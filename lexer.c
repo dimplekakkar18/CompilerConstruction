@@ -103,127 +103,156 @@ TOKEN getToken(FILE *fp)
             }
             else if( c =='_' )
             {
-                state=32;
+                state=16;
                 end++;
                 break;
             }
             else if( c == '# ')
             {
-                state=37;
+                state=19;
                 end++;
                 break;
             }
             else if (c == '[')
             {
-                state=40;
-                end++;
+                end++; // if in out function we take token from st to end-1
+                getlexeme();
+                refreshPtr();
+                state=0;
                 break;
             }
             else if (c == ']')
             {
-                state=41;
-                end++;
+                end++; // if in out function we take token from st to end-1
+                getlexeme();
+                refreshPtr();
+                state=0;
                 break;
             }
             else if (c == ',')
             {
-                state=42;
-                end++;
+                end++; // if in out function we take token from st to end-1
+                getlexeme();
+                refreshPtr();
+                state=0;
                 break;
             }
             else if (c == ';')
             {
-                state=43;
-                end++;
+                end++; // if in out function we take token from st to end-1
+                getlexeme();
+                refreshPtr();
+                state=0;
                 break;
             }
             else if (c == ':')
             {
-                state=44;
-                end++;
+                end++; // if in out function we take token from st to end-1
+                getlexeme();
+                refreshPtr();
+                state=0;
                 break;
             }
             else if (c == '.')
             {
-                state=45;
-                end++;
+                end++; // if in out function we take token from st to end-1
+                getlexeme();
+                refreshPtr();
+                state=0;
                 break;
             }
             else if (c == '(')
             {
-                state=46;
-                end++;
+                end++; // if in out function we take token from st to end-1
+                getlexeme();
+                refreshPtr();
+                state=0;
                 break;
             }
             else if (c == ')')
             {
-                state=47;
-                end++;
+                end++; // if in out function we take token from st to end-1
+                getlexeme();
+                refreshPtr();
+                state=0;
                 break;
             }
             else if (c == '+')
             {
-                state=48;
-                end++;
+                end++; // if in out function we take token from st to end-1
+                getlexeme();
+                refreshPtr();
+                state=0;
                 break;
             }
             else if (c == '-')
             {
-                state=49;
-                end++;
+                end++; // if in out function we take token from st to end-1
+                getlexeme();
+                refreshPtr();
+                state=0;
                 break;
             }
             else if (c == '*')
             {
-                state=50;
-                end++;
+                end++; // if in out function we take token from st to end-1
+                getlexeme();
+                refreshPtr();
+                state=0;
                 break;
             }
             else if (c == '/')
             {
-                state=51;
-                end++;
+                end++; // if in out function we take token from st to end-1
+                getlexeme();
+                refreshPtr();
+                state=0;
                 break;
             }
             else if (c == '~')
             {
-                state=52;
-                end++;
+                end++; // if in out function we take token from st to end-1
+                getlexeme();
+                refreshPtr();
+                state=0;
                 break;
             }
             else if (c == '>')
             {
-                state=53;
+                state=25;
                 end++;
                 break;
             }
             else if (c=='!')
             {
-                state=54;
+                state=26;
                 end++;
                 break;
             }
             else if ( c == '=')
             {
-                state=55;
+                state=27;
                 end++;
                 break;
             }
             else if ( c == '&')
             {
-                state=56;
+                state=21;
                 end++;
                 break;
             }
             else if ( c == '@')
             {
-                state=57;
+                state=23;
                 end++;
                 break;
             }
             else
-            {                   //write code
-
+            {                   
+                getError();
+                refreshPtr();
+                state = 0;
+                break;
             }
         case 1:
             if ( c == '-' )
@@ -234,6 +263,7 @@ TOKEN getToken(FILE *fp)
             }
             else if ( c == '=')
             {
+                end++; // if in out function we take token from st to end-1
                 getlexeme();
                 refreshPtr();
                 state=0;
@@ -265,6 +295,7 @@ TOKEN getToken(FILE *fp)
         case 3:
             if ( c == '-')
             {
+                end++; // if in out function we take token from st to end-1
                 getlexeme(); //populate the token
                 refreshPtr();
                 state=0;
@@ -456,6 +487,7 @@ TOKEN getToken(FILE *fp)
         case 14 :
             if ( c >= 0 && c <= 9)
             {
+                end++; // if in out function we take token from st to end-1
                 getlexeme();
                 refreshPtr();
                 state=0;
@@ -483,6 +515,210 @@ TOKEN getToken(FILE *fp)
                 break;
             }
         case 16 :
+            if( (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z'))
+            {
+                state = 17;
+                end++;
+                break;
+            }
+            else
+            {
+                getError();
+                refreshPtr();
+                state=0;
+                break;
+            }
+        case 17:
+            if( (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z'))
+            {
+                state = 17;
+                end++;
+                break;
+            }
+            else if ( c>=0 && c<=9 )
+            {
+                state=18;
+                end++;
+                break;
+            }
+            else
+            {
+                getlexeme(); //check _main()
+                refreshPtr();
+                state=0;
+                break; 
+            }
+        case 18:
+            if ( c>=0 && c<=9 )
+            {
+                state=18;
+                end++;
+                break;
+            }
+            else
+            {
+                getlexeme(); 
+                refreshPtr();
+                state=0;
+                break; 
+            }
+
+        case 19: 
+            if( c >= 'a' && c <= 'z')
+            {
+                state = 20;
+                end++;
+                break;
+            }
+            else
+            {
+                getError(); 
+                refreshPtr();
+                state=0;
+                break; 
+            }
+        
+        case 20:
+            if( c >= 'a' && c <= 'z')
+            {
+                state = 20;
+                end++;
+                break;
+            }
+            else
+            {
+                getlexeme(); 
+                refreshPtr();
+                state=0;
+                break; 
+            }
+
+        case 21:
+            if( c == '&')
+            {
+                state = 22;
+                end++;
+                break;
+            }
+            else
+            {
+                getError(); 
+                refreshPtr();
+                state=0;
+                break; 
+            }
+
+        case 22:
+            if( c == '&')
+            {
+                end++; // if in out function we take token from st to end-1
+                getlexeme();
+                refreshPtr();
+                state = 0;
+                break;
+            }
+            else
+            {
+                getError(); 
+                refreshPtr();
+                state=0;
+                break; 
+            }
+        
+        case 23:
+            if ( c == '@')
+            {
+                state = 24;
+                end++;
+                break;
+            }
+            else
+            {
+                getError(); 
+                refreshPtr();
+                state=0;
+                break;
+            }
+
+        case 24:
+            if( c == '@')
+            {
+                end++; // if in out function we take token from st to end-1
+                getlexeme();
+                refreshPtr();
+                state = 0;
+                break;
+            }
+            else
+            {
+                getError(); 
+                refreshPtr();
+                state=0;
+                break; 
+            }
+        case 25:
+            if ( c == '=')
+            {
+                end++; // if in out function we take token from st to end-1
+                getlexeme();
+                refreshPtr();
+                state = 0;
+                break;
+            }
+            else 
+            {
+                getlexeme();
+                refreshPtr();
+                state = 0;
+                break;
+            }
+        
+        case 26:
+            if ( c == '=')
+            {
+                end++;// st to end - 1 
+                getlexeme();
+                refreshPtr();
+                state = 0;
+                break;
+            }
+            else
+            {
+                getError();
+                refreshPtr();
+                state = 0;
+                break;
+            }
+        
+        case 27:
+            if ( c == '=')
+            {
+                end++;// st to end - 1 
+                getlexeme();
+                refreshPtr();
+                state = 0;
+                break;
+            }
+            else
+            {
+                getError();
+                refreshPtr();
+                state = 0;
+                break;
+            }
+        }
+    }
+    //return token;
+}
+
+
+
+
+
+        
+
+
+
 
 
         
@@ -492,19 +728,3 @@ TOKEN getToken(FILE *fp)
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-        }
-    }
-}
