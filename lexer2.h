@@ -7,6 +7,7 @@ struct token{
     char* lexeme;
 };
 
+
 enum TOKENS{
 TK_ASSIGNOP,
 TK_COMMENT,
@@ -67,4 +68,8 @@ TK_GE,
 TK_NE
 };
 
+struct keyword{
+    char * keywordname;
+    int tokenID; 
+};
 #endif 
