@@ -5,17 +5,21 @@
 #include "lexer.h"
 #include "lexer2.h"
 
-// global buffer size
-int bufferSize;
+#define MAX_BUFF_SIZE 30
 
 // global two buffers
-char *buf1, *buf2;
+char *buffer1, *buffer2;
 
 // begin and finish pointers for the two buffers
 int start, end;
 
 // line number
 int lineNo = 1;
+
+int flag[] = {0,0};
+
+int lexemeSize;
+
 
 
 void removeComments(char *test_file, char *clean_file)
@@ -46,6 +50,61 @@ void removeComments(char *test_file, char *clean_file)
 
 }
 
+void initializeBuffers(){
+    buffer1 = malloc(sizeof(char) * MAX_BUFF_SIZE);
+    buffer2 = malloc(sizeof(char) * MAX_BUFF_SIZE);
+    bzero(buffer1, MAX_BUFF_SIZE);  // initializes buffer with '\0'
+    bzero(buffer2, MAX_BUFF_SIZE);
+    start = 0;
+    end = 0;
+    lineNo = 1;
+}
+
+void loadBuffer(char* buffer, FILE* fp){
+    int numBytes = fread(buffer, sizeof(char), MAX_BUFF_SIZE, fp);
+    if(numBytes < MAX_BUFF_SIZE){
+        buffer[numBytes] = EOF;
+    }
+}
+
+char getCharFromBuffers(FILE* fp){
+    end = end%(2*MAX_BUFF_SIZE);
+    if(end==0 && !flag[0]){
+        loadBuffer(buffer1, fp);
+        flag[0] = 1;
+    }
+    if(end==MAX_BUFF_SIZE && !flag[1]){
+        loadBuffer(buffer2, fp);
+        flag[1] = 1;
+    }
+    if(end<MAX_BUFF_SIZE){
+        return buffer1[end];
+    }
+    else{
+        return buffer2[end-MAX_BUFF_SIZE];
+    }
+}
+
+char* getLexeme(){
+    char *lexeme = calloc((end>start?(end-start+1):(end+2*MAX_BUFF_SIZE-start+1)), sizeof(char));
+    int i = start;
+    int pos = 0;
+    for(i = start, pos = 0; i!=end; pos++, i=(i+1)%(MAX_BUFF_SIZE*2))
+    {
+        lexeme[pos] = (i>MAX_BUFF_SIZE ? buffer2[i-MAX_BUFF_SIZE] : buffer1[i]);
+    }
+    lexeme[pos]='\0';
+
+    if(start<MAX_BUFF_SIZE && end>=MAX_BUFF_SIZE)
+    {
+        flag[0]=0;
+    }
+    else if(start>=MAX_BUFF_SIZE && end<MAX_BUFF_SIZE){
+        flag[1]=0;
+    }
+    start = end;
+    return lexeme;
+}
 
 
 TOKEN getToken(FILE *fp)
@@ -57,11 +116,21 @@ TOKEN getToken(FILE *fp)
     char c;
     int state = 0;
     char *lexeme;
+    lexemeSize = 0;
 
     while (state >= 0)
     {
         // get character from buffer
+        if(lexemeSize>30){
+            // report an error for FUN_ID
+        }
+        else if(lexemeSize > 20){
+            // report an error for TK_ID
+        }
+
         c = getCharFromBuffers(fp);
+        // increment lexemeSize
+        lexemeSize++;
         switch (state)
         {
         // start state

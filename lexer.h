@@ -4,7 +4,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#include <lexer2.h>
+#include "lexer2.h"
 
 // Contents of your header file go here
 void removeComments(char *test_file, char *clean_file);
