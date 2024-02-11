@@ -20,7 +20,10 @@ int flag[] = {0,0};
 
 int lexemeSize;
 
-
+void getError(){
+    char* str = getLexeme();
+    printf("The lexical error : %s has happened in the line number %d", str, lineNo);
+}
 
 void removeComments(char *test_file, char *clean_file)
 {
@@ -37,7 +40,7 @@ void removeComments(char *test_file, char *clean_file)
         else if(flag==0 && c!='%'){
             fputc(c, fp2);
         }
-        else if(flag==1 && c=='/n'){
+        else if(flag==1 && c=='\n'){
             flag=0;
             fputc(c,fp2);
         }
@@ -109,6 +112,190 @@ char* getLexeme(){
 void refreshPtr(){
     start = end;
 }
+void print_token(enum TOKENS token) {
+    switch(token) {
+        case TK_ASSIGNOP:
+            printf("TK_ASSIGNOP\n");
+            break;
+        case TK_COMMENT:
+            printf("TK_COMMENT\n");
+            break;
+        case TK_FIELDID:
+            printf("TK_FIELDID\n");
+            break;
+        case TK_ID:
+            printf("TK_ID\n");
+            break;
+        case TK_NUM:
+            printf("TK_NUM\n");
+            break;
+        case TK_RNUM:
+            printf("TK_RNUM\n");
+            break;
+        case TK_FUNID:
+            printf("TK_FUNID\n");
+            break;
+        case TK_RUID:
+            printf("TK_RUID\n");
+            break;
+        case TK_WITH:
+            printf("TK_WITH\n");
+            break;
+        case TK_PARAMETERS:
+            printf("TK_PARAMETERS\n");
+            break;
+        case TK_END:
+            printf("TK_END\n");
+            break;
+        case TK_WHILE:
+            printf("TK_WHILE\n");
+            break;
+        case TK_UNION:
+            printf("TK_UNION\n");
+            break;
+        case TK_ENDUNION:
+            printf("TK_ENDUNION\n");
+            break;
+        case TK_DEFINETYPE:
+            printf("TK_DEFINETYPE\n");
+            break;
+        case TK_AS:
+            printf("TK_AS\n");
+            break;
+        case TK_TYPE:
+            printf("TK_TYPE\n");
+            break;
+        case TK_MAIN:
+            printf("TK_MAIN\n");
+            break;
+        case TK_GLOBAL:
+            printf("TK_GLOBAL\n");
+            break;
+        case TK_PARAMETER:
+            printf("TK_PARAMETER\n");
+            break;
+        case TK_LIST:
+            printf("TK_LIST\n");
+            break;
+        case TK_SQL:
+            printf("TK_SQL\n");
+            break;
+        case TK_SQR:
+            printf("TK_SQR\n");
+            break;
+        case TK_INPUT:
+            printf("TK_INPUT\n");
+            break;
+        case TK_OUTPUT:
+            printf("TK_OUTPUT\n");
+            break;
+        case TK_INT:
+            printf("TK_INT\n");
+            break;
+        case TK_REAL:
+            printf("TK_REAL\n");
+            break;
+        case TK_COMMA:
+            printf("TK_COMMA\n");
+            break;
+        case TK_SEM:
+            printf("TK_SEM\n");
+            break;
+        case TK_COLON:
+            printf("TK_COLON\n");
+            break;
+        case TK_DOT:
+            printf("TK_DOT\n");
+            break;
+        case TK_ENDWHILE:
+            printf("TK_ENDWHILE\n");
+            break;
+        case TK_OP:
+            printf("TK_OP\n");
+            break;
+        case TK_CL:
+            printf("TK_CL\n");
+            break;
+        case TK_IF:
+            printf("TK_IF\n");
+            break;
+        case TK_THEN:
+            printf("TK_THEN\n");
+            break;
+        case TK_ENDIF:
+            printf("TK_ENDIF\n");
+            break;
+        case TK_READ:
+            printf("TK_READ\n");
+            break;
+        case TK_WRITE:
+            printf("TK_WRITE\n");
+            break;
+        case TK_RETURN:
+            printf("TK_RETURN\n");
+            break;
+        case TK_PLUS:
+            printf("TK_PLUS\n");
+            break;
+        case TK_MINUS:
+            printf("TK_MINUS\n");
+            break;
+        case TK_MUL:
+            printf("TK_MUL\n");
+            break;
+        case TK_DIV:
+            printf("TK_DIV\n");
+            break;
+        case TK_CALL:
+            printf("TK_CALL\n");
+            break;
+        case TK_RECORD:
+            printf("TK_RECORD\n");
+            break;
+        case TK_ENDRECORD:
+            printf("TK_ENDRECORD\n");
+            break;
+        case TK_ELSE:
+            printf("TK_ELSE\n");
+            break;
+        case TK_AND:
+            printf("TK_AND\n");
+            break;
+        case TK_OR:
+            printf("TK_OR\n");
+            break;
+        case TK_NOT:
+            printf("TK_NOT\n");
+            break;
+        case TK_LT:
+            printf("TK_LT\n");
+            break;
+        case TK_LE:
+            printf("TK_LE\n");
+            break;
+        case TK_EQ:
+            printf("TK_EQ\n");
+            break;
+        case TK_GT:
+            printf("TK_GT\n");
+            break;
+        case TK_GE:
+            printf("TK_GE\n");
+            break;
+        case TK_NE:
+            printf("TK_NE\n");
+            break;
+        default:
+            printf("Unknown token\n");
+            break;
+    }
+}
+
+void printTokenInfo(TOKEN tk){
+    printf("The lexeme is %s: , the line numnber is %d, and the token type is :", tk.lexeme, lineNo);
+    print_token(tk.tokenId);
+    printf("\n");
+}
 
 TOKEN getToken(FILE *fp)
 {
@@ -144,13 +331,13 @@ TOKEN getToken(FILE *fp)
                 end++;
                 break;
             }
-            else if(c==' '|| c=='/t')
+            else if(c==' '|| c=='\t')
             {
                 state=4;
                 end++;
                 break;
             }
-            else if ( c == '/n'){
+            else if ( c == '\n'){
                 end++;
                 state=4;
                 lineNo++;
@@ -179,7 +366,7 @@ TOKEN getToken(FILE *fp)
                 end++;
                 break;
             }
-            else if( c == '# ')
+            else if( c == '#')
             {
                 state=19;
                 end++;
@@ -188,7 +375,10 @@ TOKEN getToken(FILE *fp)
             else if (c == '[')
             {
                 end++; // if in out function we take token from st to end-1
-                getLexeme();
+                char* lex = getLexeme(); //populate the token
+                token.lexeme = lex;
+                token.tokenId = TK_SQL;
+                token.lineNo = lineNo;
                 refreshPtr();
                 state=0;
                 break;
@@ -196,97 +386,145 @@ TOKEN getToken(FILE *fp)
             else if (c == ']')
             {
                 end++; // if in out function we take token from st to end-1
-                getLexeme();
+                char* lex = getLexeme(); //populate the token
+                token.lexeme = lex;
+                token.tokenId = TK_SQR;
+                token.lineNo = lineNo;
                 refreshPtr();
                 state=0;
+                return token;
                 break;
             }
             else if (c == ',')
             {
                 end++; // if in out function we take token from st to end-1
-                getLexeme();
+                char* lex = getLexeme(); //populate the token
+                token.lexeme = lex;
+                token.tokenId = TK_COMMA;
+                token.lineNo = lineNo;
                 refreshPtr();
                 state=0;
+                return token;
                 break;
             }
             else if (c == ';')
             {
                 end++; // if in out function we take token from st to end-1
-                getLexeme();
+                char* lex = getLexeme(); //populate the token
+                token.lexeme = lex;
+                token.tokenId = TK_SEM;
+                token.lineNo = lineNo;
                 refreshPtr();
                 state=0;
+                return token;
                 break;
             }
             else if (c == ':')
             {
                 end++; // if in out function we take token from st to end-1
-                getLexeme();
+                char* lex = getLexeme(); //populate the token
+                token.lexeme = lex;
+                token.tokenId = TK_COLON;
+                token.lineNo = lineNo;
                 refreshPtr();
                 state=0;
+                return token;
                 break;
             }
             else if (c == '.')
             {
                 end++; // if in out function we take token from st to end-1
-                getLexeme();
+                char* lex = getLexeme(); //populate the token
+                token.lexeme = lex;
+                token.tokenId = TK_DOT;
+                token.lineNo = lineNo;
                 refreshPtr();
                 state=0;
+                return token;
                 break;
             }
             else if (c == '(')
             {
                 end++; // if in out function we take token from st to end-1
-                getLexeme();
+                char* lex = getLexeme(); //populate the token
+                token.lexeme = lex;
+                token.tokenId = TK_OP;
+                token.lineNo = lineNo;
                 refreshPtr();
                 state=0;
+                return token;
                 break;
             }
             else if (c == ')')
             {
                 end++; // if in out function we take token from st to end-1
-                getLexeme();
+                char* lex = getLexeme(); //populate the token
+                token.lexeme = lex;
+                token.tokenId = TK_CL;
+                token.lineNo = lineNo;
                 refreshPtr();
                 state=0;
+                return token;
                 break;
             }
             else if (c == '+')
             {
                 end++; // if in out function we take token from st to end-1
-                getLexeme();
+                char* lex = getLexeme(); //populate the token
+                token.lexeme = lex;
+                token.tokenId = TK_PLUS;
+                token.lineNo = lineNo;
                 refreshPtr();
                 state=0;
+                return token;
                 break;
             }
             else if (c == '-')
             {
                 end++; // if in out function we take token from st to end-1
-                getLexeme();
+                char* lex = getLexeme(); //populate the token
+                token.lexeme = lex;
+                token.tokenId = TK_MINUS;
+                token.lineNo = lineNo;
                 refreshPtr();
                 state=0;
+                return token;
                 break;
             }
             else if (c == '*')
             {
                 end++; // if in out function we take token from st to end-1
-                getLexeme();
+                char* lex = getLexeme(); //populate the token
+                token.lexeme = lex;
+                token.tokenId = TK_MUL;
+                token.lineNo = lineNo;
                 refreshPtr();
                 state=0;
+                return token;
                 break;
             }
             else if (c == '/')
             {
                 end++; // if in out function we take token from st to end-1
-                getLexeme();
+                char* lex = getLexeme(); //populate the token
+                token.lexeme = lex;
+                token.tokenId = TK_DIV;
+                token.lineNo = lineNo;
                 refreshPtr();
                 state=0;
+                return token;
                 break;
             }
             else if (c == '~')
             {
                 end++; // if in out function we take token from st to end-1
-                getLexeme();
+                char* lex = getLexeme(); //populate the token
+                token.lexeme = lex;
+                token.tokenId = TK_NOT;
+                token.lineNo = lineNo;
                 refreshPtr();
                 state=0;
+                return token;
                 break;
             }
             else if (c == '>')
@@ -336,16 +574,24 @@ TOKEN getToken(FILE *fp)
             else if ( c == '=')
             {
                 end++; // if in out function we take token from st to end-1
-                getLexeme();
+                char* lex = getLexeme(); //populate the token
+                token.lexeme = lex;
+                token.tokenId = TK_LE;
+                token.lineNo = lineNo;
                 refreshPtr();
                 state=0;
+                return token;
                 break;
             }
             else
             {
-                getLexeme();
+                char* lex = getLexeme(); //populate the token
+                token.lexeme = lex;
+                token.tokenId = TK_LT;
+                token.lineNo = lineNo;
                 refreshPtr();
                 state=0;
+                return token;
                 break;
             }
         case 2:
@@ -358,9 +604,13 @@ TOKEN getToken(FILE *fp)
             else
             {
                 end--;
-                getLexeme();
+                char* lex = getLexeme(); //populate the token
+                token.lexeme = lex;
+                token.tokenId = TK_LT;
+                token.lineNo = lineNo;
                 refreshPtr();
                 state=0;
+                return token;
                 break;
             }
 
@@ -368,9 +618,13 @@ TOKEN getToken(FILE *fp)
             if ( c == '-')
             {
                 end++; // if in out function we take token from st to end-1
-                getLexeme(); //populate the token
+                char* lex = getLexeme(); //populate the token
+                token.lexeme = lex;
+                token.tokenId = TK_ASSIGNOP;
+                token.lineNo = lineNo;
                 refreshPtr();
                 state=0;
+                return token;
                 break;
             }
             else 
@@ -382,12 +636,12 @@ TOKEN getToken(FILE *fp)
             }
         
         case 4:
-            if ( c == ' ' || c == '/t'){
+            if ( c == ' ' || c == '\t'){
                 state=4;
                 end++;
                 break;
             }
-            else if ( c == '/n')
+            else if ( c == '\n')
             {
                 state=4;
                 end++;
@@ -409,9 +663,21 @@ TOKEN getToken(FILE *fp)
             }
             else 
             {
-                getLexeme();
+                char* lex = getLexeme(); //populate the token
+                int id = getKeyWordID(lex);
+                if(id == -1){
+                    token.lexeme = lex;
+                    token.tokenId = TK_ID;
+                    token.lineNo = lineNo;
+                }
+                else{
+                    token.lexeme = lex;
+                    token.tokenId = id;
+                    token.lineNo = lineNo;
+                }
                 refreshPtr();
                 state = 0;
+                return token;
                 break;
             }
         case 6:
@@ -429,9 +695,13 @@ TOKEN getToken(FILE *fp)
             }
             else 
             {
-                getLexeme();
+                char* lex = getLexeme(); //populate the token
+                token.lexeme = lex;
+                token.tokenId = TK_FIELDID;
+                token.lineNo = lineNo;
                 refreshPtr();
                 state = 0;
+                return token;
                 break;
             }
         case 7:
@@ -449,9 +719,13 @@ TOKEN getToken(FILE *fp)
             }
             else 
             {
-                getLexeme();
+                char* lex = getLexeme(); //populate the token
+                token.lexeme = lex;
+                token.tokenId = TK_ID;
+                token.lineNo = lineNo;
                 refreshPtr();
                 state=0;
+                return token;
                 break;
             }
         case 8 :
@@ -463,9 +737,13 @@ TOKEN getToken(FILE *fp)
             }
             else 
             {
-                getLexeme();
+                char* lex = getLexeme(); //populate the token
+                token.lexeme = lex;
+                token.tokenId = TK_ID;
+                token.lineNo = lineNo;
                 refreshPtr();
                 state=0;
+                return token;
                 break;   
             }
         
@@ -484,9 +762,13 @@ TOKEN getToken(FILE *fp)
             }
             else
             {
-                getLexeme();
+                char* lex = getLexeme(); //populate the token
+                token.lexeme = lex;
+                token.tokenId = TK_NUM;
+                token.lineNo = lineNo;
                 refreshPtr();
                 state=0;
+                return token;
                 break;
             }
         
@@ -500,9 +782,13 @@ TOKEN getToken(FILE *fp)
             else
             {
                 end--;
-                getLexeme();
+                char* lex = getLexeme(); //populate the token
+                token.lexeme = lex;
+                token.tokenId = TK_NUM;
+                token.lineNo = lineNo;
                 refreshPtr();
                 state = 0;
+                return token;
                 break;
             }
         
@@ -518,6 +804,7 @@ TOKEN getToken(FILE *fp)
                 getError();
                 refreshPtr();
                 state=0;
+                return token;
                 break;
             }
 
@@ -530,9 +817,13 @@ TOKEN getToken(FILE *fp)
             }
             else
             {
-                getLexeme();
+                char* lex = getLexeme(); //populate the token
+                token.lexeme = lex;
+                token.tokenId = TK_RNUM;
+                token.lineNo = lineNo;
                 refreshPtr();
                 state=0;
+                return token;
                 break;
             }
         
@@ -560,9 +851,13 @@ TOKEN getToken(FILE *fp)
             if ( c >= 0 && c <= 9)
             {
                 end++; // if in out function we take token from st to end-1
-                getLexeme();
+                char* lex = getLexeme(); //populate the token
+                token.lexeme = lex;
+                token.tokenId = TK_RNUM;
+                token.lineNo = lineNo;
                 refreshPtr();
                 state=0;
+                return token;
                 break;   
             }
             else
@@ -615,9 +910,21 @@ TOKEN getToken(FILE *fp)
             }
             else
             {
-                getLexeme(); //check _main()
+                char* lex = getLexeme(); //populate the token
+                int id = getKeyWordID(lex);
+                if(id == TK_MAIN){
+                    token.lexeme = lex;
+                    token.tokenId = TK_MAIN;
+                    token.lineNo = lineNo;
+                }
+                else{
+                    token.lexeme = lex;
+                    token.tokenId = TK_FUNID;
+                    token.lineNo = lineNo;
+                }
                 refreshPtr();
                 state=0;
+                return token;
                 break; 
             }
         case 18:
@@ -629,9 +936,13 @@ TOKEN getToken(FILE *fp)
             }
             else
             {
-                getLexeme(); 
+                char* lex = getLexeme(); //populate the token
+                token.lexeme = lex;
+                token.tokenId = TK_FUNID;
+                token.lineNo = lineNo;
                 refreshPtr();
                 state=0;
+                return token;
                 break; 
             }
 
@@ -659,9 +970,13 @@ TOKEN getToken(FILE *fp)
             }
             else
             {
-                getLexeme(); 
+                char* lex = getLexeme(); //populate the token
+                token.lexeme = lex;
+                token.tokenId = TK_RUID;
+                token.lineNo = lineNo;
                 refreshPtr();
                 state=0;
+                return token;
                 break; 
             }
 
@@ -684,9 +999,13 @@ TOKEN getToken(FILE *fp)
             if( c == '&')
             {
                 end++; // if in out function we take token from st to end-1
-                getLexeme();
+                char* lex = getLexeme(); //populate the token
+                token.lexeme = lex;
+                token.tokenId = TK_AND;
+                token.lineNo = lineNo;
                 refreshPtr();
                 state = 0;
+                return token;
                 break;
             }
             else
@@ -716,9 +1035,13 @@ TOKEN getToken(FILE *fp)
             if( c == '@')
             {
                 end++; // if in out function we take token from st to end-1
-                getLexeme();
+                char* lex = getLexeme(); //populate the token
+                token.lexeme = lex;
+                token.tokenId = TK_OR;
+                token.lineNo = lineNo;
                 refreshPtr();
                 state = 0;
+                return token;
                 break;
             }
             else
@@ -732,16 +1055,24 @@ TOKEN getToken(FILE *fp)
             if ( c == '=')
             {
                 end++; // if in out function we take token from st to end-1
-                getLexeme();
+                char* lex = getLexeme(); //populate the token
+                token.lexeme = lex;
+                token.tokenId = TK_GE;
+                token.lineNo = lineNo;
                 refreshPtr();
                 state = 0;
+                return token;
                 break;
             }
             else 
             {
-                getLexeme();
+                char* lex = getLexeme(); //populate the token
+                token.lexeme = lex;
+                token.tokenId = TK_GT;
+                token.lineNo = lineNo;
                 refreshPtr();
                 state = 0;
+                return token;
                 break;
             }
         
@@ -749,9 +1080,13 @@ TOKEN getToken(FILE *fp)
             if ( c == '=')
             {
                 end++;// st to end - 1 
-                getLexeme();
+                char* lex = getLexeme(); //populate the token
+                token.lexeme = lex;
+                token.tokenId = TK_NE;
+                token.lineNo = lineNo;
                 refreshPtr();
                 state = 0;
+                return token;
                 break;
             }
             else
@@ -766,9 +1101,13 @@ TOKEN getToken(FILE *fp)
             if ( c == '=')
             {
                 end++;// st to end - 1 
-                getLexeme();
+                char* lex = getLexeme(); //populate the token
+                token.lexeme = lex;
+                token.tokenId = TK_EQ;
+                token.lineNo = lineNo;
                 refreshPtr();
                 state = 0;
+                return token;
                 break;
             }
             else
@@ -780,9 +1119,38 @@ TOKEN getToken(FILE *fp)
             }
         }
     }
-    //return token;
+    return token;
 }
 
+int main()
+{
+    printf("Enter the buffer size: ");
+    initializeBuffers();
+    lookUpTable();
+    FILE *fp = fopen("./test.txt", "r");
+    if (fp == NULL)
+    {
+        printf("Error opening file\n");
+        return -1;
+    }
+    int flag = 1;
+    while (flag)
+    {
+        TOKEN token = getToken(fp);
+        if (token.tokenId == TK_PROGRAMEND)
+            break;
+        printf("%d %d\n", token.tokenId, token.lineNo);
+        // if (token.tokenId == NUM){
+        //     printf("%d\n", token.val.intValue);
+        // } else if (token.tokenId == RNUM){
+        //     printf("%f\n", token.val.floatValue);
+        // }
+        printf("DO you want to continue? (1/0): ");
+        scanf("%d", &flag);
+    }
+    fclose(fp);
+    return 0;
+}
 
 
 

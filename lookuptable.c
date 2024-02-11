@@ -2,12 +2,21 @@
 #include <string.h>
 #include "lexer2.h"
 
-#define NUM_KEYWORDS 28
+#define NUM_KEYWORDS 29
 #define HASH_TABLE_SIZE 127 
 #define PRIME 37 
 struct keyword kwtable[HASH_TABLE_SIZE];
 
-int lookUpTable()
+int calculateHash(char *kwname){
+    
+    int hash_value = 0;
+    for(int i = 0; i < strlen(kwname); i++){
+        hash_value = (hash_value * PRIME + kwname[i]) % HASH_TABLE_SIZE;
+    }
+    return hash_value;
+}
+
+void lookUpTable()
 {
     // allocating memory for the LOOKUP table
     struct keyword arr[NUM_KEYWORDS] = {
@@ -38,7 +47,8 @@ int lookUpTable()
         {"call", TK_CALL},
         {"record", TK_RECORD},
         {"endrecord", TK_ENDRECORD},
-        {"else", TK_ELSE}
+        {"else", TK_ELSE},
+        {"PROGRAMEND", TK_PROGRAMEND}
     };
 
     for (int i = 0; i < HASH_TABLE_SIZE; i++)
@@ -69,14 +79,6 @@ int lookUpTable()
     }
 }
 
-int calculateHash(char *kwname){
-    
-    int hash_value = 0;
-    for(int i = 0; i < strlen(kwname); i++){
-        hash_value = (hash_value * PRIME + kwname[i]) % HASH_TABLE_SIZE;
-    }
-    return hash_value;
-}
 
 int getKeyWordID(char *lexeme){
 
