@@ -106,6 +106,9 @@ char* getLexeme(){
     return lexeme;
 }
 
+void refreshPtr(){
+    start = end;
+}
 
 TOKEN getToken(FILE *fp)
 {
@@ -185,7 +188,7 @@ TOKEN getToken(FILE *fp)
             else if (c == '[')
             {
                 end++; // if in out function we take token from st to end-1
-                getlexeme();
+                getLexeme();
                 refreshPtr();
                 state=0;
                 break;
@@ -193,7 +196,7 @@ TOKEN getToken(FILE *fp)
             else if (c == ']')
             {
                 end++; // if in out function we take token from st to end-1
-                getlexeme();
+                getLexeme();
                 refreshPtr();
                 state=0;
                 break;
@@ -201,7 +204,7 @@ TOKEN getToken(FILE *fp)
             else if (c == ',')
             {
                 end++; // if in out function we take token from st to end-1
-                getlexeme();
+                getLexeme();
                 refreshPtr();
                 state=0;
                 break;
@@ -209,7 +212,7 @@ TOKEN getToken(FILE *fp)
             else if (c == ';')
             {
                 end++; // if in out function we take token from st to end-1
-                getlexeme();
+                getLexeme();
                 refreshPtr();
                 state=0;
                 break;
@@ -217,7 +220,7 @@ TOKEN getToken(FILE *fp)
             else if (c == ':')
             {
                 end++; // if in out function we take token from st to end-1
-                getlexeme();
+                getLexeme();
                 refreshPtr();
                 state=0;
                 break;
@@ -225,7 +228,7 @@ TOKEN getToken(FILE *fp)
             else if (c == '.')
             {
                 end++; // if in out function we take token from st to end-1
-                getlexeme();
+                getLexeme();
                 refreshPtr();
                 state=0;
                 break;
@@ -233,7 +236,7 @@ TOKEN getToken(FILE *fp)
             else if (c == '(')
             {
                 end++; // if in out function we take token from st to end-1
-                getlexeme();
+                getLexeme();
                 refreshPtr();
                 state=0;
                 break;
@@ -241,7 +244,7 @@ TOKEN getToken(FILE *fp)
             else if (c == ')')
             {
                 end++; // if in out function we take token from st to end-1
-                getlexeme();
+                getLexeme();
                 refreshPtr();
                 state=0;
                 break;
@@ -249,7 +252,7 @@ TOKEN getToken(FILE *fp)
             else if (c == '+')
             {
                 end++; // if in out function we take token from st to end-1
-                getlexeme();
+                getLexeme();
                 refreshPtr();
                 state=0;
                 break;
@@ -257,7 +260,7 @@ TOKEN getToken(FILE *fp)
             else if (c == '-')
             {
                 end++; // if in out function we take token from st to end-1
-                getlexeme();
+                getLexeme();
                 refreshPtr();
                 state=0;
                 break;
@@ -265,7 +268,7 @@ TOKEN getToken(FILE *fp)
             else if (c == '*')
             {
                 end++; // if in out function we take token from st to end-1
-                getlexeme();
+                getLexeme();
                 refreshPtr();
                 state=0;
                 break;
@@ -273,7 +276,7 @@ TOKEN getToken(FILE *fp)
             else if (c == '/')
             {
                 end++; // if in out function we take token from st to end-1
-                getlexeme();
+                getLexeme();
                 refreshPtr();
                 state=0;
                 break;
@@ -281,7 +284,7 @@ TOKEN getToken(FILE *fp)
             else if (c == '~')
             {
                 end++; // if in out function we take token from st to end-1
-                getlexeme();
+                getLexeme();
                 refreshPtr();
                 state=0;
                 break;
@@ -333,14 +336,14 @@ TOKEN getToken(FILE *fp)
             else if ( c == '=')
             {
                 end++; // if in out function we take token from st to end-1
-                getlexeme();
+                getLexeme();
                 refreshPtr();
                 state=0;
                 break;
             }
             else
             {
-                getlexeme();
+                getLexeme();
                 refreshPtr();
                 state=0;
                 break;
@@ -355,7 +358,7 @@ TOKEN getToken(FILE *fp)
             else
             {
                 end--;
-                getlexeme();
+                getLexeme();
                 refreshPtr();
                 state=0;
                 break;
@@ -365,7 +368,7 @@ TOKEN getToken(FILE *fp)
             if ( c == '-')
             {
                 end++; // if in out function we take token from st to end-1
-                getlexeme(); //populate the token
+                getLexeme(); //populate the token
                 refreshPtr();
                 state=0;
                 break;
@@ -406,7 +409,7 @@ TOKEN getToken(FILE *fp)
             }
             else 
             {
-                getlexeme();
+                getLexeme();
                 refreshPtr();
                 state = 0;
                 break;
@@ -426,7 +429,7 @@ TOKEN getToken(FILE *fp)
             }
             else 
             {
-                getlexeme();
+                getLexeme();
                 refreshPtr();
                 state = 0;
                 break;
@@ -446,7 +449,7 @@ TOKEN getToken(FILE *fp)
             }
             else 
             {
-                getlexeme();
+                getLexeme();
                 refreshPtr();
                 state=0;
                 break;
@@ -460,7 +463,7 @@ TOKEN getToken(FILE *fp)
             }
             else 
             {
-                getlexeme();
+                getLexeme();
                 refreshPtr();
                 state=0;
                 break;   
@@ -481,7 +484,7 @@ TOKEN getToken(FILE *fp)
             }
             else
             {
-                getlexeme();
+                getLexeme();
                 refreshPtr();
                 state=0;
                 break;
@@ -497,7 +500,7 @@ TOKEN getToken(FILE *fp)
             else
             {
                 end--;
-                getlexeme();
+                getLexeme();
                 refreshPtr();
                 state = 0;
                 break;
@@ -527,7 +530,7 @@ TOKEN getToken(FILE *fp)
             }
             else
             {
-                getlexeme();
+                getLexeme();
                 refreshPtr();
                 state=0;
                 break;
@@ -557,7 +560,7 @@ TOKEN getToken(FILE *fp)
             if ( c >= 0 && c <= 9)
             {
                 end++; // if in out function we take token from st to end-1
-                getlexeme();
+                getLexeme();
                 refreshPtr();
                 state=0;
                 break;   
@@ -612,7 +615,7 @@ TOKEN getToken(FILE *fp)
             }
             else
             {
-                getlexeme(); //check _main()
+                getLexeme(); //check _main()
                 refreshPtr();
                 state=0;
                 break; 
@@ -626,7 +629,7 @@ TOKEN getToken(FILE *fp)
             }
             else
             {
-                getlexeme(); 
+                getLexeme(); 
                 refreshPtr();
                 state=0;
                 break; 
@@ -656,7 +659,7 @@ TOKEN getToken(FILE *fp)
             }
             else
             {
-                getlexeme(); 
+                getLexeme(); 
                 refreshPtr();
                 state=0;
                 break; 
@@ -681,7 +684,7 @@ TOKEN getToken(FILE *fp)
             if( c == '&')
             {
                 end++; // if in out function we take token from st to end-1
-                getlexeme();
+                getLexeme();
                 refreshPtr();
                 state = 0;
                 break;
@@ -713,7 +716,7 @@ TOKEN getToken(FILE *fp)
             if( c == '@')
             {
                 end++; // if in out function we take token from st to end-1
-                getlexeme();
+                getLexeme();
                 refreshPtr();
                 state = 0;
                 break;
@@ -729,14 +732,14 @@ TOKEN getToken(FILE *fp)
             if ( c == '=')
             {
                 end++; // if in out function we take token from st to end-1
-                getlexeme();
+                getLexeme();
                 refreshPtr();
                 state = 0;
                 break;
             }
             else 
             {
-                getlexeme();
+                getLexeme();
                 refreshPtr();
                 state = 0;
                 break;
@@ -746,7 +749,7 @@ TOKEN getToken(FILE *fp)
             if ( c == '=')
             {
                 end++;// st to end - 1 
-                getlexeme();
+                getLexeme();
                 refreshPtr();
                 state = 0;
                 break;
@@ -763,7 +766,7 @@ TOKEN getToken(FILE *fp)
             if ( c == '=')
             {
                 end++;// st to end - 1 
-                getlexeme();
+                getLexeme();
                 refreshPtr();
                 state = 0;
                 break;
