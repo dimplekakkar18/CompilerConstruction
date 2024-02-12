@@ -1,6 +1,7 @@
 #ifndef LEXER2_H
 #define LEXER2_H
 typedef struct token TOKEN;
+
 struct token{
     int tokenId;
     int lineNo;
@@ -65,6 +66,11 @@ TK_EQ,
 TK_GT,
 TK_GE,
 TK_NE
+};
+
+struct keyword{
+    char * keywordname;
+    int tokenID; 
 };
 
 #endif 
