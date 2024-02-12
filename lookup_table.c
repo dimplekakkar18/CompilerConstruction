@@ -9,7 +9,7 @@ struct keyword kwtable[HASH_TABLE_SIZE];
 
 int calculateHash(char *kwname)
 {
-    int prime = 37;
+    int prime = 31;
     int hash_value = 0;
     for (int i = 0; i < strlen(kwname); i++)
     {
@@ -22,13 +22,17 @@ int calculateHash(char *kwname)
 int getKeyWordID(char *lexeme)
 {
 
-    int index = calc_hash(lexeme);
+    int index = calculateHash(lexeme);
     if (kwtable[index].keywordname != NULL)
     {
-        if (strcmp(kwtable[index].keywordname, lexeme) == 0)
+        int original_index = index;
+        int probe_num = 1;
+        while(index<HASH_TABLE_SIZE && strcmp(kwtable[index].keywordname, lexeme) != 0)
         {
-            return kwtable[index].tokenID;
+            index =(original_index + probe_num * probe_num) % HASH_TABLE_SIZE;
+            probe_num++;
         }
+        if(index<HASH_TABLE_SIZE) return kwtable[index].tokenID;       
     }
 
     return -1;
@@ -80,7 +84,7 @@ int lookUpTable()
 
     for (int i = 0; i < NUM_KEYWORDS; i++)
     {
-        int index = hashRW(arr[i].keywordname);
+        int index = calculateHash(arr[i].keywordname);
         if (kwtable[index].keywordname == NULL)
         {
             kwtable[index].keywordname = arr[i].keywordname;
@@ -105,4 +109,6 @@ int lookUpTable()
             collision++;
         }
     }
+
+    //printf("Collissions : %d  \n",collision);
 }
