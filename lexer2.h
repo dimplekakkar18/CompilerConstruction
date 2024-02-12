@@ -66,7 +66,9 @@ TK_EQ,
 TK_GT,
 TK_GE,
 TK_NE,
-TK_PROGRAMEND
+TK_PROGRAMEND,
+TK_ERROR,
+TK_EOF
 };
 
 struct keyword{

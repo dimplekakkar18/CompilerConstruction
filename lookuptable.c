@@ -2,9 +2,9 @@
 #include <string.h>
 #include "lexer2.h"
 
-#define NUM_KEYWORDS 29
+#define NUM_KEYWORDS 31
 #define HASH_TABLE_SIZE 127 
-#define PRIME 37 
+#define PRIME 1023
 struct keyword kwtable[HASH_TABLE_SIZE];
 
 int calculateHash(char *kwname){
@@ -48,7 +48,9 @@ void lookUpTable()
         {"record", TK_RECORD},
         {"endrecord", TK_ENDRECORD},
         {"else", TK_ELSE},
-        {"PROGRAMEND", TK_PROGRAMEND}
+        {"PROGRAMEND", TK_PROGRAMEND},
+        {"ERROR", TK_ERROR},
+        {"EOF", TK_EOF}
     };
 
     for (int i = 0; i < HASH_TABLE_SIZE; i++)

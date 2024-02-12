@@ -5,7 +5,7 @@
 #include "lexer.h"
 #include "lexer2.h"
 
-#define MAX_BUFF_SIZE 30
+#define MAX_BUFF_SIZE 1024
 
 // global two buffers
 char *buffer1, *buffer2;
@@ -20,9 +20,10 @@ int flag[] = {0,0};
 
 int lexemeSize;
 
-void getError(){
+char* getError(){
     char* str = getLexeme();
-    printf("The lexical error : %s has happened in the line number %d", str, lineNo);
+    // printf("The lexical error : %s has happened in the line number %d\n", str, lineNo);
+    return str;
 }
 
 void removeComments(char *test_file, char *clean_file)
@@ -285,6 +286,9 @@ void print_token(enum TOKENS token) {
         case TK_NE:
             printf("TK_NE\n");
             break;
+        case TK_ERROR:
+            printf("TK_ERROR\n");
+            break;
         default:
             printf("Unknown token\n");
             break;
@@ -292,9 +296,8 @@ void print_token(enum TOKENS token) {
 }
 
 void printTokenInfo(TOKEN tk){
-    printf("The lexeme is %s: , the line numnber is %d, and the token type is :", tk.lexeme, lineNo);
+    printf("The lexeme is %s , the line numnber is %d, and the token type is ", tk.lexeme, lineNo);
     print_token(tk.tokenId);
-    printf("\n");
 }
 
 TOKEN getToken(FILE *fp)
@@ -341,6 +344,7 @@ TOKEN getToken(FILE *fp)
                 end++;
                 state=4;
                 lineNo++;
+                break;
             }
             else if((c=='a')||(c>='e'&& c<='z'))
             {
@@ -381,6 +385,7 @@ TOKEN getToken(FILE *fp)
                 token.lineNo = lineNo;
                 refreshPtr();
                 state=0;
+                return token;
                 break;
             }
             else if (c == ']')
@@ -557,12 +562,26 @@ TOKEN getToken(FILE *fp)
                 end++;
                 break;
             }
+            else if( c == EOF){
+                end++;
+                char* lex = getError(); //increment errorno
+                refreshPtr();
+                state=0;
+                token.lexeme = lex;
+                token.tokenId = TK_ERROR;
+                token.lineNo = lineNo;
+                return token;
+            }
             else
             {                   
-                getError();
+                end++;
+                char* lex = getError(); //increment errorno
                 refreshPtr();
-                state = 0;
-                break;
+                state=0;
+                token.lexeme = lex;
+                token.tokenId = TK_ERROR;
+                token.lineNo = lineNo;
+                return token;
             }
         case 1:
             if ( c == '-' )
@@ -629,9 +648,13 @@ TOKEN getToken(FILE *fp)
             }
             else 
             {
-                getError(); //increment errorno
+                char* lex = getError(); //increment errorno
                 refreshPtr();
                 state=0;
+                token.lexeme = lex;
+                token.tokenId = TK_ERROR;
+                token.lineNo = lineNo;
+                return token;
                 break;
             }
         
@@ -667,7 +690,7 @@ TOKEN getToken(FILE *fp)
                 int id = getKeyWordID(lex);
                 if(id == -1){
                     token.lexeme = lex;
-                    token.tokenId = TK_ID;
+                    token.tokenId = TK_FIELDID;
                     token.lineNo = lineNo;
                 }
                 else{
@@ -687,7 +710,7 @@ TOKEN getToken(FILE *fp)
                 end++;
                 break;
             }
-            else if ( c >= 2 && c <= 7)
+            else if ( c >= '2' && c <= '7')
             {
                 state = 7;
                 end++;
@@ -705,13 +728,13 @@ TOKEN getToken(FILE *fp)
                 break;
             }
         case 7:
-            if ( c >= 'b' && c <= 'd')
+            if (c >= 'b' && c <= 'd')
             {
                 state=7;
                 end++;
                 break;
             }
-            else if ( c >= 2 && c <= 7 )
+            else if (c >= '2' && c <= '7')
             {
                 state = 8;
                 end++;
@@ -729,7 +752,7 @@ TOKEN getToken(FILE *fp)
                 break;
             }
         case 8 :
-            if ( c >= 2 && c <= 7)
+            if ( c >= '2' && c <= '7')
             {
                 state = 8;
                 end++;
@@ -748,7 +771,7 @@ TOKEN getToken(FILE *fp)
             }
         
         case 9:
-            if ( c >= 0 && c <= 9)
+            if ( c >= '0' && c <= '9')
             {
                 state=9;
                 end++;
@@ -773,7 +796,7 @@ TOKEN getToken(FILE *fp)
             }
         
         case 10:
-            if ( c >= 0 && c <= 9)
+            if ( c >= '0' && c <= '9')
             {
                 state=11;
                 end++;
@@ -793,7 +816,7 @@ TOKEN getToken(FILE *fp)
             }
         
         case 11:
-            if ( c >= 0 && c <= 9)
+            if ( c >= '0' && c <= '9')
             {
                 state=12;
                 end++;
@@ -801,11 +824,13 @@ TOKEN getToken(FILE *fp)
             }
             else
             {
-                getError();
+                char* lex = getError(); //increment errorno
                 refreshPtr();
                 state=0;
+                token.lexeme = lex;
+                token.tokenId = TK_ERROR;
+                token.lineNo = lineNo;
                 return token;
-                break;
             }
 
         case 12 :
@@ -828,7 +853,7 @@ TOKEN getToken(FILE *fp)
             }
         
         case 13:
-            if ( c >= 0 && c <= 9)
+            if ( c >= '0' && c <= '9')
             {
                 state=14;
                 end++;
@@ -842,13 +867,16 @@ TOKEN getToken(FILE *fp)
             }
             else
             {
-                getError();
+                char* lex = getError(); //increment errorno
                 refreshPtr();
                 state=0;
-                break;
+                token.lexeme = lex;
+                token.tokenId = TK_ERROR;
+                token.lineNo = lineNo;
+                return token;
             }
         case 14 :
-            if ( c >= 0 && c <= 9)
+            if ( c >= '0' && c <= '9')
             {
                 end++; // if in out function we take token from st to end-1
                 char* lex = getLexeme(); //populate the token
@@ -862,13 +890,16 @@ TOKEN getToken(FILE *fp)
             }
             else
             {
-                getError();
+                char* lex = getError(); //increment errorno
                 refreshPtr();
                 state=0;
-                break;
+                token.lexeme = lex;
+                token.tokenId = TK_ERROR;
+                token.lineNo = lineNo;
+                return token;
             }
         case 15 :
-            if ( c >= 0 && c <= 9)
+            if ( c >= '0' && c <= '9')
             {
                 state=14;
                 end++;
@@ -876,10 +907,13 @@ TOKEN getToken(FILE *fp)
             }
             else
             {
-                getError();
+                char* lex = getError(); //increment errorno
                 refreshPtr();
                 state=0;
-                break;
+                token.lexeme = lex;
+                token.tokenId = TK_ERROR;
+                token.lineNo = lineNo;
+                return token;
             }
         case 16 :
             if( (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z'))
@@ -890,10 +924,13 @@ TOKEN getToken(FILE *fp)
             }
             else
             {
-                getError();
+                char* lex = getError(); //increment errorno
                 refreshPtr();
                 state=0;
-                break;
+                token.lexeme = lex;
+                token.tokenId = TK_ERROR;
+                token.lineNo = lineNo;
+                return token;
             }
         case 17:
             if( (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z'))
@@ -902,7 +939,7 @@ TOKEN getToken(FILE *fp)
                 end++;
                 break;
             }
-            else if ( c>=0 && c<=9 )
+            else if ( c>='0' && c<='9' )
             {
                 state=18;
                 end++;
@@ -928,7 +965,7 @@ TOKEN getToken(FILE *fp)
                 break; 
             }
         case 18:
-            if ( c>=0 && c<=9 )
+            if ( c>='0' && c<='9' )
             {
                 state=18;
                 end++;
@@ -955,10 +992,13 @@ TOKEN getToken(FILE *fp)
             }
             else
             {
-                getError(); 
+                char* lex = getError(); //increment errorno
                 refreshPtr();
                 state=0;
-                break; 
+                token.lexeme = lex;
+                token.tokenId = TK_ERROR;
+                token.lineNo = lineNo;
+                return token;
             }
         
         case 20:
@@ -989,10 +1029,13 @@ TOKEN getToken(FILE *fp)
             }
             else
             {
-                getError(); 
+                char* lex = getError(); //increment errorno
                 refreshPtr();
                 state=0;
-                break; 
+                token.lexeme = lex;
+                token.tokenId = TK_ERROR;
+                token.lineNo = lineNo;
+                return token;
             }
 
         case 22:
@@ -1010,10 +1053,13 @@ TOKEN getToken(FILE *fp)
             }
             else
             {
-                getError(); 
+                char* lex = getError(); //increment errorno
                 refreshPtr();
                 state=0;
-                break; 
+                token.lexeme = lex;
+                token.tokenId = TK_ERROR;
+                token.lineNo = lineNo;
+                return token;
             }
         
         case 23:
@@ -1025,10 +1071,13 @@ TOKEN getToken(FILE *fp)
             }
             else
             {
-                getError(); 
+                char* lex = getError(); //increment errorno
                 refreshPtr();
                 state=0;
-                break;
+                token.lexeme = lex;
+                token.tokenId = TK_ERROR;
+                token.lineNo = lineNo;
+                return token;
             }
 
         case 24:
@@ -1046,10 +1095,13 @@ TOKEN getToken(FILE *fp)
             }
             else
             {
-                getError(); 
+                char* lex = getError(); //increment errorno
                 refreshPtr();
                 state=0;
-                break; 
+                token.lexeme = lex;
+                token.tokenId = TK_ERROR;
+                token.lineNo = lineNo;
+                return token;
             }
         case 25:
             if ( c == '=')
@@ -1091,10 +1143,13 @@ TOKEN getToken(FILE *fp)
             }
             else
             {
-                getError();
+                char* lex = getError(); //increment errorno
                 refreshPtr();
-                state = 0;
-                break;
+                state=0;
+                token.lexeme = lex;
+                token.tokenId = TK_ERROR;
+                token.lineNo = lineNo;
+                return token;
             }
         
         case 27:
@@ -1112,10 +1167,13 @@ TOKEN getToken(FILE *fp)
             }
             else
             {
-                getError();
+                char* lex = getError(); //increment errorno
                 refreshPtr();
-                state = 0;
-                break;
+                state=0;
+                token.lexeme = lex;
+                token.tokenId = TK_ERROR;
+                token.lineNo = lineNo;
+                return token;
             }
         }
     }
@@ -1124,7 +1182,6 @@ TOKEN getToken(FILE *fp)
 
 int main()
 {
-    printf("Enter the buffer size: ");
     initializeBuffers();
     lookUpTable();
     FILE *fp = fopen("./test.txt", "r");
@@ -1137,9 +1194,11 @@ int main()
     while (flag)
     {
         TOKEN token = getToken(fp);
-        if (token.tokenId == TK_PROGRAMEND)
+        if (*token.lexeme == EOF){
+            // printf("*****\n");
             break;
-        printf("%d %d\n", token.tokenId, token.lineNo);
+        }
+        printTokenInfo(token);
         // if (token.tokenId == NUM){
         //     printf("%d\n", token.val.intValue);
         // } else if (token.tokenId == RNUM){
