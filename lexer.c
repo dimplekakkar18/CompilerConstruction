@@ -5,7 +5,7 @@
 #include "lexer.h"
 #include "lexer2.h"
 
-#define MAX_BUFF_SIZE 1024
+#define MAX_BUFF_SIZE 20//1024
 
 // global two buffers
 char *buffer1, *buffer2;
@@ -95,7 +95,7 @@ char* getLexeme(){
     int pos = 0;
     for(i = start, pos = 0; i!=end; pos++, i=(i+1)%(MAX_BUFF_SIZE*2))
     {
-        lexeme[pos] = (i>MAX_BUFF_SIZE ? buffer2[i-MAX_BUFF_SIZE] : buffer1[i]);
+        lexeme[pos] = (i>=MAX_BUFF_SIZE) ? buffer2[i-MAX_BUFF_SIZE] : buffer1[i];
     }
     lexeme[pos]='\0';
 
