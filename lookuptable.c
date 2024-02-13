@@ -4,7 +4,7 @@
 
 #define NUM_KEYWORDS 31
 #define HASH_TABLE_SIZE 127 
-#define PRIME 1023
+#define PRIME 31
 struct keyword kwtable[HASH_TABLE_SIZE];
 
 int calculateHash(char *kwname){

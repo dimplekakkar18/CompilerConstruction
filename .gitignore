@@ -1,0 +1,4 @@
+.vscode
+lookuptable.o
+lexer.o
+final

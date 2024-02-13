@@ -99,7 +99,7 @@ char* getLexeme(){
     }
     lexeme[pos]='\0';
 
-    printf("%d %d\n",start,end);
+    // printf("%d %d\n",start,end);
     refreshPtr();
     return lexeme;
 }
@@ -297,7 +297,7 @@ void print_token(enum TOKENS token) {
 }
 
 void printTokenInfo(TOKEN tk){
-    printf("The lexeme is %s , the line numnber is %d, and the token type is ", tk.lexeme, lineNo);
+    printf("The lexeme is %s, the line numnber is %d, and the token type is ", tk.lexeme, lineNo);
     print_token(tk.tokenId);
 }
 

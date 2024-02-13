@@ -1,1 +1,5 @@
-23.23Eb2
+definetype union #student as #newname;
+record #taggedunionexample
+type int: tagvalue;
+type newname: field;
+endrecord
