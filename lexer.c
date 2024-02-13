@@ -5,7 +5,7 @@
 #include "lexer.h"
 #include "lexer2.h"
 
-#define MAX_BUFF_SIZE 20//1024
+#define MAX_BUFF_SIZE 11//1024
 
 // global two buffers
 char *buffer1, *buffer2;
@@ -99,6 +99,12 @@ char* getLexeme(){
     }
     lexeme[pos]='\0';
 
+    printf("%d %d\n",start,end);
+    refreshPtr();
+    return lexeme;
+}
+
+void refreshPtr(){    
     if(start<MAX_BUFF_SIZE && end>=MAX_BUFF_SIZE)
     {
         flag[0]=0;
@@ -106,11 +112,6 @@ char* getLexeme(){
     else if(start>=MAX_BUFF_SIZE && end<MAX_BUFF_SIZE){
         flag[1]=0;
     }
-    start = end;
-    return lexeme;
-}
-
-void refreshPtr(){
     start = end;
 }
 void print_token(enum TOKENS token) {
