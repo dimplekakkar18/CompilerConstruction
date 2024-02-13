@@ -98,9 +98,8 @@ char* getLexeme(){
         lexeme[pos] = (i>=MAX_BUFF_SIZE) ? buffer2[i-MAX_BUFF_SIZE] : buffer1[i];
     }
     lexeme[pos]='\0';
-
-    // printf("%d %d\n",start,end);
-    refreshPtr();
+    
+    //refreshPtr();
     return lexeme;
 }
 
@@ -112,6 +111,7 @@ void refreshPtr(){
     else if(start>=MAX_BUFF_SIZE && end<MAX_BUFF_SIZE){
         flag[1]=0;
     }
+    printf("%d %d\n",start,end);
     start = end;
 }
 void print_token(enum TOKENS token) {
