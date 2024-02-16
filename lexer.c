@@ -1199,6 +1199,7 @@ int main()
             // printf("*****\n");
             break;
         }
+        checkTokenID(token.lexeme, token.tokenId); 
         printTokenInfo(token);
         // if (token.tokenId == NUM){
         //     printf("%d\n", token.val.intValue);
