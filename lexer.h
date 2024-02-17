@@ -6,9 +6,17 @@
 #include <stdlib.h>
 #include "lexer2.h"
 
-int lookUpTable();
-int calculateHash(char *word);
-int getKeyWordID(char *word);
+// int lookUpTable();
+// int calculateHash(char *word);
+// int getKeyWordID(char *word);
+// void insertKeyWord();
+int calculateHash(char *identifier);
+void createSymbolTable();
+identifierNode *createNewNode(char *identifierName, int tokenID);
+int insertToSymbolTable(char * identifierName, int tokenID);
+int searchSymbolTable(char *identifierName);
+int checkTokenID(char *identifierName, int tokenID);
+
 
 // Contents of your header file go here
 void removeComments(char *test_file, char *clean_file);

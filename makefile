@@ -10,5 +10,5 @@
 # clean:
 # rm -f final lexer.o lookuptable.o
 All:
-		gcc -c lexer.c lookuptable.c
-		gcc -o final lexer.o lookuptable.o
+		gcc -c lexer.c symboltable.c
+		gcc -o final lexer.o symboltable.o

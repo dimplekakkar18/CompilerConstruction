@@ -2,7 +2,8 @@
 .vscode/c_cpp_properties.json
 .vscode/settings.json
 .vscode/tasks.json
-lookuptable.o
+symboltable.o
 lexer.o
 final
 a.out
+clean.txt

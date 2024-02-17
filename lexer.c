@@ -5,7 +5,7 @@
 #include "lexer.h"
 #include "lexer2.h"
 
-#define MAX_BUFF_SIZE 11//1024
+#define MAX_BUFF_SIZE 1024
 
 // global two buffers
 char *buffer1, *buffer2;
@@ -111,9 +111,15 @@ void refreshPtr(){
     else if(start>=MAX_BUFF_SIZE && end<MAX_BUFF_SIZE){
         flag[1]=0;
     }
-    printf("%d %d\n",start,end);
+    // printf("%d %d\n",start,end);
     start = end;
 }
+int len(char* str){
+    int i = 0;
+    while(*(str+i)!='\0') i++;
+    return i;
+}
+
 void print_token(enum TOKENS token) {
     switch(token) {
         case TK_ASSIGNOP:
@@ -297,7 +303,20 @@ void print_token(enum TOKENS token) {
 }
 
 void printTokenInfo(TOKEN tk){
-    printf("The lexeme is %s, the line numnber is %d, and the token type is ", tk.lexeme, lineNo);
+    if(tk.tokenId == TK_ERROR){
+        // unknown symbol  
+        // unknown pattern 
+        // var id is having len > 20 - Done
+        // field id is having len > 30 - Done
+        if(len(tk.lexeme)==1 && (*tk.lexeme<'A' || *tk.lexeme>'Z')){
+            printf("Line No %d : Error: Unknown Symbol <%s>\n", lineNo, tk.lexeme);
+        }
+        else{
+            printf("Line no: %d : Error: Unknown pattern <%s>\n", lineNo, tk.lexeme);
+        }
+        return;
+    }
+    printf("Line no. %d\tLexeme %-20s\tToken ", lineNo, tk.lexeme);
     print_token(tk.tokenId);
 }
 
@@ -314,14 +333,6 @@ TOKEN getToken(FILE *fp)
 
     while (state >= 0)
     {
-        // get character from buffer
-        if(lexemeSize>30){
-            // report an error for FUN_ID
-        }
-        else if(lexemeSize > 20){
-            // report an error for TK_ID
-        }
-
         c = getCharFromBuffers(fp);
         // increment lexemeSize
         lexemeSize++;
@@ -688,7 +699,7 @@ TOKEN getToken(FILE *fp)
             else 
             {
                 char* lex = getLexeme(); //populate the token
-                int id = getKeyWordID(lex);
+                int id = searchSymbolTable(lex);
                 if(id == -1){
                     token.lexeme = lex;
                     token.tokenId = TK_FIELDID;
@@ -949,7 +960,7 @@ TOKEN getToken(FILE *fp)
             else
             {
                 char* lex = getLexeme(); //populate the token
-                int id = getKeyWordID(lex);
+                int id = searchSymbolTable(lex);
                 if(id == TK_MAIN){
                     token.lexeme = lex;
                     token.tokenId = TK_MAIN;
@@ -1183,9 +1194,10 @@ TOKEN getToken(FILE *fp)
 
 int main()
 {
+    removeComments("./test.txt","clean.txt");
     initializeBuffers();
-    lookUpTable();
-    FILE *fp = fopen("./test.txt", "r");
+    createSymbolTable();
+    FILE *fp = fopen("./clean.txt", "r");
     if (fp == NULL)
     {
         printf("Error opening file\n");
@@ -1199,15 +1211,20 @@ int main()
             // printf("*****\n");
             break;
         }
-        checkTokenID(token.lexeme, token.tokenId); 
-        printTokenInfo(token);
         // if (token.tokenId == NUM){
         //     printf("%d\n", token.val.intValue);
         // } else if (token.tokenId == RNUM){
         //     printf("%f\n", token.val.floatValue);
         // }
-        printf("DO you want to continue? (1/0): ");
-        scanf("%d", &flag);
+        if(token.tokenId==TK_ID && len(token.lexeme)>20) printf("Line No %d: Error :Variable Identifier is longer than the prescribed length of 20 characters.\n",lineNo);
+        else if (token.tokenId==TK_FIELDID && len(token.lexeme)>30) printf("Line No %d: Error :Field Identifier is longer than the prescribed length of 30 characters.\n",lineNo);
+        else{
+            checkTokenID(token.lexeme, token.tokenId);
+            // printf("%d\n", checkTokenID(token.lexeme, token.tokenId));
+            printTokenInfo(token); 
+        }
+        // printf("DO you want to continue? (1/0): ");
+        // scanf("%d", &flag);
     }
     fclose(fp);
     return 0;

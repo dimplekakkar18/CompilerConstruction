@@ -6,6 +6,18 @@ struct token{
     int lineNo;
     char* lexeme;
 };
+typedef struct symbolTableLL
+{
+    struct identifierNode *head;
+    int size;
+} symbolTableLL;
+
+typedef struct identifierNode
+{
+    struct identifierNode *next;
+    char *identifierName;
+    int tokenID;
+} identifierNode;
 
 
 enum TOKENS{
