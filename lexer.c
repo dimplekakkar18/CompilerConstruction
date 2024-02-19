@@ -316,6 +316,10 @@ void printTokenInfo(TOKEN tk){
         }
         return;
     }
+    if(tk.tokenId==TK_COMMENT){
+        printf("Line no. %d\tLexeme %-20s\tToken TK_COMMENT\n", lineNo++, tk.lexeme);
+        return;
+    }
     printf("Line no. %d\tLexeme %-20s\tToken ", lineNo, tk.lexeme);
     print_token(tk.tokenId);
 }
@@ -571,6 +575,11 @@ TOKEN getToken(FILE *fp)
             else if ( c == '@')
             {
                 state=23;
+                end++;
+                break;
+            }
+            else if ( c == '%'){
+                state=28;
                 end++;
                 break;
             }
@@ -1187,6 +1196,25 @@ TOKEN getToken(FILE *fp)
                 token.lineNo = lineNo;
                 return token;
             }
+        case 28:
+            if( c!='\n'){
+                state = 28;
+                end++;
+                break;
+            }
+            else
+            {
+                end++;// st to end - 1 
+                char* lex = malloc(1*sizeof(char));
+                lex[0] = '%';
+                token.lexeme = lex;
+                token.tokenId = TK_COMMENT;
+                token.lineNo = lineNo;
+                refreshPtr();
+                state = 0;
+                return token;
+                break;
+            }
         }
     }
     return token;
@@ -1194,7 +1222,7 @@ TOKEN getToken(FILE *fp)
 
 int main()
 {
-    removeComments("./test.txt","clean.txt");
+    removeComments("./t1.txt","clean.txt");
     initializeBuffers();
     createSymbolTable();
     FILE *fp = fopen("./clean.txt", "r");
