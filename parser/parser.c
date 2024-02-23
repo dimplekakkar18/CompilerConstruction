@@ -34,9 +34,12 @@ int setContains(long long int set, int term)
         return 0
 }
 
-void propogateStack()
+void propogateStack(stack * st)
 {
-
+    while(st->count>0)
+    {
+        int temp = pop(st);
+    }
 }
 
 void generateFollow()
@@ -69,20 +72,27 @@ void generateFollow()
                 break;
             }
             //node next is not null
+
             if(node->next->type == TERMINAL)
             {
                 if(addToSet(&follow[node->sym.nonterminal],node->next->sym.terminal));
                     changed = 1;
+                push(st,node->sym.nonterminal);
+                propogateStack(st);
                 continue;
             }
+            //handled next being terminal
 
             if(setContains(follow[node->next->sym.nonterminal],EPSILON))
             {
-                push(st,node->next->sym.nonterminal);
+                push(st,node->sym.nonterminal);
                 continue;
             }
             //now just need to add follow of next into current
+
             follow[node->sym.nonterminal] |= follow[node->next->sym.nonterminal];
+            push(st,node->sym.nonterminal);
+            propogateStack(st);
             changed = 1;
         }
     }
