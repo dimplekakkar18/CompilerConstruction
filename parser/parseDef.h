@@ -55,7 +55,7 @@ typedef enum NONTERMINAL
 
 
 typedef union SYMBOL{
-    TOKENS terminal; 
+    enum TOKENS terminal; 
     NONTERMINAL nonterminal; 
 }SYMBOL;
 
@@ -64,11 +64,16 @@ typedef enum SYMBOLTYPE{
     TERMINAL, 
     NON_TERMINAL, 
     EPSILON,
-    //NONE,
+    NONE,
 }SYMBOLTYPE;
 
-ruleLL * grammar[NUMRULES]; 
+ruleLL grammar[NUMRULES];
 
+typedef struct hash_ele
+{
+    enum SYMBOLTYPE type;
+    SYMBOL sym;
+}hash_ele;
 
 
 
