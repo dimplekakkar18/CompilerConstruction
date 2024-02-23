@@ -3,6 +3,7 @@
 #include "linkedList.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include <stack.h>
 
 #define NUM_NONTERMINALS 50 
 #define NUM_TERMINALS 56
@@ -316,9 +317,12 @@ int setContains(long long int set, int term)
 
 void propogateStack(stack * st)
 {
+    int temp = pop(st);
     while(st->count>0)
     {
-        int temp = pop(st);
+        int temp2 = pop(st);
+        follow[temp2] |= follow[temp];
+        temp = temp2;
     }
 }
 
