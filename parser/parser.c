@@ -5,10 +5,11 @@
 #include <stdlib.h>
 #include <stack.h>
 
-#define NUM_NONTERMINALS 50 
+#define NUM_NONTERMINALS 50
 #define NUM_TERMINALS 56
-#define PRIME 853 
+#define PRIME 853
 #define HASH_TABLE_SIZE 1024
+#define EPSILON 57 // terms+1
 
 char *nonterminals[NUM_NONTERMINALS] = {
     "<program>",
@@ -120,57 +121,58 @@ char *terminals[NUM_TERMINALS] = {
     "TK_DEFINETYPE",
     "TK_AS"};
 
-ruleLL * createGrammar(FILE * fp,hash_ele * hash_table)
+ruleLL *createGrammar(FILE *fp, hash_ele *hash_table)
 {
     char buffer[128];
-    struct LLNode * lhs;
-    struct LLNode * rhs; 
-    ruleLL * grammar = (ruleLL *) malloc(sizeof(ruleLL) * NUMRULES);
+    struct LLNode *lhs;
+    struct LLNode *rhs;
+    ruleLL *grammar = (ruleLL *)malloc(sizeof(ruleLL) * NUMRULES);
 
     if (fp == NULL)
     {
         printf("Error opening file\n");
     }
 
-    //Allocate memory for each rule
-    for(int i=0; i<NUMRULES; i++)
+    // Allocate memory for each rule
+    for (int i = 0; i < NUMRULES; i++)
     {
         grammar[i] = createLL();
     }
 
-    int i = 0; 
+    int i = 0;
     char delim[] = ",\n";
 
     while (fgets(buffer, 128, fp) != NULL)
     {
-        
-        char * tok = strtok(buffer, delim); //Just extracting the lhs from each rule 
-        
-        int index = calculateHash(tok); 
+
+        char *tok = strtok(buffer, delim); // Just extracting the lhs from each rule
+
+        int index = calculateHash(tok);
 
         if (hash_table[index].type == NON_TERMINAL)
         {
-            lhs = createNewNode(hash_table[index].sym, NON_TERMINAL); 
-            addNewNode(lhs,grammar[i]);
+            lhs = createNewNode(hash_table[index].sym, NON_TERMINAL);
+            addNewNode(lhs, grammar[i]);
         }
-        else{
+        else
+        {
             printf("Error: rule starts with a terminal \n");
         }
 
-        tok = strtok(NULL, delim); //NULL in the first entry means it'll start tokenizing from where it left off, i.e RHS 
+        tok = strtok(NULL, delim); // NULL in the first entry means it'll start tokenizing from where it left off, i.e RHS
         while (tok != NULL)
         {
             tok = trim(tok);
             int index = calculateHash(tok);
             rhs = createNewNode(hash_table[index].sym, hash_table[index].type);
-            addNewNode(rhs,grammar[i]);
+            addNewNode(rhs, grammar[i]);
 
             tok = strtok(NULL, delim);
         }
         i++;
     }
     fclose(fp);
-    
+
     return grammar;
 }
 
@@ -189,7 +191,7 @@ int calculateHash(char *word)
 hash_ele *create_hashTable()
 {
 
-    hash_ele * hash_table = (hash_ele * )malloc((NUM_NONTERMINALS + NUM_TERMINALS) * sizeof(hash_ele)); 
+    hash_ele *hash_table = (hash_ele *)malloc((NUM_NONTERMINALS + NUM_TERMINALS) * sizeof(hash_ele));
 
     int num_collisions = 0;
 
@@ -279,46 +281,43 @@ hash_ele *create_hashTable()
             probe++;
         }
     }
-    return hash_table; 
+    return hash_table;
 }
-
 
 #define numNTS 57
 #define numRules 90
-#define EPSILON 57//need to change acc
 
-long long int follow[numNTS];
-long long int first[numNTS];
+long long int follow[NUM_NONTERMINALS];
+long long int first[NUM_NONTERMINALS];
 
-
-
-void createGrammar(FILE * fp)
+void createGrammar(FILE *fp)
 {
-
 }
 
-int addToSet(long long int* set, int term)
+int addToSet(long long int *set, int term)
 {
-    long long int termval = ((long long)1)<<term;
+    long long int termval = ((long long)1) << term;
 
-    if(*set&termval)
-        return 0;//this val already set
-    
+    if (*set & termval)
+        return 0; // this val already set
+
     *set |= termval;
     return 1;
 }
 
 int setContains(long long int set, int term)
 {
-    long long int termval = ((long long)1)<<term;
-    if(set&termval)
-        return 0
+    long long int termval = ((long long)1) << term;
+    if (set & termval)
+        return 0;
+    else
+        return 1;
 }
 
-void propogateStack(stack * st)
+void propogateStackFollow(stack *st)
 {
     int temp = pop(st);
-    while(st->count>0)
+    while (st->count > 0)
     {
         int temp2 = pop(st);
         follow[temp2] |= follow[temp];
@@ -328,57 +327,60 @@ void propogateStack(stack * st)
 
 void generateFollow()
 {
-    int changed = 0;
-    int changedNT[numNTS] = {0};
+    int changed = 1;
+    int changedNT[NUM_NONTERMINALS] = {0};
     LLNODE *grammar[numRules];
-    stack * st = getStack();
-    while(changed)
-    for(int i = 0; i<numRules; i++)
+    stack *st = getStack();
+    while (changed)
     {
-        LLNODE * node = grammar[i];
-        
-        while((node = node->next)!=NULL)
+        changed = 0;
+        for (int i = 0; i < numRules; i++)
         {
-            if(node->type == TERMINAL)
-                continue;
-            
-            if(node->type == EPSILON)
-                break;
-            
-            //only option for NT left
-            if(node->next == NULL)
+            LLNODE *node = grammar[i];
+
+            while ((node = node->next) != NULL)
             {
-                if(follow[node->type]==follow[i])
+                if (node->type == TERMINAL)
+                    continue;
+
+                if (node->type == EPSILON)
                     break;
 
-                follow[node->type] |= follow[i];
-                changed = 1;
-                break;
-            }
-            //node next is not null
+                // only option for NT left
+                if (node->next == NULL)
+                {
+                    if (follow[node->type] == follow[i])
+                        break;
 
-            if(node->next->type == TERMINAL)
-            {
-                if(addToSet(&follow[node->sym.nonterminal],node->next->sym.terminal));
+                    follow[node->type] |= follow[i];
                     changed = 1;
-                push(st,node->sym.nonterminal);
-                propogateStack(st);
-                continue;
-            }
-            //handled next being terminal
+                    break;
+                }
+                // node next is not null
 
-            if(setContains(follow[node->next->sym.nonterminal],EPSILON))
-            {
-                push(st,node->sym.nonterminal);
-                continue;
-            }
-            //now just need to add follow of next into current
+                if (node->next->type == TERMINAL)
+                {
+                    if (addToSet(&follow[node->sym.nonterminal], node->next->sym.terminal))
+                        ;
+                    changed = 1;
+                    push(st, node->sym.nonterminal);
+                    propogateStackFollow(st);
+                    continue;
+                }
+                // handled next being terminal
 
-            follow[node->sym.nonterminal] |= follow[node->next->sym.nonterminal];
-            push(st,node->sym.nonterminal);
-            propogateStack(st);
-            changed = 1;
+                if (setContains(follow[node->next->sym.nonterminal], EPSILON))
+                {
+                    push(st, node->sym.nonterminal);
+                    continue;
+                }
+                // now just need to add follow of next into current
+
+                follow[node->sym.nonterminal] |= follow[node->next->sym.nonterminal];
+                push(st, node->sym.nonterminal);
+                propogateStackFollow(st);
+                changed = 1;
+            }
         }
     }
 }
-
