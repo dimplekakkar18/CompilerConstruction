@@ -18,16 +18,16 @@ LLNODE * createNewNode(SYMBOL symbol, SYMBOLTYPE type)
     return node; 
 }
 
-void addNewNode(LLNODE * node, ruleLL rule)
+void addNewNode(LLNODE * node, ruleLL* rule)
 {
-    if(rule.head == NULL)
+    if(rule->head == NULL)
     {
-        rule.head = node; 
-        rule.tail = node; 
+        rule->head = node; 
+        rule->tail = node; 
     }
     else
     {
-        LLNODE * temp = rule.head; 
+        LLNODE * temp = rule->head; 
         while(temp->next!=NULL)
         {
             temp = temp->next; 

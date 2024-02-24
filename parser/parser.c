@@ -184,7 +184,7 @@ ruleLL *createGrammar(char* grammar_file, hash_ele *hash_table)
         if (hash_table[index].type == NON_TERMINAL)
         {
             lhs = createNewNode(hash_table[index].sym, NON_TERMINAL);
-            addNewNode(lhs, grammar[i]);
+            addNewNode(lhs, &grammar[i]);
         }
         else
         {
@@ -197,8 +197,7 @@ ruleLL *createGrammar(char* grammar_file, hash_ele *hash_table)
             tok = trim(tok);
             int index = getIndex(tok);
             rhs = createNewNode(hash_table[index].sym, hash_table[index].type);
-            addNewNode(rhs, grammar[i]);
-
+            addNewNode(rhs, &grammar[i]);
             tok = strtok(NULL, delim);
         }
         i++;
@@ -225,9 +224,9 @@ int setContains(token_set* sets, int term)
 {
     long long int termval = ((long long)1) << term;
     if (sets->set & termval)
-        return 0;
-    else
         return 1;
+    else
+        return 0;
 }
 
 void propogateStackFollow(stack *st, token_set* follow, int * changed)
@@ -236,8 +235,10 @@ void propogateStackFollow(stack *st, token_set* follow, int * changed)
     while (st->count > 0)
     {
         int temp2 = pop(st);
-        if(!(follow[temp2].set == follow[temp].set))
+        if(follow[temp2].set != follow[temp].set)
+        {
             *changed = 1;
+        }
         follow[temp2].set |= follow[temp].set;
         temp = temp2;
     }
@@ -416,7 +417,7 @@ void computerFirst(token_set *firstSet, ruleLL* rules)
     }
 }
 
-void generateFollow(ruleLL* grammar, token_set* follow)
+void generateFollow(ruleLL* grammar, token_set* follow, token_set* first)
 {
 
     for (int i = 0; i < NUM_NONTERMINALS; i++)      // all the firstsets are init to 0 (empty set)
@@ -424,18 +425,20 @@ void generateFollow(ruleLL* grammar, token_set* follow)
         follow[i].set = 0;
     }
     int changed = 1;
-    int changedNT[NUM_NONTERMINALS] = {0};
+    // int changedNT[NUM_NONTERMINALS] = {0};
     // LLNODE *grammar[NUM_RULES];
     stack *st = getStack();
     while (changed)
     {
+
+        printf("%d\n", changed);
         changed = 0;
         for (int i = 0; i < NUM_RULES; i++)
         {
             LLNODE *node = grammar[i].head;
-
-            while ((node = node->next) != NULL)
+            while (node->next!=NULL)
             {
+                node = node->next;
                 if (node->type == TERMINAL)
                     continue;
 
@@ -445,10 +448,10 @@ void generateFollow(ruleLL* grammar, token_set* follow)
                 // only option for NT left
                 if (node->next == NULL)
                 {
-                    if (follow[node->type].set == follow[i].set)
+                    if (follow[node->type].set == follow[grammar[i].head->sym.nonterminal].set)
                         break;
 
-                    follow[node->type].set |= follow[i].set;
+                    follow[node->type].set |= follow[grammar[i].head->sym.nonterminal].set;
                     changed = 1;
                     break;
                 }
@@ -457,8 +460,7 @@ void generateFollow(ruleLL* grammar, token_set* follow)
                 if (node->next->type == TERMINAL)
                 {
                     if (addToSet(&follow[node->sym.nonterminal], node->next->sym.terminal))
-                        ;
-                    changed = 1;
+                        changed = 1;
                     push(st, node->sym.nonterminal);
                     propogateStackFollow(st, follow,&changed);
                     continue;
@@ -471,11 +473,13 @@ void generateFollow(ruleLL* grammar, token_set* follow)
                     continue;
                 }
                 // now just need to add follow of next into current
-
-                follow[node->sym.nonterminal].set |= follow[node->next->sym.nonterminal].set;
+                long long int temp = follow[node->sym.nonterminal].set | first[node->next->sym.nonterminal].set;
+                if(follow[node->sym.nonterminal].set != temp){
+                    changed = 1;
+                    follow[node->sym.nonterminal].set |= follow[node->next->sym.nonterminal].set;
+                }
                 push(st, node->sym.nonterminal);
                 propogateStackFollow(st, follow, &changed);
-                changed = 1;
             }
         }
     }
@@ -643,12 +647,11 @@ int main()
 {
     create_hashTable();
     ruleLL *rules = createGrammar("grammar.csv", hash_table);
-    printf("******DEBUGGER1*****\n");
     print_rules(rules);
     token_set *first_sets = malloc(sizeof(token_set) * NUM_NONTERMINALS);
     token_set *follow_sets = malloc(sizeof(token_set) * NUM_NONTERMINALS);
     computerFirst(first_sets,rules);
-    generateFollow(rules,follow_sets);
+    generateFollow(rules,follow_sets,first_sets);
     for (int i = 0; i < NUM_NONTERMINALS; i++)
     {
         printf("First(%s): ", nonterminals[i]);
