@@ -1,11 +1,11 @@
 #include "linkedList.h"
 #include <stdio.h>
 #include <stdlib.h>
-ruleLL createLL()
+ruleLL* createLL()
 {
-    ruleLL linkedlist; 
-    linkedlist.head = NULL; 
-    linkedlist.tail = NULL; 
+    ruleLL* linkedlist = malloc(sizeof(ruleLL)); 
+    linkedlist->head = NULL; 
+    linkedlist->tail = NULL; 
     return linkedlist; 
 }
 

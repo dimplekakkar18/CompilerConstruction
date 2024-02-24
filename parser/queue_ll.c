@@ -19,7 +19,7 @@ Queue *createQueue() {
 }
 
 bool enqueue(Queue *q, Element e) {
-	NODE node = createNewNode(e);
+	NODE node = createNewQNode(e);
 	if(node==NULL) return false;
 	insertNodeAtEnd(node ,q->data);
     q->front = q->data->head;

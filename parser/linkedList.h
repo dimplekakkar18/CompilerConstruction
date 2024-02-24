@@ -13,6 +13,8 @@ typedef struct ruleLL{
     LLNODE * head; 
     LLNODE * tail; 
 }ruleLL;
-
+ruleLL* createLL();
+LLNODE * createNewNode(SYMBOL symbol, SYMBOLTYPE type);
+void addNewNode(LLNODE * node, ruleLL rule);
 ruleLL grammar[NUM_RULES];
 #endif 

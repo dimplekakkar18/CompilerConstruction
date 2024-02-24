@@ -25,7 +25,7 @@ LIST createNewList();
 // This function allocates memory for a new list and returns a pointer to it.
 // The list is empty and the count is set to 0.
 
-NODE createNewNode(Element data);
+NODE createNewQNode(Element data);
 // This function allocates memory for a new node and returns a pointer to it.
 // The next pointer is set to NULL and the data is set to the value passed in.
 

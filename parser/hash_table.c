@@ -1,7 +1,115 @@
 #include "linkedList.h"
 #include <string.h>
 #include <stdio.h>
+char *_nonterminals[NUM_NONTERMINALS] = {
+    "<program>",
+    "<otherFunctions>",
+    "<mainFunction>",
+    "<stmts>",
+    "<function>",
+    "<input_par>",
+    "<output_par>",
+    "<parameter_list>",
+    "<dataType>",
+    "<primitiveDatatype>",
+    "<constructedDatatype>",
+    "<remaining_list>",
+    "<returnStmt>",
+    "<recOrDefType>",
+    "<typeDefinition>",
+    "<typeDefinitions>",
+    "<fieldDefinitions>",
+    "<fieldDefinition>",
+    "<moreFields>",
+    "<declarations>",
+    "<declaration>",
+    "<global_or_not>",
+    "<otherStmts>",
+    "<stmt>",
+    "<assignmentStmt>",
+    "<SingleOrRecId>",
+    "<moreRecID>",
+    "<funCallStmt>",
+    "<outputParameters>",
+    "<inputParameters>",
+    "<iterativeStmt>",
+    "<conditionalStmt>",
+    "<ioStmt>",
+    "<arithmeticExpression>",
+    "<term>",
+    "<t1>",
+    "<t0>",
+    "<factor>",
+    "<f1>",
+    "<f0>",
+    "<booleanExpression>",
+    "<logicalOp>",
+    "<relationalOp>",
+    "<var>",
+    "<optionalReturn>",
+    "<idList>",
+    "<more_ids>",
+    "<definetypestmt>",
+    "<A>",
+    "<optelse>"};
 
+char *_terminals[NUM_TERMINALS] = {
+    "TK_MAIN",
+    "TK_INT",
+    "TK_ID",
+    "TK_REAL",
+    "TK_ENDRECORD",
+    "TK_END",
+    "TK_FUNID",
+    "TK_SEM",
+    "TK_INPUT",
+    "TK_PARAMETER",
+    "TK_LIST",
+    "TK_SQL",
+    "TK_SQR",
+    "TK_OUTPUT",
+    "TK_RECORD",
+    "TK_UNION",
+    "TK_RUID",
+    "TK_COMMA",
+    "TK_TYPE",
+    "TK_COLON",
+    "TK_FIELDID",
+    "TK_GLOBAL",
+    "TK_ASSIGNOP",
+    "TK_DOT",
+    "TK_CALL",
+    "TK_WITH",
+    "TK_PARAMETERS",
+    "TK_WHILE",
+    "TK_OP",
+    "TK_CL",
+    "TK_IF",
+    "TK_THEN",
+    "TK_ELSE",
+    "TK_ENDIF",
+    "TK_READ",
+    "TK_WRITE",
+    "TK_PLUS",
+    "TK_MINUS",
+    "TK_MUL",
+    "TK_DIV",
+    "TK_RETURN",
+    "TK_NOT",
+    "TK_LT",
+    "TK_LE",
+    "TK_EQ",
+    "TK_GT",
+    "TK_GE",
+    "TK_NE",
+    "TK_NUM",
+    "TK_RNUM",
+    "TK_ENDUNION",
+    "TK_ENDWHILE",
+    "TK_AND",
+    "TK_OR",
+    "TK_DEFINETYPE",
+    "TK_AS"};
 int calculateHash(char *word)
 {
     int hash_value = 0;
@@ -18,7 +126,7 @@ int addnonTerm(){
     int num_collisions = 0;
     for (int i = 0; i < NUM_NONTERMINALS; i++)
     {
-        int index = calculateHash(nonterminals[i]);
+        int index = calculateHash(_nonterminals[i]);
 
         if (hash_table[index].type == NONE)
         {
@@ -51,7 +159,7 @@ int addTerm(){
     int num_collisions = 0;
     for (int i = 0; i < NUM_TERMINALS; i++)
     {
-        int index = calculateHash(terminals[i]);
+        int index = calculateHash(_terminals[i]);
 
         if (hash_table[index].type == NONE)
         {
@@ -128,12 +236,12 @@ int getIndex(char *tok)
     {
         if (hash_table[currIndex].type == TERMINAL)
         {
-            if (strcmp(terminals[hash_table[currIndex].sym.terminal], tok) == 0)
+            if (strcmp(_terminals[hash_table[currIndex].sym.terminal], tok) == 0)
                 return currIndex;
         }
         else if (hash_table[currIndex].type == NON_TERMINAL)
         {
-            if (strcmp(nonterminals[hash_table[currIndex].sym.nonterminal], tok) == 0)
+            if (strcmp(_nonterminals[hash_table[currIndex].sym.nonterminal], tok) == 0)
                 return currIndex;
         }
         else if (hash_table[currIndex].type == EPSILON)
@@ -153,11 +261,11 @@ int getIndex(char *tok)
         {
             return -1;
         }
-        else if (hash_table[newIndex].type == TERMINAL && strcmp(terminals[hash_table[newIndex].sym.terminal], tok) == 0)
+        else if (hash_table[newIndex].type == TERMINAL && strcmp(_terminals[hash_table[newIndex].sym.terminal], tok) == 0)
         {
             return newIndex;
         }
-        else if (hash_table[newIndex].type == NON_TERMINAL && strcmp(nonterminals[hash_table[newIndex].sym.nonterminal], tok) == 0)
+        else if (hash_table[newIndex].type == NON_TERMINAL && strcmp(_nonterminals[hash_table[newIndex].sym.nonterminal], tok) == 0)
         {
             return newIndex;
         }

@@ -13,7 +13,7 @@ LIST createNewList() {
 // This function allocates memory for a new list and returns a pointer to it.
 // The list is empty and the count is set to 0.
 
-NODE createNewNode(Element data) {
+NODE createNewQNode(Element data) {
 	NODE n = (NODE) malloc(sizeof(node));
 	if(n==NULL) return n;
 	n->data = data;

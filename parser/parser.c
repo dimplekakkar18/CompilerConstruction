@@ -1,5 +1,4 @@
 #include "parseDef.h"
-#include "linkedList.c"
 #include "linkedList.h"
 #include <stdio.h>
 #include <ctype.h>
@@ -9,64 +8,122 @@
 #include "queue.h"
 #include "set.h"
 
-#define NUM_NONTERMINALS 50
-#define NUM_TERMINALS 56
+// #define NUM_NONTERMINALS 50
+// #define NUM_TERMINALS 56
 // #define PRIME 853
 // #define HASH_TABLE_SIZE 1024
 // long long int follow[NUM_NONTERMINALS];
 // long long int first[NUM_NONTERMINALS];
 
-// char *nonterminals[NUM_NONTERMINALS] = {
-//     "<program>",
-//     "<otherFunctions>",
-//     "<mainFunction>",
-//     "<stmts>",
-//     "<function>",
-//     "<input_par>",
-//     "<output_par>",
-//     "<parameter_list>",
-//     "<dataType>",
-//     "<primitiveDatatype>",
-//     "<constructedDatatype>",
-//     "<remaining_list>",
-//     "<returnStmt>",
-//     "<recOrDefType>",
-//     "<typeDefinition>",
-//     "<typeDefinitions>",
-//     "<fieldDefinitions>",
-//     "<fieldDefinition>",
-//     "<moreFields>",
-//     "<declarations>",
-//     "<declaration>",
-//     "<global_or_not>",
-//     "<otherStmts>",
-//     "<stmt>",
-//     "<assignmentStmt>",
-//     "<SingleOrRecId>",
-//     "<moreRecID>",
-//     "<funCallStmt>",
-//     "<outputParameters>",
-//     "<inputParameters>",
-//     "<iterativeStmt>",
-//     "<conditionalStmt>",
-//     "<ioStmt>",
-//     "<arithmeticExpression>",
-//     "<term>",
-//     "<t1>",
-//     "<t0>",
-//     "<factor>",
-//     "<f1>",
-//     "<f0>",
-//     "<booleanExpression>",
-//     "<logicalOp>",
-//     "<relationalOp>",
-//     "<var>",
-//     "<optionalReturn>",
-//     "<idList>",
-//     "<more_ids>",
-//     "<definetypestmt>",
-//     "<A>",
-//     "<optelse>"};
+char *nonterminals[NUM_NONTERMINALS] = {
+    "<program>",
+    "<otherFunctions>",
+    "<mainFunction>",
+    "<stmts>",
+    "<function>",
+    "<input_par>",
+    "<output_par>",
+    "<parameter_list>",
+    "<dataType>",
+    "<primitiveDatatype>",
+    "<constructedDatatype>",
+    "<remaining_list>",
+    "<returnStmt>",
+    "<recOrDefType>",
+    "<typeDefinition>",
+    "<typeDefinitions>",
+    "<fieldDefinitions>",
+    "<fieldDefinition>",
+    "<moreFields>",
+    "<declarations>",
+    "<declaration>",
+    "<global_or_not>",
+    "<otherStmts>",
+    "<stmt>",
+    "<assignmentStmt>",
+    "<SingleOrRecId>",
+    "<moreRecID>",
+    "<funCallStmt>",
+    "<outputParameters>",
+    "<inputParameters>",
+    "<iterativeStmt>",
+    "<conditionalStmt>",
+    "<ioStmt>",
+    "<arithmeticExpression>",
+    "<term>",
+    "<t1>",
+    "<t0>",
+    "<factor>",
+    "<f1>",
+    "<f0>",
+    "<booleanExpression>",
+    "<logicalOp>",
+    "<relationalOp>",
+    "<var>",
+    "<optionalReturn>",
+    "<idList>",
+    "<more_ids>",
+    "<definetypestmt>",
+    "<A>",
+    "<optelse>"};
+
+char *terminals[NUM_TERMINALS] = {
+    "TK_MAIN",
+    "TK_INT",
+    "TK_ID",
+    "TK_REAL",
+    "TK_ENDRECORD",
+    "TK_END",
+    "TK_FUNID",
+    "TK_SEM",
+    "TK_INPUT",
+    "TK_PARAMETER",
+    "TK_LIST",
+    "TK_SQL",
+    "TK_SQR",
+    "TK_OUTPUT",
+    "TK_RECORD",
+    "TK_UNION",
+    "TK_RUID",
+    "TK_COMMA",
+    "TK_TYPE",
+    "TK_COLON",
+    "TK_FIELDID",
+    "TK_GLOBAL",
+    "TK_ASSIGNOP",
+    "TK_DOT",
+    "TK_CALL",
+    "TK_WITH",
+    "TK_PARAMETERS",
+    "TK_WHILE",
+    "TK_OP",
+    "TK_CL",
+    "TK_IF",
+    "TK_THEN",
+    "TK_ELSE",
+    "TK_ENDIF",
+    "TK_READ",
+    "TK_WRITE",
+    "TK_PLUS",
+    "TK_MINUS",
+    "TK_MUL",
+    "TK_DIV",
+    "TK_RETURN",
+    "TK_NOT",
+    "TK_LT",
+    "TK_LE",
+    "TK_EQ",
+    "TK_GT",
+    "TK_GE",
+    "TK_NE",
+    "TK_NUM",
+    "TK_RNUM",
+    "TK_ENDUNION",
+    "TK_ENDWHILE",
+    "TK_AND",
+    "TK_OR",
+    "TK_DEFINETYPE",
+    "TK_AS"};
 
 Element itoe (int i)
 {
@@ -112,9 +169,8 @@ ruleLL *createGrammar(char* grammar_file, hash_ele *hash_table)
     // Allocate memory for each rule
     for (int i = 0; i < NUMRULES; i++)
     {
-        grammar[i] = createLL();
+        grammar[i] = *createLL();
     }
-
     int i = 0;
     char delim[] = ",\n";
 
@@ -587,6 +643,7 @@ int main()
 {
     create_hashTable();
     ruleLL *rules = createGrammar("grammar.csv", hash_table);
+    printf("******DEBUGGER1*****\n");
     print_rules(rules);
     token_set *first_sets = malloc(sizeof(token_set) * NUM_NONTERMINALS);
     token_set *follow_sets = malloc(sizeof(token_set) * NUM_NONTERMINALS);
