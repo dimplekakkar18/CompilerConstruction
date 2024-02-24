@@ -1,5 +1,5 @@
 #include "stack.h"
-
+#include <stdlib.h>
 stack * getStack()
 {
     stack *st = malloc(sizeof(stack));

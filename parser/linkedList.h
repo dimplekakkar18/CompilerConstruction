@@ -1,7 +1,7 @@
 #ifndef LL_H
 #define LL_H
 
-#include "parseDef.h"; 
+#include "parseDef.h"
 
 typedef struct LLNode{
     struct LLNode * next; 
@@ -14,4 +14,5 @@ typedef struct ruleLL{
     LLNODE * tail; 
 }ruleLL;
 
+ruleLL grammar[NUM_RULES];
 #endif 

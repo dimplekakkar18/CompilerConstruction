@@ -18,7 +18,7 @@ LLNODE * createNewNode(SYMBOL symbol, SYMBOLTYPE type)
     return node; 
 }
 
-int addNewNode(LLNODE * node, ruleLL rule)
+void addNewNode(LLNODE * node, ruleLL rule)
 {
     if(rule.head == NULL)
     {
