@@ -425,6 +425,7 @@ void generateFollow(ruleLL* grammar, token_set* follow, token_set* first)
     {
         follow[i].set = 0;
     }
+    addToSet(&follow[0],END_CODE);
     int changed = 1;
     // int changedNT[NUM_NONTERMINALS] = {0};
     // LLNODE *grammar[NUM_RULES];
@@ -487,6 +488,12 @@ void generateFollow(ruleLL* grammar, token_set* follow, token_set* first)
                 propogateStackFollow(st, follow, &changed);
             }
         }
+    }
+
+    long long int epsv = (long long)1 <<EPSILON; //remove epsilon
+    for (int i = 0; i < NUM_RULES; i++)
+    {
+        follow[i].set &= ~epsv;
     }
 }
 
@@ -645,6 +652,10 @@ void printSet(token_set *set)
     if (isMember(set, EPSILON))
     {
         printf("EPSILON");
+    }
+    if (isMember(set, END_CODE))
+    {
+        printf("$");
     }
 }
 

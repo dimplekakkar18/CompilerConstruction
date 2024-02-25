@@ -8,6 +8,7 @@
 #define NUM_NONTERMINALS 50
 #define NUM_RULES 90
 #define NUM_TERMINALS 56
+#define END_CODE 58 // num_terminals +2
 
 typedef enum NONTERMINAL
 {
