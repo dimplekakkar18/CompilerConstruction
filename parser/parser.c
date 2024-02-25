@@ -489,24 +489,31 @@ ruleLL* parseTable[NUM_NONTERMINALS][NUM_TERMINALS];
 
 
 
-void makeParseTable(token_set* first, token_set* follow)
+void makeParseTable(token_set* first, token_set* follow,ruleLL* grammar)
 {
     for(int i=0;i<NUM_NONTERMINALS;i++){
         for(int j=0;j<NUM_TERMINALS;j++){
             parseTable[i][j]=NULL;
         }
     }
-
+    // printf("reached1\n");
     for(int i=0; i<NUMRULES; i++)
     {
+        // printf("reached2\n");   
         LLNODE* node = grammar[i].head;
+        // printf("reached3\n");   
+        // if(node==NULL){printf("HI");}
+        //  printf("reached3\n");   
+        // printf("%s",node->type);
         int flag=1;
         SYMBOL nt=node->sym;
+        // printf("reached3\n");   
 
         node = node->next;
 
         while(flag && node != NULL)
         {
+          
             flag=0;
             if(node->type == TERMINAL){
                 parseTable[nt.nonterminal][node->sym.terminal]=&grammar[i];            
@@ -539,6 +546,9 @@ void makeParseTable(token_set* first, token_set* follow)
                     num >>= 1;  // Right shift to check the next bit
                     ++index;
                 }
+            }
+            else{
+                printf("ignored\n");
             }
 
             if(flag==1) node=node->next;
@@ -585,7 +595,16 @@ void printParseTable(ruleLL*** parseTable)
     {
         for(int j=0;j<NUM_TERMINALS;j++)
         {
-            printLinkedList(parseTable[i][j]->head);
+            printf("reached 1");
+            ruleLL* ptr=parseTable[i][j];
+            printf("reached 2");
+            if(ptr->head->type==TERMINAL){
+                printf("%d",((ptr->head)->sym).terminal);
+            }
+            else if(ptr->head->type==NON_TERMINAL){
+                printf("%d",((ptr->head)->sym).nonterminal);
+            }
+            // printf("%d",(ptr->head)->sym);
         }
     }
 }
@@ -651,14 +670,16 @@ int main()
     token_set *first_sets = malloc(sizeof(token_set) * NUM_NONTERMINALS);
     token_set *follow_sets = malloc(sizeof(token_set) * NUM_NONTERMINALS);
     computerFirst(first_sets,rules);
-    generateFollow(rules,follow_sets,first_sets);
+     generateFollow(rules,follow_sets,first_sets);
     for (int i = 0; i < NUM_NONTERMINALS; i++)
     {
         printf("First(%s): ", nonterminals[i]);
         printSet(&first_sets[i]);
         printf("\n");
     }
-
+    makeParseTable(first_sets,follow_sets,rules);
+    printf("hi");
+    printParseTable(&parseTable);
     for (int i = 0; i < NUM_NONTERMINALS; i++)
     {
         printf("Follow(%s): ", nonterminals[i]);
