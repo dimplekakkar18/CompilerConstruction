@@ -1,6 +1,9 @@
 #include "linkedList.h"
 #include <string.h>
 #include <stdio.h>
+
+ruleLL grammar[NUM_RULES];
+
 char *_nonterminals[NUM_NONTERMINALS] = {
     "<program>",
     "<otherFunctions>",

@@ -235,9 +235,10 @@ void propogateStackFollow(stack *st, token_set* follow, int * changed)
     while (st->count > 0)
     {
         int temp2 = pop(st);
-        if(follow[temp2].set != follow[temp].set)
+        if((follow[temp2].set & follow[temp].set) == follow[temp2].set)
         {
-            *changed = 1;
+            *changed = 1; // setting changed
+            //printf("flagged at propogate stack\n");
         }
         follow[temp2].set |= follow[temp].set;
         temp = temp2;
@@ -430,8 +431,6 @@ void generateFollow(ruleLL* grammar, token_set* follow, token_set* first)
     stack *st = getStack();
     while (changed)
     {
-
-        printf("%d\n", changed);
         changed = 0;
         for (int i = 0; i < NUM_RULES; i++)
         {
@@ -448,11 +447,12 @@ void generateFollow(ruleLL* grammar, token_set* follow, token_set* first)
                 // only option for NT left
                 if (node->next == NULL)
                 {
-                    if (follow[node->type].set == follow[grammar[i].head->sym.nonterminal].set)
+                    if ((follow[node->type].set | follow[grammar[i].head->sym.nonterminal].set)==follow[node->type].set)
                         break;
-
+                    
                     follow[node->type].set |= follow[grammar[i].head->sym.nonterminal].set;
-                    changed = 1;
+                    changed = 1;   
+                    //printf("  flagged at next NULL %d\n  ", i);      
                     break;
                 }
                 // node next is not null
@@ -460,7 +460,10 @@ void generateFollow(ruleLL* grammar, token_set* follow, token_set* first)
                 if (node->next->type == TERMINAL)
                 {
                     if (addToSet(&follow[node->sym.nonterminal], node->next->sym.terminal))
-                        changed = 1;
+                    {
+                        changed = 1; // setting changed
+                        //printf("  flagged at next is term %d\n  ", i);
+                    }
                     push(st, node->sym.nonterminal);
                     propogateStackFollow(st, follow,&changed);
                     continue;
@@ -474,9 +477,11 @@ void generateFollow(ruleLL* grammar, token_set* follow, token_set* first)
                 }
                 // now just need to add follow of next into current
                 long long int temp = follow[node->sym.nonterminal].set | first[node->next->sym.nonterminal].set;
+                //printf("%lld,%lld",follow[node->type].set,temp);
                 if(follow[node->sym.nonterminal].set != temp){
-                    changed = 1;
-                    follow[node->sym.nonterminal].set |= follow[node->next->sym.nonterminal].set;
+                    changed = 1; // setting changed
+                    //printf("  flagged at next is NT no eps %d\n  ", i);
+                    follow[node->sym.nonterminal].set = temp;
                 }
                 push(st, node->sym.nonterminal);
                 propogateStackFollow(st, follow, &changed);
@@ -652,6 +657,7 @@ int main()
     token_set *follow_sets = malloc(sizeof(token_set) * NUM_NONTERMINALS);
     computerFirst(first_sets,rules);
     generateFollow(rules,follow_sets,first_sets);
+    printf("  flagged at FINSHES\n  ");
     for (int i = 0; i < NUM_NONTERMINALS; i++)
     {
         printf("First(%s): ", nonterminals[i]);

@@ -87,7 +87,7 @@ typedef struct hash_ele
 
 
 
-hash_ele hash_table[HASH_TABLE_SIZE];
+extern hash_ele hash_table[HASH_TABLE_SIZE]; //FIX
 int calculateHash(char *word);
 int addnonTerm();
 int addTerm();

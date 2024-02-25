@@ -16,5 +16,6 @@ typedef struct ruleLL{
 ruleLL* createLL();
 LLNODE * createNewNode(SYMBOL symbol, SYMBOLTYPE type);
 void addNewNode(LLNODE * node, ruleLL* rule);
-ruleLL grammar[NUM_RULES];
+
+extern ruleLL grammar[NUM_RULES]; //FIX
 #endif 
