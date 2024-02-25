@@ -1,0 +1,50 @@
+Follow(<program>): EMPTY SET
+Follow(<otherFunctions>): TK_MAIN 
+Follow(<mainFunction>): EMPTY SET
+Follow(<stmts>): TK_END 
+Follow(<function>): TK_MAIN TK_FUNID 
+Follow(<input_par>): TK_SEM TK_OUTPUT 
+Follow(<output_par>): TK_SEM 
+Follow(<parameter_list>): TK_SQR 
+Follow(<dataType>): TK_ID TK_COLON 
+Follow(<primitiveDatatype>): TK_ID TK_COLON 
+Follow(<constructedDatatype>): TK_ID TK_COLON 
+Follow(<remaining_list>): TK_SQR 
+Follow(<returnStmt>): TK_END 
+Follow(<recOrDefType>): TK_ID TK_SQL TK_RECORD TK_UNION TK_TYPE TK_CALL TK_WHILE TK_IF TK_READ TK_WRITE TK_RETURN TK_DEFINETYPE 
+Follow(<typeDefinition>): TK_ID TK_SQL TK_RECORD TK_UNION TK_TYPE TK_CALL TK_WHILE TK_IF TK_READ TK_WRITE TK_RETURN TK_DEFINETYPE 
+Follow(<typeDefinitions>): TK_ID TK_SQL TK_TYPE TK_CALL TK_WHILE TK_IF TK_READ TK_WRITE TK_RETURN 
+Follow(<fieldDefinitions>): TK_ENDRECORD TK_ENDUNION 
+Follow(<fieldDefinition>): TK_ENDRECORD TK_TYPE TK_ENDUNION 
+Follow(<moreFields>): TK_ENDRECORD TK_ENDUNION 
+Follow(<declarations>): TK_ID TK_SQL TK_CALL TK_WHILE TK_IF TK_READ TK_WRITE TK_RETURN 
+Follow(<declaration>): TK_ID TK_SQL TK_TYPE TK_CALL TK_WHILE TK_IF TK_READ TK_WRITE TK_RETURN 
+Follow(<global_or_not>): TK_SEM 
+Follow(<otherStmts>): TK_ELSE TK_ENDIF TK_RETURN TK_ENDWHILE 
+Follow(<stmt>): TK_ID TK_SQL TK_CALL TK_WHILE TK_IF TK_ELSE TK_ENDIF TK_READ TK_WRITE TK_RETURN TK_ENDWHILE 
+Follow(<assignmentStmt>): TK_ID TK_SQL TK_CALL TK_WHILE TK_IF TK_ELSE TK_ENDIF TK_READ TK_WRITE TK_RETURN TK_ENDWHILE 
+Follow(<SingleOrRecId>): TK_SEM TK_ASSIGNOP TK_CL TK_PLUS TK_MINUS TK_MUL TK_DIV TK_LT TK_LE TK_EQ TK_GT TK_GE TK_NE 
+Follow(<moreRecID>): TK_SEM TK_ASSIGNOP TK_CL TK_PLUS TK_MINUS TK_MUL TK_DIV TK_LT TK_LE TK_EQ TK_GT TK_GE TK_NE 
+Follow(<funCallStmt>): TK_ID TK_SQL TK_CALL TK_WHILE TK_IF TK_ELSE TK_ENDIF TK_READ TK_WRITE TK_RETURN TK_ENDWHILE 
+Follow(<outputParameters>): TK_CALL 
+Follow(<inputParameters>): TK_SEM 
+Follow(<iterativeStmt>): TK_ID TK_SQL TK_CALL TK_WHILE TK_IF TK_ELSE TK_ENDIF TK_READ TK_WRITE TK_RETURN TK_ENDWHILE 
+Follow(<conditionalStmt>): TK_ID TK_SQL TK_CALL TK_WHILE TK_IF TK_ELSE TK_ENDIF TK_READ TK_WRITE TK_RETURN TK_ENDWHILE 
+Follow(<ioStmt>): TK_ID TK_SQL TK_CALL TK_WHILE TK_IF TK_ELSE TK_ENDIF TK_READ TK_WRITE TK_RETURN TK_ENDWHILE 
+Follow(<arithmeticExpression>): TK_SEM TK_CL 
+Follow(<term>): TK_SEM TK_CL TK_PLUS TK_MINUS 
+Follow(<t1>): TK_SEM TK_CL 
+Follow(<t0>): TK_SEM TK_CL TK_PLUS TK_MINUS 
+Follow(<factor>): TK_SEM TK_CL TK_PLUS TK_MINUS TK_MUL TK_DIV 
+Follow(<f1>): TK_SEM TK_CL TK_PLUS TK_MINUS 
+Follow(<f0>): TK_SEM TK_CL TK_PLUS TK_MINUS TK_MUL TK_DIV 
+Follow(<booleanExpression>): TK_CL 
+Follow(<logicalOp>): TK_OP 
+Follow(<relationalOp>): TK_ID TK_NUM TK_RNUM 
+Follow(<var>): TK_SEM TK_CL TK_PLUS TK_MINUS TK_MUL TK_DIV TK_LT TK_LE TK_EQ TK_GT TK_GE TK_NE 
+Follow(<optionalReturn>): TK_SEM 
+Follow(<idList>): TK_SQR 
+Follow(<more_ids>): TK_SQR 
+Follow(<definetypestmt>): TK_ID TK_SQL TK_RECORD TK_UNION TK_TYPE TK_CALL TK_WHILE TK_IF TK_READ TK_WRITE TK_RETURN TK_DEFINETYPE 
+Follow(<A>): TK_RUID 
+Follow(<optelse>): TK_ID TK_SQL TK_CALL TK_WHILE TK_IF TK_ELSE TK_ENDIF TK_READ TK_WRITE TK_RETURN TK_ENDWHILE 

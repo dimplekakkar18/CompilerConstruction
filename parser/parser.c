@@ -489,7 +489,23 @@ void generateFollow(ruleLL* grammar, token_set* follow, token_set* first)
                 // }
 
                 // only option for NT left
-                if (node->next == NULL)
+               
+                // push(st, node->sym.nonterminal);
+                // printf("%s   ",terminals[node->sym.nonterminal]);
+                LLNODE * tempnode=node->next;
+                while((tempnode!=NULL)&&(tempnode->type==NON_TERMINAL)&&(setContains(&first[tempnode->sym.nonterminal], EPSILON)))
+                {
+                    //push(st, node->sym.nonterminal);
+                    long long int temp = follow[node->sym.nonterminal].set | first[node->next->sym.nonterminal].set;
+                    if(follow[node->sym.nonterminal].set != temp){
+                        changed = 1; // setting changed
+                        follow[node->sym.nonterminal].set = temp;
+                    }
+                    
+                    tempnode = tempnode->next;
+                }
+
+                if (tempnode== NULL)
                 {
                     if ((follow[node->sym.nonterminal].set | follow[grammar[i].head->sym.nonterminal].set)!=follow[node->sym.nonterminal].set)
                     {
@@ -505,7 +521,7 @@ void generateFollow(ruleLL* grammar, token_set* follow, token_set* first)
                 }
                 // node next is not null
 
-                if (node->next->type == TERMINAL)
+                if (tempnode->type == TERMINAL)
                 {
                     if (addToSet(&follow[node->sym.nonterminal], node->next->sym.terminal))
                     {
@@ -522,16 +538,6 @@ void generateFollow(ruleLL* grammar, token_set* follow, token_set* first)
                     changed = 1; // setting changed
                     follow[node->sym.nonterminal].set = temp;
                 }
-                // push(st, node->sym.nonterminal);
-                // printf("%s   ",terminals[node->sym.nonterminal]);
-                LLNODE * tempnode;
-                while(setContains(&first[node->next->sym.nonterminal], EPSILON))
-                {
-                    //push(st, node->sym.nonterminal);
-                    printf("HELL %d\n",i);
-                    
-                }
-                printf("LEHS %d\n",i);
 
                 // push(st,node->next->sym.nonterminal);
                 // propogateStackFollow(st, follow,first, &changed,-2);
