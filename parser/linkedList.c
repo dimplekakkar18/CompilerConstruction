@@ -1,6 +1,7 @@
 #include "linkedList.h"
 #include <stdio.h>
 #include <stdlib.h>
+hash_ele hash_table[HASH_TABLE_SIZE]; //FIX
 ruleLL* createLL()
 {
     ruleLL* linkedlist = malloc(sizeof(ruleLL)); 

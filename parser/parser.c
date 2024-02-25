@@ -235,15 +235,17 @@ void propogateStackFollow(stack *st, token_set* follow, int * changed)
     while (st->count > 0)
     {
         int temp2 = pop(st);
-        if(follow[temp2].set != follow[temp].set)
+        if((follow[temp2].set | follow[temp].set) != follow[temp2].set)
         {
-            *changed = 1;
+            printf("DEBUGGER*************\n");
+            *changed = 1; // setting changed
+            //printf("flagged at propogate stack\n");
         }
         follow[temp2].set |= follow[temp].set;
         temp = temp2;
     }
 }
-void computerFirst(token_set *firstSet, ruleLL* rules)
+void computeFirst(token_set *firstSet, ruleLL* rules)
 {
     for (int i = 0; i < NUM_NONTERMINALS; i++)      // all the firstsets are init to 0 (empty set)
     {
@@ -255,10 +257,12 @@ void computerFirst(token_set *firstSet, ruleLL* rules)
         isDone[i] = 0;
     }
     for(int i = 0; i < NUM_RULES; i++){
-        if(rules[i].head->next==NULL){               // RHS is EPSILON
+        if(rules[i].head->next->type==__EPSILON){               // RHS is EPSILON
             addToken(&firstSet[rules[i].head->sym.nonterminal], EPSILON);   // include EPSILON in first(LHS)
             setKthBit(&nullable, rules[i].head->sym.nonterminal);            // LHS is a nullable non-terminal
             isDone[i] = 1;
+            // printf("%lld******************* %d \n", nullable, i);
+
             // printf("***** %d %lld %lld %d\n", i, nullable, (nullable&(((long long int)1)<<rules[i].head->tnt.nonterm)), rules[i].head->tnt.nonterm);
             // printf("*********%d %d %lld\n", i, rules[i].head->tnt.nonterm, nullable);
         }
@@ -321,7 +325,7 @@ void computerFirst(token_set *firstSet, ruleLL* rules)
             LLNODE *node = rules[i].head;
             LLNODE* temp = node;
             node = node->next;
-            if(node==NULL) continue;
+            if(node->type==__EPSILON) continue;
             if(node->type==TERMINAL) continue;
             while(node!=NULL){
                 if(node->type==TERMINAL){
@@ -391,7 +395,7 @@ void computerFirst(token_set *firstSet, ruleLL* rules)
             LLNODE* temp1 = node;
             if(node->sym.nonterminal!=topo[i]) continue;
             node = node->next;                                   // node points to rhs
-            if(node==NULL){
+            if(node->type==__EPSILON){
                 continue;
             }
             else if(node->type==TERMINAL){
@@ -417,21 +421,115 @@ void computerFirst(token_set *firstSet, ruleLL* rules)
     }
 }
 
+void printSet(token_set *set);//remove later
+// void generateFollow(ruleLL* grammar, token_set* follow, token_set* first)
+// {
+//     for (int i = 0; i < NUM_NONTERMINALS; i++)      // all the firstsets are init to 0 (empty set)
+//     {
+//         follow[i].set = 0;
+//     }
+//     addToSet(&follow[0],END_CODE);
+//     int changed = 1;
+//     // int changedNT[NUM_NONTERMINALS] = {0};
+//     // LLNODE *grammar[NUM_RULES];
+//     stack *st = getStack();
+//     while (changed)
+//     {
+//         changed = 0;
+//         for (int i = 0; i < NUM_RULES; i++)
+//         {
+//             LLNODE *node = grammar[i].head;
+//             while (node->next!=NULL)
+//             {
+//                 node = node->next;
+//                 if (node->type == TERMINAL)
+//                 {
+//                     continue;
+//                 }
+
+//                 if (node->type == __EPSILON){
+//                     break;
+//                 }
+                
+//                 // if(i==1)
+//                 // {
+//                 //     printf("%s",nonterminals[node->sym.nonterminal]);
+//                 // }
+
+//                 // only option for NT left
+//                 if (node->next == NULL)
+//                 {
+//                     if ((follow[node->sym.nonterminal].set | follow[grammar[i].head->sym.nonterminal].set)!=follow[node->sym.nonterminal].set)
+//                     {
+//                         changed = 1;   
+//                         follow[node->sym.nonterminal].set |= follow[grammar[i].head->sym.nonterminal].set;
+//                     }
+                    
+//                     push(st, node->sym.nonterminal);
+//                     propogateStackFollow(st, follow,&changed);
+//                      //printf("  flagged at next NULL %d\n  ", i);      
+//                     break;
+//                 }
+//                 // node next is not null
+
+//                 if (node->next->type == TERMINAL)
+//                 {
+//                     if (addToSet(&follow[node->sym.nonterminal], node->next->sym.terminal))
+//                     {
+//                         changed = 1; // setting changed
+//                         //printf("  flagged at next is term %d\n  ", i);
+//                     }
+//                     push(st, node->sym.nonterminal);
+//                     propogateStackFollow(st, follow,&changed);
+//                     continue;
+//                 }
+//                 // handled next being terminal
+//                 long long int temp = follow[node->sym.nonterminal].set | first[node->next->sym.nonterminal].set;
+//                 if(follow[node->sym.nonterminal].set != temp){
+
+//                     changed = 1; // setting changed
+//                     follow[node->sym.nonterminal].set = temp;
+//                 }
+//                 push(st, node->sym.nonterminal);
+
+//                 if (setContains(&first[node->next->sym.nonterminal], EPSILON))
+//                 {
+//                     printf("HELLL %d\n",i);
+//                     //push(st, node->sym.nonterminal);
+//                     continue;
+//                 }
+//                 // now just need to add follow of next into current
+//                 // long long int temp = follow[node->sym.nonterminal].set | first[node->next->sym.nonterminal].set;
+//                 // if(follow[node->sym.nonterminal].set != temp){
+//                 //     changed = 1; // setting changed
+//                 //     follow[node->sym.nonterminal].set = temp;
+//                 // }
+//                 //push(st, node->sym.nonterminal);
+//                 propogateStackFollow(st, follow, &changed);
+//             }
+//         }
+//     }
+
+//     long long int epsv = (long long)1 <<EPSILON; //remove epsilon
+//     for (int i = 0; i < NUM_RULES; i++)
+//     {
+//         follow[i].set &= ~epsv;
+//     }
+// }
+
 void generateFollow(ruleLL* grammar, token_set* follow, token_set* first)
 {
-
     for (int i = 0; i < NUM_NONTERMINALS; i++)      // all the firstsets are init to 0 (empty set)
     {
         follow[i].set = 0;
     }
+    addToSet(&follow[0],END_CODE);
     int changed = 1;
     // int changedNT[NUM_NONTERMINALS] = {0};
     // LLNODE *grammar[NUM_RULES];
     stack *st = getStack();
     while (changed)
     {
-
-        printf("%d\n", changed);
         changed = 0;
         for (int i = 0; i < NUM_RULES; i++)
         {
@@ -440,63 +538,90 @@ void generateFollow(ruleLL* grammar, token_set* follow, token_set* first)
             {
                 node = node->next;
                 if (node->type == TERMINAL)
-                    continue;
-
-                if (node->type == __EPSILON)
-                    break;
-
-                // only option for NT left
-                if (node->next == NULL)
                 {
-                    if (follow[node->type].set == follow[grammar[i].head->sym.nonterminal].set)
-                        break;
+                    continue;
+                }
 
-                    follow[node->type].set |= follow[grammar[i].head->sym.nonterminal].set;
-                    changed = 1;
+                if (node->type == __EPSILON){
                     break;
+                }
+
+                LLNODE * tempnode=node->next;
+                while((tempnode!=NULL)&&(tempnode->type==NON_TERMINAL)&&(setContains(&first[tempnode->sym.nonterminal], EPSILON)))
+                {
+                    long long int temp = follow[node->sym.nonterminal].set | first[tempnode->sym.nonterminal].set;
+                    if(follow[node->sym.nonterminal].set != temp){
+                        changed = 1; // setting changed
+                        follow[node->sym.nonterminal].set = temp;
+                    }
+                    
+                    tempnode = tempnode->next;
+                }
+
+                if (tempnode== NULL)
+                {
+                    if ((follow[node->sym.nonterminal].set | follow[grammar[i].head->sym.nonterminal].set)!=follow[node->sym.nonterminal].set)
+                    {
+                        changed = 1;   
+                        follow[node->sym.nonterminal].set |= follow[grammar[i].head->sym.nonterminal].set;
+                    }
+                    continue;
                 }
                 // node next is not null
 
-                if (node->next->type == TERMINAL)
+                if (tempnode->type == TERMINAL)
                 {
-                    if (addToSet(&follow[node->sym.nonterminal], node->next->sym.terminal))
-                        changed = 1;
-                    push(st, node->sym.nonterminal);
-                    propogateStackFollow(st, follow,&changed);
+                    if (addToSet(&follow[node->sym.nonterminal], tempnode->sym.terminal))
+                    {
+                        changed = 1; // setting changed
+                    }
                     continue;
                 }
                 // handled next being terminal
-
-                if (setContains(&follow[node->next->sym.nonterminal], EPSILON))
-                {
-                    push(st, node->sym.nonterminal);
-                    continue;
-                }
-                // now just need to add follow of next into current
-                long long int temp = follow[node->sym.nonterminal].set | first[node->next->sym.nonterminal].set;
+                long long int temp = follow[node->sym.nonterminal].set | first[tempnode->sym.nonterminal].set;
                 if(follow[node->sym.nonterminal].set != temp){
-                    changed = 1;
-                    follow[node->sym.nonterminal].set |= follow[node->next->sym.nonterminal].set;
+
+                    changed = 1; // setting changed
+                    follow[node->sym.nonterminal].set = temp;
                 }
-                push(st, node->sym.nonterminal);
-                propogateStackFollow(st, follow, &changed);
             }
         }
     }
+
+    long long int epsv = (long long)1 <<EPSILON; //remove epsilon
+    for (int i = 0; i < NUM_RULES; i++)
+    {
+        follow[i].set &= ~epsv;
+    }
 }
 
-ruleLL* parseTable[NUM_NONTERMINALS][NUM_TERMINALS];
 
 
-
-void makeParseTable(token_set* first, token_set* follow,ruleLL* grammar)
+ruleLL** makeParseTable(token_set* first, token_set* follow,ruleLL* grammar)   //grammar is a pointer to the first ruleLL struct
 {
-    for(int i=0;i<NUM_NONTERMINALS;i++){
-        for(int j=0;j<NUM_TERMINALS;j++){
-            parseTable[i][j]=NULL;
+    // ruleLL** parseTable = (ruleLL*)malloc(NUM_NONTERMINALS * sizeof(ruleLL));
+    // for(int i=0;i<NUM_NONTERMINALS;i++){
+    //     for(int j=0;j<NUM_TERMINALS;j++){
+    //         parseTable[i][j].head=NULL;
+    //         parseTable[i][j].tail=NULL;
+    //     }
+    // }
+
+    ruleLL** parseTable = (struct ruleLL*)malloc(NUM_NONTERMINALS * sizeof(struct ruleLL));
+    if (parseTable == NULL) {
+        printf("Memory allocation failed.");
+        // exit(1);
+    }
+
+    // Allocate memory for each row of structs
+    for (int i = 0; i < NUM_NONTERMINALS; ++i) {
+        parseTable[i] = (struct ruleLL*)malloc(NUM_TERMINALS * sizeof(struct ruleLL));
+        if (parseTable[i] == NULL) {
+            printf("Memory allocation failed.");
+            // exit(1);
         }
     }
-    // printf("reached1\n");
+    // printf("hi\n");
     for(int i=0; i<NUMRULES; i++)
     {
         // printf("reached2\n");   
@@ -510,25 +635,30 @@ void makeParseTable(token_set* first, token_set* follow,ruleLL* grammar)
         // printf("reached3\n");   
 
         node = node->next;
-
-        while(flag && node != NULL)
+        // printf("hi2\n");
+        while(flag &&( node != NULL))
         {
-          
+            // printf("check1\n");
             flag=0;
             if(node->type == TERMINAL){
-                parseTable[nt.nonterminal][node->sym.terminal]=&grammar[i];            
+                parseTable[nt.nonterminal][node->sym.terminal]=grammar[i];
+                if(parseTable[nt.nonterminal][node->sym.terminal].head != NULL) printf("value stored\n");               
             }
             else if(node->type == __EPSILON)
             {
+                // printf("check\n");
                 long long int num = follow[node->sym.nonterminal].set;
                 int index = 0;
                 while (num) {
                     if (num & 1) {
-                        parseTable[nt.nonterminal][index]=&grammar[i];
+                        parseTable[nt.nonterminal][index]=grammar[i];
+                        if(parseTable[nt.nonterminal][node->sym.terminal].head != NULL) printf("value stored\n");  
                     }
                     num >>= 1;  // Right shift to check the next bit
                     ++index;
                 }
+                             
+                
             }
             else if(node->type == NON_TERMINAL)
             {
@@ -537,15 +667,21 @@ void makeParseTable(token_set* first, token_set* follow,ruleLL* grammar)
                 while (num) {
                     if(index == EPSILON && (num&1))
                     {
+                        // printf("DEBUGER\n");
                         flag=1;
+                        num>>=1;
                         continue;
                     }
                     if (num & 1) {
-                        parseTable[nt.nonterminal][index]=&grammar[i];
+                        // printf("DEBUGER\n");
+                        parseTable[nt.nonterminal][index]=grammar[i];
+                        if(parseTable[nt.nonterminal][node->sym.terminal].head != NULL) printf("value stored\n");  
                     }
                     num >>= 1;  // Right shift to check the next bit
                     ++index;
                 }
+
+                // if(parseTable[nt.nonterminal][node->sym.terminal].head == NULL) printf("value not stored\n");
             }
             else{
                 printf("ignored\n");
@@ -559,7 +695,7 @@ void makeParseTable(token_set* first, token_set* follow,ruleLL* grammar)
                 int index = 0;
                 while (num) {
                     if (num & 1) {
-                        parseTable[nt.nonterminal][index]=&grammar[i];
+                        parseTable[nt.nonterminal][index]=grammar[i];
                     }
                     num >>= 1;  // Right shift to check the next bit
                     ++index;
@@ -567,7 +703,118 @@ void makeParseTable(token_set* first, token_set* follow,ruleLL* grammar)
         }
 
     }
+    return parseTable;
 }
+
+int** makeParseTable2(token_set* first, token_set* follow, ruleLL* grammar) {
+    // FILE* file = fopen("followSets.txt", "r");
+    // if (file == NULL) {
+    //     perror("Error opening file");
+    //     // exit(EXIT_FAILURE);
+    // }
+    // int index = 0;
+    // while (index!=NUM_NONTERMINALS) {
+    //     fscanf(file, "%lld", &follow[index].set);
+    //     index++;
+    //     if (index >= NUM_NONTERMINALS) {
+    //         break; // Prevent reading more lines than the size of the followset array
+    //     }
+    // }
+
+    // fclose(file);
+
+    int** parseTable = (int**)malloc(NUM_NONTERMINALS * sizeof(int*));
+    if (parseTable == NULL) {
+        printf("Memory allocation failed.");
+        exit(1);
+    }
+
+    for (int i = 0; i < NUM_NONTERMINALS; ++i) {
+        parseTable[i] = (int*)malloc(NUM_TERMINALS * sizeof(int));
+        if (parseTable[i] == NULL) {
+            printf("Memory allocation failed.");
+            exit(1);
+        }
+    }
+
+    for (int i = 0; i < NUM_NONTERMINALS; i++) {
+        for (int j = 0; j < NUM_TERMINALS; j++) {
+            parseTable[i][j] = -1; // Initialize all cells to some default value
+        }
+    }
+
+    for (int i = 0; i < NUMRULES; i++) {
+        LLNODE* node = grammar[i].head;
+        int flag = 1;
+        SYMBOL nt = node->sym;
+
+        node = node->next;
+
+        while (flag && (node != NULL)) {
+            flag = 0;
+            if (node->type == TERMINAL) {
+                parseTable[nt.nonterminal][node->sym.terminal] = i; // Store the rule index instead of grammar[i]
+            } else if (node->type == __EPSILON) {
+                long long int num = follow[nt.nonterminal].set;
+                int index = 0;
+                while (num) {
+                    if (num & 1) {
+                        parseTable[nt.nonterminal][index] = i;
+                    }
+                    num >>= 1; // Right shift to check the next bit
+                    ++index;
+                }
+            } else if (node->type == NON_TERMINAL) {
+                long long int num = first[node->sym.nonterminal].set;
+                int index = 0;
+                while (num) {
+                    if (index == EPSILON && (num & 1)) {
+                        flag = 1;
+                        num >>= 1;
+                        continue;
+                    }
+                    if (num & 1) {
+                        parseTable[nt.nonterminal][index] = i;
+                    }
+                    num >>= 1; // Right shift to check the next bit
+                    ++index;
+                }
+            }
+
+            if (flag == 1)
+                node = node->next;
+        }
+
+        if (flag) {
+            long long int num = follow[node->sym.nonterminal].set;
+            int index = 0;
+            while (num) {
+                if (num & 1) {
+                    parseTable[nt.nonterminal][index] = i;
+                }
+                num >>= 1; // Right shift to check the next bit
+                ++index;
+            }
+        }
+    }
+
+    return parseTable;
+}
+
+void printParseTable2(int** parseTable)
+{
+    printf("Parse Table:\n");
+    for (int i = 0; i < NUM_NONTERMINALS; i++)
+    {
+        for (int j = 0; j < NUM_TERMINALS; j++)
+        {
+            printf("%d ", parseTable[i][j]);
+        }
+        printf("\n");
+    }
+}
+
+
 void printLinkedList(LLNODE* node) {
     while (node != NULL) {
         if(node->type == TERMINAL)
@@ -589,23 +836,39 @@ void printLinkedList(LLNODE* node) {
     printf("NULL\n");
 }
 
-void printParseTable(ruleLL*** parseTable)
+void printParseTable(ruleLL** parseTable)
 {
+    // parseTable[0][0];
+    // printf("hii\n");
+
     for(int i=0;i<NUM_NONTERMINALS;i++)
     {
         for(int j=0;j<NUM_TERMINALS;j++)
         {
-            printf("reached 1");
-            ruleLL* ptr=parseTable[i][j];
-            printf("reached 2");
-            if(ptr->head->type==TERMINAL){
-                printf("%d",((ptr->head)->sym).terminal);
+           
+            // printf("reached 1\n");
+            ruleLL ptr = parseTable[i][j];
+            // printf("%s", nonterminals[i]);
+            // printf("reached 2\n");
+            if(ptr.head==NULL)
+            {
+                printf("error");
             }
-            else if(ptr->head->type==NON_TERMINAL){
-                printf("%d",((ptr->head)->sym).nonterminal);
+            else if(ptr.head->type==TERMINAL){
+                printf("%s", terminals[((ptr.head)->sym).terminal]);
+                // printf("%s",terminals[j]);
+                // printf("%s",);
+                // printf("%d",((ptr.head)->sym).terminal);
+            }
+            else if(ptr.head->type==NON_TERMINAL){
+                // printf("gone");
+                printf("%s",nonterminals[((ptr.head)->sym).nonterminal]);
+                // printf("%d",((ptr.head)->sym).nonterminal);
             }
             // printf("%d",(ptr->head)->sym);
+            
         }
+        printf("\n");
     }
 }
 
@@ -630,7 +893,7 @@ void print_rules(ruleLL* rules)
             {
                 printf("%s ", terminals[temp->sym.terminal]);
             }
-            else
+            else if (temp->type == __EPSILON)
             {
                 printf("EPSILON ");
             }
@@ -660,6 +923,10 @@ void printSet(token_set *set)
     {
         printf("EPSILON");
     }
+    if (isMember(set, END_CODE))
+    {
+        printf("$");
+    }
 }
 
 int main()
@@ -669,23 +936,36 @@ int main()
     print_rules(rules);
     token_set *first_sets = malloc(sizeof(token_set) * NUM_NONTERMINALS);
     token_set *follow_sets = malloc(sizeof(token_set) * NUM_NONTERMINALS);
-    computerFirst(first_sets,rules);
-     generateFollow(rules,follow_sets,first_sets);
+    computeFirst(first_sets,rules);
     for (int i = 0; i < NUM_NONTERMINALS; i++)
     {
         printf("First(%s): ", nonterminals[i]);
         printSet(&first_sets[i]);
         printf("\n");
     }
-    makeParseTable(first_sets,follow_sets,rules);
-    printf("hi");
-    printParseTable(&parseTable);
-    for (int i = 0; i < NUM_NONTERMINALS; i++)
+
+    generateFollow(rules,follow_sets,first_sets);
+        for (int i = 0; i < NUM_NONTERMINALS; i++)
     {
         printf("Follow(%s): ", nonterminals[i]);
         printSet(&follow_sets[i]);
         printf("\n");
     }
+    int** pt = makeParseTable2(first_sets,follow_sets,rules);
+    printParseTable2(pt);
+    // for (int i = 0; i < NUM_NONTERMINALS; i++)
+    // {
+    //     printf("First(%s): ", nonterminals[i]);
+    //     printSet(&first_sets[i]);
+    //     printf("\n");
+    // }
+
+
+    // ruleLL** pt = makeParseTable(first_sets,follow_sets,rules);
+
+    // printf("hi\n");
+    // pt[0][0];
+    // printParseTable(pt);
 
 
     // printf("Enter the buffer size: ");
