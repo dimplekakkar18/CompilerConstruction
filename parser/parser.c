@@ -235,7 +235,7 @@ void propogateStackFollow(stack *st, token_set* follow, int * changed)
     while (st->count > 0)
     {
         int temp2 = pop(st);
-        if((follow[temp2].set & follow[temp].set) == follow[temp2].set)
+        if((follow[temp2].set | follow[temp].set) == follow[temp2].set)
         {
             *changed = 1; // setting changed
             //printf("flagged at propogate stack\n");
@@ -418,6 +418,7 @@ void computerFirst(token_set *firstSet, ruleLL* rules)
     }
 }
 
+void printSet(token_set *set);//remove later
 void generateFollow(ruleLL* grammar, token_set* follow, token_set* first)
 {
 
@@ -440,18 +441,28 @@ void generateFollow(ruleLL* grammar, token_set* follow, token_set* first)
             {
                 node = node->next;
                 if (node->type == TERMINAL)
+                {
                     continue;
+                }
 
                 if (node->type == __EPSILON)
                     break;
+                
+                // if(i==1)
+                // {
+                //     printf("%s",nonterminals[node->sym.nonterminal]);
+                // }
 
                 // only option for NT left
                 if (node->next == NULL)
                 {
-                    if ((follow[node->type].set | follow[grammar[i].head->sym.nonterminal].set)==follow[node->type].set)
+                    if ((follow[node->sym.nonterminal].set | follow[grammar[i].head->sym.nonterminal].set)==follow[node->sym.nonterminal].set)
+                    {
                         break;
+                    }
                     
-                    follow[node->type].set |= follow[grammar[i].head->sym.nonterminal].set;
+                    follow[node->sym.nonterminal].set |= follow[grammar[i].head->sym.nonterminal].set;
+                    
                     changed = 1;   
                     //printf("  flagged at next NULL %d\n  ", i);      
                     break;
@@ -470,21 +481,25 @@ void generateFollow(ruleLL* grammar, token_set* follow, token_set* first)
                     continue;
                 }
                 // handled next being terminal
-
-                if (setContains(&follow[node->next->sym.nonterminal], EPSILON))
-                {
-                    push(st, node->sym.nonterminal);
-                    continue;
-                }
-                // now just need to add follow of next into current
                 long long int temp = follow[node->sym.nonterminal].set | first[node->next->sym.nonterminal].set;
-                //printf("%lld,%lld",follow[node->type].set,temp);
                 if(follow[node->sym.nonterminal].set != temp){
                     changed = 1; // setting changed
-                    //printf("  flagged at next is NT no eps %d\n  ", i);
                     follow[node->sym.nonterminal].set = temp;
                 }
                 push(st, node->sym.nonterminal);
+
+                if (setContains(&follow[node->next->sym.nonterminal], EPSILON))
+                {
+                    //push(st, node->sym.nonterminal);
+                    continue;
+                }
+                // now just need to add follow of next into current
+                // long long int temp = follow[node->sym.nonterminal].set | first[node->next->sym.nonterminal].set;
+                // if(follow[node->sym.nonterminal].set != temp){
+                //     changed = 1; // setting changed
+                //     follow[node->sym.nonterminal].set = temp;
+                // }
+                //push(st, node->sym.nonterminal);
                 propogateStackFollow(st, follow, &changed);
             }
         }
@@ -668,7 +683,6 @@ int main()
     token_set *follow_sets = malloc(sizeof(token_set) * NUM_NONTERMINALS);
     computerFirst(first_sets,rules);
     generateFollow(rules,follow_sets,first_sets);
-    printf("  flagged at FINSHES\n  ");
     for (int i = 0; i < NUM_NONTERMINALS; i++)
     {
         printf("First(%s): ", nonterminals[i]);
