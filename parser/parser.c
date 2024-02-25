@@ -229,54 +229,53 @@ int setContains(token_set* sets, int term)
         return 0;
 }
 
-void propogateStackFollow(stack *st, token_set* follow, token_set* first,int * changed, int terminal)//set terminal -1 if need to add follow, -2 if first. else terminal to add
-{
-    int temp;
-    if(terminal == -1)
-    {
-        temp = pop(st);
+// void propogateStackFollow(stack *st, token_set* follow, token_set* first,int * changed, int terminal)//set terminal -1 if need to add follow, -2 if first. else terminal to add
+// {
+//     int temp;
+//     if(terminal == -1)
+//     {
+//         temp = pop(st);
 
-        while (st->count > 0)
-        {
-            int temp2 = pop(st);
-            if((follow[temp2].set | follow[temp].set) != follow[temp2].set)
-            {
-                //printf("DEBUGGER*************\n");
-                *changed = 1; // setting changed
-            }
-            follow[temp2].set |= follow[temp].set;
-        }
-    }
-    else if(terminal == -2)
-    {
-        temp = pop(st);
+//         while (st->count > 0)
+//         {
+//             int temp2 = pop(st);
+//             if((follow[temp2].set | follow[temp].set) != follow[temp2].set)
+//             {
+//                 //printf("DEBUGGER*************\n");
+//                 *changed = 1; // setting changed
+//             }
+//             follow[temp2].set |= follow[temp].set;
+//         }
+//     }
+//     else if(terminal == -2)
+//     {
+//         temp = pop(st);
 
-        while (st->count > 0)
-        {
-            int temp2 = pop(st);
-            if((follow[temp2].set | first[temp].set) != follow[temp2].set)
-            {
-                //printf("DEBUGGER*************\n");
-                *changed = 1; // setting changed
-            }
-            follow[temp2].set |= first[temp].set;
-            printf(" %s ",nonterminals[temp2]);
-        }
-    }
-    else
-    {
-        while (st->count > 0)
-        {
-            int temp2 = pop(st);
-            if(addToSet(&follow[temp2],terminal))
-            {
-                //printf("DEBUGGER*************\n");
-                *changed = 1; // setting changed
-            }
-        }
-    }
-
-}
+//         while (st->count > 0)
+//         {
+//             int temp2 = pop(st);
+//             if((follow[temp2].set | first[temp].set) != follow[temp2].set)
+//             {
+//                 //printf("DEBUGGER*************\n");
+//                 *changed = 1; // setting changed
+//             }
+//             follow[temp2].set |= first[temp].set;
+//             printf(" %s ",nonterminals[temp2]);
+//         }
+//     }
+//     else
+//     {
+//         while (st->count > 0)
+//         {
+//             int temp2 = pop(st);
+//             if(addToSet(&follow[temp2],terminal))
+//             {
+//                 //printf("DEBUGGER*************\n");
+//                 *changed = 1; // setting changed
+//             }
+//         }
+//     }
+// }
 void computeFirst(token_set *firstSet, ruleLL* rules)
 {
     for (int i = 0; i < NUM_NONTERMINALS; i++)      // all the firstsets are init to 0 (empty set)
@@ -482,21 +481,11 @@ void generateFollow(ruleLL* grammar, token_set* follow, token_set* first)
                 if (node->type == __EPSILON){
                     break;
                 }
-                
-                // if(i==1)
-                // {
-                //     printf("%s",nonterminals[node->sym.nonterminal]);
-                // }
 
-                // only option for NT left
-               
-                // push(st, node->sym.nonterminal);
-                // printf("%s   ",terminals[node->sym.nonterminal]);
                 LLNODE * tempnode=node->next;
                 while((tempnode!=NULL)&&(tempnode->type==NON_TERMINAL)&&(setContains(&first[tempnode->sym.nonterminal], EPSILON)))
                 {
-                    //push(st, node->sym.nonterminal);
-                    long long int temp = follow[node->sym.nonterminal].set | first[node->next->sym.nonterminal].set;
+                    long long int temp = follow[node->sym.nonterminal].set | first[tempnode->sym.nonterminal].set;
                     if(follow[node->sym.nonterminal].set != temp){
                         changed = 1; // setting changed
                         follow[node->sym.nonterminal].set = temp;
@@ -512,35 +501,25 @@ void generateFollow(ruleLL* grammar, token_set* follow, token_set* first)
                         changed = 1;   
                         follow[node->sym.nonterminal].set |= follow[grammar[i].head->sym.nonterminal].set;
                     }
-                    
-                    // push(st, node->sym.nonterminal);
-                    // push(st, grammar[i].head->sym.nonterminal);
-                    // propogateStackFollow(st, follow, NULL,&changed,-1);
-                     //printf("  flagged at next NULL %d\n  ", i);      
-                    break;
+                    continue;
                 }
                 // node next is not null
 
                 if (tempnode->type == TERMINAL)
                 {
-                    if (addToSet(&follow[node->sym.nonterminal], node->next->sym.terminal))
+                    if (addToSet(&follow[node->sym.nonterminal], tempnode->sym.terminal))
                     {
                         changed = 1; // setting changed
                     }
-                    // push(st, node->sym.nonterminal);
-                    // propogateStackFollow(st, follow,NULL,&changed,node->next->sym.terminal);
                     continue;
                 }
                 // handled next being terminal
-                long long int temp = follow[node->sym.nonterminal].set | first[node->next->sym.nonterminal].set;
+                long long int temp = follow[node->sym.nonterminal].set | first[tempnode->sym.nonterminal].set;
                 if(follow[node->sym.nonterminal].set != temp){
 
                     changed = 1; // setting changed
                     follow[node->sym.nonterminal].set = temp;
                 }
-
-                // push(st,node->next->sym.nonterminal);
-                // propogateStackFollow(st, follow,first, &changed,-2);
             }
         }
     }
@@ -753,9 +732,9 @@ int main()
         printSet(&follow_sets[i]);
         printf("\n");
     }
-    printf("hello\n");
-    makeParseTable(first_sets,follow_sets,rules);
-    printf("hi\n");
+    // printf("hello\n");
+    // makeParseTable(first_sets,follow_sets,rules);
+    // printf("hi\n");
     // printParseTable(&parseTable);
 
 
