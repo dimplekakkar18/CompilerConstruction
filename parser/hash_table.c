@@ -247,7 +247,7 @@ int getIndex(char *tok)
             if (strcmp(_nonterminals[hash_table[currIndex].sym.nonterminal], tok) == 0)
                 return currIndex;
         }
-        else if (hash_table[currIndex].type == EPSILON)
+        else if (hash_table[currIndex].type == __EPSILON)
         {
             if (strcmp("EPSILON", tok) == 0)
                 return currIndex;
