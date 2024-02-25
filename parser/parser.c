@@ -517,18 +517,34 @@ void generateFollow(ruleLL* grammar, token_set* follow, token_set* first)
     }
 }
 
-ruleLL* parseTable[NUM_NONTERMINALS][NUM_TERMINALS];
 
 
 
-void makeParseTable(token_set* first, token_set* follow,ruleLL* grammar)
+ruleLL** makeParseTable(token_set* first, token_set* follow,ruleLL* grammar)   //grammar is a pointer to the first ruleLL struct
 {
-    for(int i=0;i<NUM_NONTERMINALS;i++){
-        for(int j=0;j<NUM_TERMINALS;j++){
-            parseTable[i][j]=NULL;
-        }
+    // ruleLL** parseTable = (ruleLL*)malloc(NUM_NONTERMINALS * sizeof(ruleLL));
+    // for(int i=0;i<NUM_NONTERMINALS;i++){
+    //     for(int j=0;j<NUM_TERMINALS;j++){
+    //         parseTable[i][j].head=NULL;
+    //         parseTable[i][j].tail=NULL;
+    //     }
+    // }
+
+    ruleLL** parseTable = (struct ruleLL*)malloc(NUM_NONTERMINALS * sizeof(struct ruleLL));
+    if (parseTable == NULL) {
+        printf("Memory allocation failed.");
+        // exit(1);
     }
 
+    // Allocate memory for each row of structs
+    for (int i = 0; i < NUM_NONTERMINALS; ++i) {
+        parseTable[i] = (struct ruleLL*)malloc(NUM_TERMINALS * sizeof(struct ruleLL));
+        if (parseTable[i] == NULL) {
+            printf("Memory allocation failed.");
+            // exit(1);
+        }
+    }
+    printf("hi\n");
     for(int i=0; i<NUMRULES; i++)
     {
         LLNODE* node = grammar[i].head;
@@ -536,24 +552,30 @@ void makeParseTable(token_set* first, token_set* follow,ruleLL* grammar)
         SYMBOL nt=node->sym;
 
         node = node->next;
-
-        while(flag && node != NULL)
+        printf("hi2\n");
+        while(flag &&( node != NULL))
         {
+            printf("check1\n");
             flag=0;
             if(node->type == TERMINAL){
-                parseTable[nt.nonterminal][node->sym.terminal]=&grammar[i];            
+                parseTable[nt.nonterminal][node->sym.terminal]=grammar[i];
+                if(parseTable[nt.nonterminal][node->sym.terminal].head != NULL) printf("value stored\n");               
             }
             else if(node->type == __EPSILON)
             {
+                printf("check\n");
                 long long int num = follow[node->sym.nonterminal].set;
                 int index = 0;
                 while (num) {
                     if (num & 1) {
-                        parseTable[nt.nonterminal][index]=&grammar[i];
+                        parseTable[nt.nonterminal][index]=grammar[i];
+                        if(parseTable[nt.nonterminal][node->sym.terminal].head != NULL) printf("value stored\n");  
                     }
                     num >>= 1;  // Right shift to check the next bit
                     ++index;
                 }
+                             
+                
             }
             else if(node->type == NON_TERMINAL)
             {
@@ -562,15 +584,21 @@ void makeParseTable(token_set* first, token_set* follow,ruleLL* grammar)
                 while (num) {
                     if(index == EPSILON && (num&1))
                     {
+                        printf("DEBUGER\n");
                         flag=1;
+                        num>>=1;
                         continue;
                     }
                     if (num & 1) {
-                        parseTable[nt.nonterminal][index]=&grammar[i];
+                        printf("DEBUGER\n");
+                        parseTable[nt.nonterminal][index]=grammar[i];
+                        if(parseTable[nt.nonterminal][node->sym.terminal].head != NULL) printf("value stored\n");  
                     }
                     num >>= 1;  // Right shift to check the next bit
                     ++index;
                 }
+
+                // if(parseTable[nt.nonterminal][node->sym.terminal].head == NULL) printf("value not stored\n");
             }
 
             if(flag==1) node=node->next;
@@ -581,7 +609,7 @@ void makeParseTable(token_set* first, token_set* follow,ruleLL* grammar)
                 int index = 0;
                 while (num) {
                     if (num & 1) {
-                        parseTable[nt.nonterminal][index]=&grammar[i];
+                        parseTable[nt.nonterminal][index]=grammar[i];
                     }
                     num >>= 1;  // Right shift to check the next bit
                     ++index;
@@ -589,7 +617,119 @@ void makeParseTable(token_set* first, token_set* follow,ruleLL* grammar)
         }
 
     }
+    return parseTable;
 }
+
+int** makeParseTable2(token_set* first, token_set* follow, ruleLL* grammar) {
+    FILE* file = fopen("followSets.txt", "r");
+    if (file == NULL) {
+        perror("Error opening file");
+        // exit(EXIT_FAILURE);
+    }
+    int index = 0;
+    while (index!=NUM_NONTERMINALS) {
+        fscanf(file, "%lld", &follow[index].set);
+        index++;
+        if (index >= NUM_NONTERMINALS) {
+            break; // Prevent reading more lines than the size of the followset array
+        }
+    }
+
+    fclose(file);
+
+    int** parseTable = (int**)malloc(NUM_NONTERMINALS * sizeof(int*));
+    if (parseTable == NULL) {
+        printf("Memory allocation failed.");
+        exit(1);
+    }
+
+    for (int i = 0; i < NUM_NONTERMINALS; ++i) {
+        parseTable[i] = (int*)malloc(NUM_TERMINALS * sizeof(int));
+        if (parseTable[i] == NULL) {
+            printf("Memory allocation failed.");
+            exit(1);
+        }
+    }
+
+    for (int i = 0; i < NUM_NONTERMINALS; i++) {
+        for (int j = 0; j < NUM_TERMINALS; j++) {
+            parseTable[i][j] = -1; // Initialize all cells to some default value
+        }
+    }
+
+    for (int i = 0; i < NUMRULES; i++) {
+        LLNODE* node = grammar[i].head;
+        int flag = 1;
+        SYMBOL nt = node->sym;
+
+        node = node->next;
+
+        while (flag && (node != NULL)) {
+            flag = 0;
+
+            if (node->type == TERMINAL) {
+                parseTable[nt.nonterminal][node->sym.terminal] = i; // Store the rule index instead of grammar[i]
+            } else if (node->type == __EPSILON) {
+                long long int num = follow[node->sym.nonterminal].set;
+                int index = 0;
+                while (num) {
+                    if (num & 1) {
+                        parseTable[nt.nonterminal][index] = i;
+                    }
+                    num >>= 1; // Right shift to check the next bit
+                    ++index;
+                }
+            } else if (node->type == NON_TERMINAL) {
+                long long int num = first[node->sym.nonterminal].set;
+                int index = 0;
+                while (num) {
+                    if (index == EPSILON && (num & 1)) {
+                        flag = 1;
+                        num >>= 1;
+                        continue;
+                    }
+                    if (num & 1) {
+                        parseTable[nt.nonterminal][index] = i;
+                    }
+                    num >>= 1; // Right shift to check the next bit
+                    ++index;
+                }
+            }
+
+            if (flag == 1)
+                node = node->next;
+        }
+
+        if (flag) {
+            long long int num = follow[node->sym.nonterminal].set;
+            int index = 0;
+            while (num) {
+                if (num & 1) {
+                    parseTable[nt.nonterminal][index] = i;
+                }
+                num >>= 1; // Right shift to check the next bit
+                ++index;
+            }
+        }
+    }
+
+    return parseTable;
+}
+
+void printParseTable2(int** parseTable)
+{
+    printf("Parse Table:\n");
+    for (int i = 0; i < NUM_NONTERMINALS; i++)
+    {
+        for (int j = 0; j < NUM_TERMINALS; j++)
+        {
+            printf("%d ", parseTable[i][j]);
+        }
+        printf("\n");
+    }
+}
+
+
 void printLinkedList(LLNODE* node) {
     while (node != NULL) {
         if(node->type == TERMINAL)
@@ -611,25 +751,39 @@ void printLinkedList(LLNODE* node) {
     printf("NULL\n");
 }
 
-void printParseTable(ruleLL*** parseTable)
+void printParseTable(ruleLL** parseTable)
 {
+    // parseTable[0][0];
+    // printf("hii\n");
+
     for(int i=0;i<NUM_NONTERMINALS;i++)
     {
         for(int j=0;j<NUM_TERMINALS;j++)
         {
            
-            printf("reached 1");
-            ruleLL* ptr=parseTable[i][j];
-
-            printf("reached 2");
-            if(ptr->head->type==TERMINAL){
-                printf("%d",((ptr->head)->sym).terminal);
+            // printf("reached 1\n");
+            ruleLL ptr = parseTable[i][j];
+            // printf("%s", nonterminals[i]);
+            // printf("reached 2\n");
+            if(ptr.head==NULL)
+            {
+                printf("error");
             }
-            else if(ptr->head->type==NON_TERMINAL){
-                printf("%d",((ptr->head)->sym).nonterminal);
+            else if(ptr.head->type==TERMINAL){
+                printf("%s", terminals[((ptr.head)->sym).terminal]);
+                // printf("%s",terminals[j]);
+                // printf("%s",);
+                // printf("%d",((ptr.head)->sym).terminal);
+            }
+            else if(ptr.head->type==NON_TERMINAL){
+                // printf("gone");
+                printf("%s",nonterminals[((ptr.head)->sym).nonterminal]);
+                // printf("%d",((ptr.head)->sym).nonterminal);
             }
             // printf("%d",(ptr->head)->sym);
+            
         }
+        printf("\n");
     }
 }
 
@@ -704,7 +858,10 @@ int main()
         printSet(&first_sets[i]);
         printf("\n");
     }
+
     generateFollow(rules,follow_sets,first_sets);
+    int** pt = makeParseTable2(first_sets,follow_sets,rules);
+    printParseTable2(pt);
     for (int i = 0; i < NUM_NONTERMINALS; i++)
     {
         printf("First(%s): ", nonterminals[i]);
@@ -718,10 +875,11 @@ int main()
         printSet(&follow_sets[i]);
         printf("\n");
     }
-    printf("hello\n");
-    makeParseTable(first_sets,follow_sets,rules);
-    printf("hi\n");
-    // printParseTable(&parseTable);
+    // ruleLL** pt = makeParseTable(first_sets,follow_sets,rules);
+
+    // printf("hi\n");
+    // pt[0][0];
+    // printParseTable(pt);
 
 
     // printf("Enter the buffer size: ");
