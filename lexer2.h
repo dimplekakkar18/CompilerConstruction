@@ -80,7 +80,8 @@ TK_GE,
 TK_NE,
 TK_PROGRAMEND,
 TK_ERROR,
-TK_EOF
+TK_EOF,
+EPSILON
 };
 
 struct keyword{
