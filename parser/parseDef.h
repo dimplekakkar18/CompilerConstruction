@@ -13,8 +13,8 @@
 typedef enum NONTERMINAL
 {
     __program__,
+    __otherFunctions__,
     __mainFunction__,
-    __otherFunctions__,   
     __stmts__,
     __function__,
     __input_par__,

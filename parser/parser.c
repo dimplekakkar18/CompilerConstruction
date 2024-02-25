@@ -746,7 +746,7 @@ int** makeParseTable2(token_set* first, token_set* follow, ruleLL* grammar) {
             if (node->type == TERMINAL) {
                 parseTable[nt.nonterminal][node->sym.terminal] = i; // Store the rule index instead of grammar[i]
             } else if (node->type == __EPSILON) {
-                long long int num = follow[node->sym.nonterminal].set;
+                long long int num = follow[nt.nonterminal].set;
                 int index = 0;
                 while (num) {
                     if (num & 1) {
