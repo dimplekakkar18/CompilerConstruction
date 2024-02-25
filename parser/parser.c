@@ -256,7 +256,7 @@ void computerFirst(token_set *firstSet, ruleLL* rules)
         isDone[i] = 0;
     }
     for(int i = 0; i < NUM_RULES; i++){
-        if(rules[i].head->next==NULL){               // RHS is EPSILON
+        if(rules[i].head->next->type==__EPSILON){               // RHS is EPSILON
             addToken(&firstSet[rules[i].head->sym.nonterminal], EPSILON);   // include EPSILON in first(LHS)
             setKthBit(&nullable, rules[i].head->sym.nonterminal);            // LHS is a nullable non-terminal
             isDone[i] = 1;
@@ -322,7 +322,7 @@ void computerFirst(token_set *firstSet, ruleLL* rules)
             LLNODE *node = rules[i].head;
             LLNODE* temp = node;
             node = node->next;
-            if(node==NULL) continue;
+            if(node->type==__EPSILON) continue;
             if(node->type==TERMINAL) continue;
             while(node!=NULL){
                 if(node->type==TERMINAL){
@@ -392,7 +392,7 @@ void computerFirst(token_set *firstSet, ruleLL* rules)
             LLNODE* temp1 = node;
             if(node->sym.nonterminal!=topo[i]) continue;
             node = node->next;                                   // node points to rhs
-            if(node==NULL){
+            if(node->type==__EPSILON){
                 continue;
             }
             else if(node->type==TERMINAL){
@@ -516,7 +516,7 @@ ruleLL* parseTable[NUM_NONTERMINALS][NUM_TERMINALS];
 
 
 
-void makeParseTable(token_set* first, token_set* follow)
+void makeParseTable(token_set* first, token_set* follow,ruleLL* grammar)
 {
     for(int i=0;i<NUM_NONTERMINALS;i++){
         for(int j=0;j<NUM_TERMINALS;j++){
@@ -612,7 +612,18 @@ void printParseTable(ruleLL*** parseTable)
     {
         for(int j=0;j<NUM_TERMINALS;j++)
         {
-            printLinkedList(parseTable[i][j]->head);
+           
+            printf("reached 1");
+            ruleLL* ptr=parseTable[i][j];
+
+            printf("reached 2");
+            if(ptr->head->type==TERMINAL){
+                printf("%d",((ptr->head)->sym).terminal);
+            }
+            else if(ptr->head->type==NON_TERMINAL){
+                printf("%d",((ptr->head)->sym).nonterminal);
+            }
+            // printf("%d",(ptr->head)->sym);
         }
     }
 }
@@ -696,6 +707,9 @@ int main()
         printSet(&follow_sets[i]);
         printf("\n");
     }
+    makeParseTable(first_sets,follow_sets,rules);
+    printf("hi\n");
+    // printParseTable(&parseTable);
 
 
     // printf("Enter the buffer size: ");
