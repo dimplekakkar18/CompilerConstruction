@@ -229,21 +229,53 @@ int setContains(token_set* sets, int term)
         return 0;
 }
 
-void propogateStackFollow(stack *st, token_set* follow, int * changed)
+void propogateStackFollow(stack *st, token_set* follow, token_set* first,int * changed, int terminal)//set terminal -1 if need to add follow, -2 if first. else terminal to add
 {
-    int temp = pop(st);
-    while (st->count > 0)
+    int temp;
+    if(terminal == -1)
     {
-        int temp2 = pop(st);
-        if((follow[temp2].set | follow[temp].set) != follow[temp2].set)
+        temp = pop(st);
+
+        while (st->count > 0)
         {
-            printf("DEBUGGER*************\n");
-            *changed = 1; // setting changed
-            //printf("flagged at propogate stack\n");
+            int temp2 = pop(st);
+            if((follow[temp2].set | follow[temp].set) != follow[temp2].set)
+            {
+                //printf("DEBUGGER*************\n");
+                *changed = 1; // setting changed
+            }
+            follow[temp2].set |= follow[temp].set;
         }
-        follow[temp2].set |= follow[temp].set;
-        temp = temp2;
     }
+    else if(terminal == -2)
+    {
+        temp = pop(st);
+
+        while (st->count > 0)
+        {
+            int temp2 = pop(st);
+            if((follow[temp2].set | first[temp].set) != follow[temp2].set)
+            {
+                //printf("DEBUGGER*************\n");
+                *changed = 1; // setting changed
+            }
+            follow[temp2].set |= first[temp].set;
+            printf(" %s ",nonterminals[temp2]);
+        }
+    }
+    else
+    {
+        while (st->count > 0)
+        {
+            int temp2 = pop(st);
+            if(addToSet(&follow[temp2],terminal))
+            {
+                //printf("DEBUGGER*************\n");
+                *changed = 1; // setting changed
+            }
+        }
+    }
+
 }
 void computeFirst(token_set *firstSet, ruleLL* rules)
 {
@@ -465,8 +497,9 @@ void generateFollow(ruleLL* grammar, token_set* follow, token_set* first)
                         follow[node->sym.nonterminal].set |= follow[grammar[i].head->sym.nonterminal].set;
                     }
                     
-                    push(st, node->sym.nonterminal);
-                    propogateStackFollow(st, follow,&changed);
+                    // push(st, node->sym.nonterminal);
+                    // push(st, grammar[i].head->sym.nonterminal);
+                    // propogateStackFollow(st, follow, NULL,&changed,-1);
                      //printf("  flagged at next NULL %d\n  ", i);      
                     break;
                 }
@@ -477,10 +510,9 @@ void generateFollow(ruleLL* grammar, token_set* follow, token_set* first)
                     if (addToSet(&follow[node->sym.nonterminal], node->next->sym.terminal))
                     {
                         changed = 1; // setting changed
-                        //printf("  flagged at next is term %d\n  ", i);
                     }
-                    push(st, node->sym.nonterminal);
-                    propogateStackFollow(st, follow,&changed);
+                    // push(st, node->sym.nonterminal);
+                    // propogateStackFollow(st, follow,NULL,&changed,node->next->sym.terminal);
                     continue;
                 }
                 // handled next being terminal
@@ -490,22 +522,19 @@ void generateFollow(ruleLL* grammar, token_set* follow, token_set* first)
                     changed = 1; // setting changed
                     follow[node->sym.nonterminal].set = temp;
                 }
-                push(st, node->sym.nonterminal);
-
-                if (setContains(&first[node->next->sym.nonterminal], EPSILON))
+                // push(st, node->sym.nonterminal);
+                // printf("%s   ",terminals[node->sym.nonterminal]);
+                LLNODE * tempnode;
+                while(setContains(&first[node->next->sym.nonterminal], EPSILON))
                 {
-                    printf("HELLL %d\n",i);
                     //push(st, node->sym.nonterminal);
-                    continue;
+                    printf("HELL %d\n",i);
+                    
                 }
-                // now just need to add follow of next into current
-                // long long int temp = follow[node->sym.nonterminal].set | first[node->next->sym.nonterminal].set;
-                // if(follow[node->sym.nonterminal].set != temp){
-                //     changed = 1; // setting changed
-                //     follow[node->sym.nonterminal].set = temp;
-                // }
-                //push(st, node->sym.nonterminal);
-                propogateStackFollow(st, follow, &changed);
+                printf("LEHS %d\n",i);
+
+                // push(st,node->next->sym.nonterminal);
+                // propogateStackFollow(st, follow,first, &changed,-2);
             }
         }
     }

@@ -10,6 +10,7 @@ stack * getStack()
 void push(stack *st,int val)
 {
     stackNODE sd = malloc(sizeof(stackNODE));
+    sd->val = val;
     sd->next = st->head;
     st->head = sd;
     st->count++;
