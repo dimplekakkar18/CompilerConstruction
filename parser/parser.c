@@ -798,6 +798,19 @@ int** makeParseTable2(token_set* first, token_set* follow, ruleLL* grammar) {
         }
     }
 
+    for(int i=0;i<NUM_NONTERMINALS;i++)
+    {
+        long long int nont = follow[i].set;
+        for(int j=0;j<NUM_TERMINALS;j++)
+        {
+            if(parseTable[i][j]==-1){
+                if(nont & 1){
+                    parseTable[i][j]=-2;
+                }
+            }
+            nont>>=1;
+        }
+    }
     return parseTable;
 }
 
