@@ -6,4 +6,5 @@ All:
 		gcc -c -o linked_listQ.o linked_listQ.c
 		gcc -c -o queue_ll.o queue_ll.c
 		gcc -c -o parser.o parser.c
-		gcc -o exe stack.o set.o linkedList.o hash_table.o linked_listQ.o queue_ll.o parser.o
+		gcc -c ../lexer.c ../symboltable.c
+		gcc -o exe stack.o set.o linkedList.o hash_table.o linked_listQ.o queue_ll.o parser.o lexer.o symboltable.o

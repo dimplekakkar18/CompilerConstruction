@@ -9,6 +9,7 @@
 #define NUM_RULES 90
 #define NUM_TERMINALS 56
 #define END_CODE 58 // num_terminals +2
+#define STARTSYMBOL __program__
 
 typedef enum NONTERMINAL
 {
@@ -77,6 +78,7 @@ typedef enum SYMBOLTYPE{
     NON_TERMINAL, 
     __EPSILON,
     NONE,
+    __ENDCODE,
 }SYMBOLTYPE;
 
 
@@ -84,10 +86,11 @@ typedef struct hash_ele
 {
     enum SYMBOLTYPE type;
     SYMBOL sym;
-}hash_ele;
+}hash_ele, stackEle, tree_ele;
 
 
-
+extern char* nonterminals[NUM_NONTERMINALS]; 
+extern char* terminals[NUM_TERMINALS]; 
 extern hash_ele hash_table[HASH_TABLE_SIZE]; //FIX
 int calculateHash(char *word);
 int addnonTerm();

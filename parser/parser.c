@@ -7,7 +7,7 @@
 #include "stack.h"
 #include "queue.h"
 #include "set.h"
-
+#include "../lexer.h"
 // #define NUM_NONTERMINALS 50
 // #define NUM_TERMINALS 56
 // #define PRIME 853
@@ -229,22 +229,22 @@ int setContains(token_set* sets, int term)
         return 0;
 }
 
-void propogateStackFollow(stack *st, token_set* follow, int * changed)
-{
-    int temp = pop(st);
-    while (st->count > 0)
-    {
-        int temp2 = pop(st);
-        if((follow[temp2].set | follow[temp].set) != follow[temp2].set)
-        {
-            printf("DEBUGGER*************\n");
-            *changed = 1; // setting changed
-            //printf("flagged at propogate stack\n");
-        }
-        follow[temp2].set |= follow[temp].set;
-        temp = temp2;
-    }
-}
+// void propogateStackFollow(stack *st, token_set* follow, int * changed)
+// {
+//     int temp = pop(st);
+//     while (st->count > 0)
+//     {
+//         int temp2 = pop(st);
+//         if((follow[temp2].set | follow[temp].set) != follow[temp2].set)
+//         {
+//             printf("DEBUGGER*************\n");
+//             *changed = 1; // setting changed
+//             //printf("flagged at propogate stack\n");
+//         }
+//         follow[temp2].set |= follow[temp].set;
+//         temp = temp2;
+//     }
+// }
 void computeFirst(token_set *firstSet, ruleLL* rules)
 {
     for (int i = 0; i < NUM_NONTERMINALS; i++)      // all the firstsets are init to 0 (empty set)
@@ -422,100 +422,6 @@ void computeFirst(token_set *firstSet, ruleLL* rules)
 }
 
 void printSet(token_set *set);//remove later
-// void generateFollow(ruleLL* grammar, token_set* follow, token_set* first)
-// {
-//     for (int i = 0; i < NUM_NONTERMINALS; i++)      // all the firstsets are init to 0 (empty set)
-//     {
-//         follow[i].set = 0;
-//     }
-//     addToSet(&follow[0],END_CODE);
-//     int changed = 1;
-//     // int changedNT[NUM_NONTERMINALS] = {0};
-//     // LLNODE *grammar[NUM_RULES];
-//     stack *st = getStack();
-//     while (changed)
-//     {
-//         changed = 0;
-//         for (int i = 0; i < NUM_RULES; i++)
-//         {
-//             LLNODE *node = grammar[i].head;
-//             while (node->next!=NULL)
-//             {
-//                 node = node->next;
-//                 if (node->type == TERMINAL)
-//                 {
-//                     continue;
-//                 }
-
-//                 if (node->type == __EPSILON){
-//                     break;
-//                 }
-                
-//                 // if(i==1)
-//                 // {
-//                 //     printf("%s",nonterminals[node->sym.nonterminal]);
-//                 // }
-
-//                 // only option for NT left
-//                 if (node->next == NULL)
-//                 {
-//                     if ((follow[node->sym.nonterminal].set | follow[grammar[i].head->sym.nonterminal].set)!=follow[node->sym.nonterminal].set)
-//                     {
-//                         changed = 1;   
-//                         follow[node->sym.nonterminal].set |= follow[grammar[i].head->sym.nonterminal].set;
-//                     }
-                    
-//                     push(st, node->sym.nonterminal);
-//                     propogateStackFollow(st, follow,&changed);
-//                      //printf("  flagged at next NULL %d\n  ", i);      
-//                     break;
-//                 }
-//                 // node next is not null
-
-//                 if (node->next->type == TERMINAL)
-//                 {
-//                     if (addToSet(&follow[node->sym.nonterminal], node->next->sym.terminal))
-//                     {
-//                         changed = 1; // setting changed
-//                         //printf("  flagged at next is term %d\n  ", i);
-//                     }
-//                     push(st, node->sym.nonterminal);
-//                     propogateStackFollow(st, follow,&changed);
-//                     continue;
-//                 }
-//                 // handled next being terminal
-//                 long long int temp = follow[node->sym.nonterminal].set | first[node->next->sym.nonterminal].set;
-//                 if(follow[node->sym.nonterminal].set != temp){
-
-//                     changed = 1; // setting changed
-//                     follow[node->sym.nonterminal].set = temp;
-//                 }
-//                 push(st, node->sym.nonterminal);
-
-//                 if (setContains(&first[node->next->sym.nonterminal], EPSILON))
-//                 {
-//                     printf("HELLL %d\n",i);
-//                     //push(st, node->sym.nonterminal);
-//                     continue;
-//                 }
-//                 // now just need to add follow of next into current
-//                 // long long int temp = follow[node->sym.nonterminal].set | first[node->next->sym.nonterminal].set;
-//                 // if(follow[node->sym.nonterminal].set != temp){
-//                 //     changed = 1; // setting changed
-//                 //     follow[node->sym.nonterminal].set = temp;
-//                 // }
-//                 //push(st, node->sym.nonterminal);
-//                 propogateStackFollow(st, follow, &changed);
-//             }
-//         }
-//     }
-
-//     long long int epsv = (long long)1 <<EPSILON; //remove epsilon
-//     for (int i = 0; i < NUM_RULES; i++)
-//     {
-//         follow[i].set &= ~epsv;
-//     }
-// }
 
 void generateFollow(ruleLL* grammar, token_set* follow, token_set* first)
 {
@@ -800,6 +706,44 @@ int** makeParseTable2(token_set* first, token_set* follow, ruleLL* grammar) {
 
     return parseTable;
 }
+
+void addToStackAndTree(Tree * parseTree, stack * stk,int sym, SYMBOLTYPE type)
+{
+    TreeNode * tnode = createTreeNode(); 
+    tnode->val.sym.nonterminal = sym; 
+    tnode->val.type = type;  
+    addTreeNode(parseTree, NULL, tnode); 
+    
+    stackNODE * stkele = createStackEle(); 
+    stkele = createStackEle(); 
+    stkele->val.sym.nonterminal = sym;
+    stkele->val.type = type; 
+    stkele->treeref = tnode; 
+    push(stk, stkele); 
+
+}
+void makeParseTree(int ** parse_table, FILE * fp){
+    stack * stk = getStack(); 
+    Tree * parseTree = createTree(); 
+
+    stackNODE * stkele = createStackEle(); 
+    stkele->val.sym.terminal = END_CODE;
+    stkele->val.type = __ENDCODE;  
+    push(stk, stkele); 
+
+    addToStackAndTree(parseTree, stk, STARTSYMBOL, NON_TERMINAL);
+    TOKEN tok = getToken(fp); 
+    while(tok.tokenId!=TK_EOF)
+    {
+        stackEle TOS = top(stk); 
+        if(TOS.type == NON_TERMINAL)
+        {
+            //parse_table[][] = 
+        }
+    }
+   
+}
+
 
 void printParseTable2(int** parseTable)
 {

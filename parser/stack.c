@@ -1,5 +1,6 @@
 #include "stack.h"
 #include <stdlib.h>
+#include <stdio.h>
 stack * getStack()
 {
     stack *st = malloc(sizeof(stack));
@@ -7,21 +8,19 @@ stack * getStack()
     return st;
 }
 
-void push(stack *st,int val)
+void push(stack *st,stackNODE * sd)
 {
-    stackNODE sd = malloc(sizeof(stackNODE));
     sd->next = st->head;
     st->head = sd;
     st->count++;
 }
 
-int pop(stack *st)
+stackEle pop(stack *st)
 {
     if(st->count == 0)
-        return -1;
-
-    int val = st->head->val;
-    stackNODE temp = st->head;
+        printf("stack is empty, yet accessed\n");
+    stackEle val = st->head->val;
+    stackNODE * temp = st->head;
     st->head = st->head->next;
     st->count--;
     free(temp);
@@ -30,13 +29,23 @@ int pop(stack *st)
 
 void deleteStack(stack *st)
 {
-    stackNODE node = st->head;
+    stackNODE * node = st->head;
     int i = st->count;
     free(st);
     for(;i>0;i--)
     {
-        stackNODE temp = node->next;
+        stackNODE * temp = node->next;
         free(node);
         node = temp;
     }
+}
+
+stackEle top(stack* st){
+    return st->head->val;
+}
+
+stackNODE * createStackEle(){
+    stackNODE * node = (stackNODE *) malloc(sizeof(stackNODE));
+    node->next = NULL; 
+    node->treeref = NULL; 
 }

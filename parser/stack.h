@@ -1,23 +1,31 @@
 #ifndef STACK_H
 #define STACK_H
+#include "parseDef.h"
+
+#include "treeADT.h"
 
 typedef struct stackNODE{
     struct stackNODE* next;
-    int val;
-}*stackNODE;
+    stackEle val;
+    TreeNode * treeref; 
+}stackNODE;
 
 typedef struct{
     int count;
-    stackNODE head;
+    stackNODE * head;
 }stack;
 
 
-stack * getStack();
+stack* getStack();
 
-void push(stack *st,int val);
+void push(stack *st, stackNODE * sd);
 
-int pop(stack *st);
+stackEle pop(stack *st);
 
 void deleteStack(stack * st);
+
+stackEle top(stack* st);
+
+stackNODE * createStackEle(); 
 
 #endif
