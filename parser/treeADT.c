@@ -14,6 +14,7 @@ TreeNode * createTreeNode(){
     node->children = NULL; 
     node->numChild = 0; 
     node->val.type = NONE; 
+    return node; 
 }
 
 void addTreeNode(Tree * parseTree, TreeNode * parent, TreeNode * child)

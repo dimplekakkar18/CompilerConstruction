@@ -24,7 +24,7 @@ stackEle pop(stack *st);
 
 void deleteStack(stack * st);
 
-stackEle top(stack* st);
+stackNODE * top(stack* st);
 
 stackNODE * createStackEle(); 
 

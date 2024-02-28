@@ -1,7 +1,8 @@
 #ifndef PARSER_DEF_H
 #define PARSER_DEF_H
-
 #include "../lexer2.h"
+#include "set.h"
+#include <stdio.h>
 #define NUMRULES 90
 #define HASH_TABLE_SIZE 487
 #define PRIME 31
@@ -92,10 +93,5 @@ typedef struct hash_ele
 extern char* nonterminals[NUM_NONTERMINALS]; 
 extern char* terminals[NUM_TERMINALS]; 
 extern hash_ele hash_table[HASH_TABLE_SIZE]; //FIX
-int calculateHash(char *word);
-int addnonTerm();
-int addTerm();
-void create_hashTable();
-int getIndex(char *tok);
 
 #endif

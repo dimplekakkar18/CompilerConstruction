@@ -40,12 +40,13 @@ void deleteStack(stack *st)
     }
 }
 
-stackEle top(stack* st){
-    return st->head->val;
+stackNODE * top(stack* st){
+    return st->head;
 }
 
 stackNODE * createStackEle(){
     stackNODE * node = (stackNODE *) malloc(sizeof(stackNODE));
     node->next = NULL; 
     node->treeref = NULL; 
+    return node; 
 }
