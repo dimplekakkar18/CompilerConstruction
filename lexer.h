@@ -10,9 +10,9 @@
 // int calculateHash(char *word);
 // int getKeyWordID(char *word);
 // void insertKeyWord();
-int calculateHash(char *identifier);
+int calcHash(char *identifier);
 void createSymbolTable();
-identifierNode *createNewNode(char *identifierName, int tokenID);
+identifierNode *createSymbolNode(char *identifierName, int tokenID);
 int insertToSymbolTable(char * identifierName, int tokenID);
 int searchSymbolTable(char *identifierName);
 int checkTokenID(char *identifierName, int tokenID);
@@ -26,6 +26,8 @@ char getCharFromBuffers(FILE* fp);
 char* getLexeme();
 void refreshPtr();
 TOKEN getToken(FILE *fp);
+int len(char * string); 
+void printTokenInfo(TOKEN tk); 
 
 
 #endif 

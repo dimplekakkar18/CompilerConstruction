@@ -1220,43 +1220,43 @@ TOKEN getToken(FILE *fp)
     return token;
 }
 
-int main()
-{
-    removeComments("./t1.txt","clean.txt");
-    initializeBuffers();
-    createSymbolTable();
-    FILE *fp = fopen("./clean.txt", "r");
-    if (fp == NULL)
-    {
-        printf("Error opening file\n");
-        return -1;
-    }
-    int flag = 1;
-    while (flag)
-    {
-        TOKEN token = getToken(fp);
-        if (*token.lexeme == EOF){
-            // printf("*****\n");
-            break;
-        }
-        // if (token.tokenId == NUM){
-        //     printf("%d\n", token.val.intValue);
-        // } else if (token.tokenId == RNUM){
-        //     printf("%f\n", token.val.floatValue);
-        // }
-        if(token.tokenId==TK_ID && len(token.lexeme)>20) printf("Line No %d: Error :Variable Identifier is longer than the prescribed length of 20 characters.\n",lineNo);
-        else if (token.tokenId==TK_FIELDID && len(token.lexeme)>30) printf("Line No %d: Error :Field Identifier is longer than the prescribed length of 30 characters.\n",lineNo);
-        else{
-            checkTokenID(token.lexeme, token.tokenId);
-            // printf("%d\n", checkTokenID(token.lexeme, token.tokenId));
-            printTokenInfo(token); 
-        }
-        // printf("DO you want to continue? (1/0): ");
-        // scanf("%d", &flag);
-    }
-    fclose(fp);
-    return 0;
-}
+// int main()
+// {
+//     removeComments("./t1.txt","clean.txt");
+//     initializeBuffers();
+//     createSymbolTable();
+//     FILE *fp = fopen("./clean.txt", "r");
+//     if (fp == NULL)
+//     {
+//         printf("Error opening file\n");
+//         return -1;
+//     }
+//     int flag = 1;
+//     while (flag)
+//     {
+//         TOKEN token = getToken(fp);
+//         if (*token.lexeme == EOF){
+//             // printf("*****\n");
+//             break;
+//         }
+//         // if (token.tokenId == NUM){
+//         //     printf("%d\n", token.val.intValue);
+//         // } else if (token.tokenId == RNUM){
+//         //     printf("%f\n", token.val.floatValue);
+//         // }
+//         if(token.tokenId==TK_ID && len(token.lexeme)>20) printf("Line No %d: Error :Variable Identifier is longer than the prescribed length of 20 characters.\n",lineNo);
+//         else if (token.tokenId==TK_FIELDID && len(token.lexeme)>30) printf("Line No %d: Error :Field Identifier is longer than the prescribed length of 30 characters.\n",lineNo);
+//         else{
+//             checkTokenID(token.lexeme, token.tokenId);
+//             // printf("%d\n", checkTokenID(token.lexeme, token.tokenId));
+//             printTokenInfo(token); 
+//         }
+//         // printf("DO you want to continue? (1/0): ");
+//         // scanf("%d", &flag);
+//     }
+//     fclose(fp);
+//     return 0;
+// }
 
 
 

@@ -10,7 +10,7 @@
 
 symbolTableLL *symbolTable[HASH_TABLE_SIZE];
 
-int calculateHash(char *identifier)
+int calcHash(char *identifier)
 {
     int hash_value = 0;
     for (int i = 0; i < strlen(identifier); i++)
@@ -66,13 +66,13 @@ void createSymbolTable()
 
     for (int i = 0; i < NUM_KEYWORDS; i++)
     {
-        identifierNode* node = createNewNode(arr[i].keywordname,arr[i].tokenID);
-        int index = calculateHash(node->identifierName);
+        identifierNode* node = createSymbolNode(arr[i].keywordname,arr[i].tokenID);
+        int index = calcHash(node->identifierName);
         insertToSymbolTable(node->identifierName,node->tokenID);
     }
 }
 
-identifierNode *createNewNode(char *identifierName, int tokenID)
+identifierNode *createSymbolNode(char *identifierName, int tokenID)
 {
     identifierNode *newN = (identifierNode *)malloc(sizeof(identifierNode));
     newN->identifierName = identifierName;
@@ -82,8 +82,8 @@ identifierNode *createNewNode(char *identifierName, int tokenID)
 }
 
 int insertToSymbolTable(char * identifierName, int tokenID){
-    int index = calculateHash(identifierName);
-    identifierNode * insertNode = createNewNode(identifierName, tokenID); 
+    int index = calcHash(identifierName);
+    identifierNode * insertNode = createSymbolNode(identifierName, tokenID); 
     identifierNode * temp = symbolTable[index]->head; 
 
     if(symbolTable[index]->size == 0)
@@ -106,7 +106,7 @@ int insertToSymbolTable(char * identifierName, int tokenID){
 }
 int searchSymbolTable(char *identifierName)
 {
-    int index = calculateHash(identifierName);
+    int index = calcHash(identifierName);
     identifierNode *curr = symbolTable[index]->head;
     while (curr != NULL)
     {
