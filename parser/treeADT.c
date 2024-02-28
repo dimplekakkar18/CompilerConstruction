@@ -10,6 +10,7 @@ Tree  * createTree(){
 
 TreeNode * createTreeNode(){
     TreeNode * node = (TreeNode * ) malloc(sizeof(TreeNode)); 
+    node->parent = NULL; 
     node->children = NULL; 
     node->numChild = 0; 
     node->val.type = NONE; 
@@ -29,6 +30,8 @@ void addTreeNode(Tree * parseTree, TreeNode * parent, TreeNode * child)
         parent->numChild++; 
         parent->children = realloc(parent->children, sizeof(TreeNode *) * parent->numChild);
         parent->children[parent->numChild - 1] = child; 
+        //make sure child isn't null 
+        child->parent = parent; 
     }
 }
 
@@ -48,15 +51,26 @@ void printTreeNode(TreeNode * node)
     }
 
     printTreeNode(node->children[0]); 
+    if(node->parent!=NULL)
+    {
+        if(node->val.type == NON_TERMINAL)
+        printf("Current Node: %s, Parent Node: %s, Line Number %d \t",nonterminals[node->val.sym.nonterminal],nonterminals[node->parent->val.sym.nonterminal],lineNo);
+        else if(node->val.type == TERMINAL)
+        printf("Current Node: %s, Parent Node: %s, Line Number %d \t",terminals[node->val.sym.terminal],nonterminals[node->parent->val.sym.nonterminal],lineNo);
+    }
+    else 
+    {
+        if(node->val.type == NON_TERMINAL)
+        printf("Current Node: %s, Parent Node: ROOT, Line Number %d \t",nonterminals[node->val.sym.nonterminal],lineNo);
+        else if(node->val.type == TERMINAL)
+        printf("Current Node: %s, Parent Node: ROOT, Line Number %d \t",terminals[node->val.sym.terminal],lineNo);
+    }
 
-    if(node->val.type == NON_TERMINAL)
-        printf("%s \t",nonterminals[node->val.sym.nonterminal]);
-    else if(node->val.type == TERMINAL)
-        printf("%s \t",terminals[node->val.sym.terminal]); 
 
     for(int i=1; i<node->numChild; i++)
     {
         printTreeNode(node->children[i]); 
+        
     }
     return; 
 

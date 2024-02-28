@@ -5,6 +5,7 @@
 
 typedef struct TreeNode{
     struct TreeNode ** children; 
+    struct TreeNode * parent; 
     int numChild;  
     tree_ele val; 
 } TreeNode; 
@@ -18,5 +19,5 @@ TreeNode * createTreeNode();
 void addTreeNode(Tree * parseTree, TreeNode * parent, TreeNode * child);
 void printTree(Tree * parseTree);
 void destroyTree(Tree * parseTree);
-
+extern int lineNo; 
 #endif

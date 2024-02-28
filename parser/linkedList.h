@@ -5,6 +5,7 @@
 
 typedef struct LLNode{
     struct LLNode * next; 
+    struct LLNode * prev; 
     SYMBOL sym; //This is the union which contains the value of terminal or nonterminal 
     enum SYMBOLTYPE type; //This is flag telling whether it is terminal/nonterminal or epsilon 
 }LLNODE; 

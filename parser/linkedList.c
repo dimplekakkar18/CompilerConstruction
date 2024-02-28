@@ -14,6 +14,7 @@ LLNODE * createNewNode(SYMBOL symbol, SYMBOLTYPE type)
 {
     LLNODE * node = (LLNODE *) malloc(sizeof(LLNODE));
     node->next = NULL; 
+    node->prev = NULL; 
     node->sym = symbol; 
     node->type = type;  
     return node; 
@@ -34,6 +35,8 @@ void addNewNode(LLNODE * node, ruleLL* rule)
             temp = temp->next; 
         }
         temp->next = node; 
+        node->prev = temp; 
+        rule->tail = node; 
     }
 }
 

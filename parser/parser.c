@@ -703,16 +703,29 @@ int** makeParseTable2(token_set* first, token_set* follow, ruleLL* grammar) {
             }
         }
     }
+        for(int i=0;i<NUM_NONTERMINALS;i++)
+        {
+            long long int nont = follow[i].set;
+            for(int j=0;j<NUM_TERMINALS;j++)
+            {
+                if(parseTable[i][j]==-1){
+                    if(nont & 1){
+                        parseTable[i][j]=-2;
+                    }
+                }
+                nont>>=1;
+            }
+        }
 
     return parseTable;
 }
 
-void addToStackAndTree(Tree * parseTree, stack * stk,int sym, SYMBOLTYPE type)
+void addToStackAndTree(Tree * parseTree, stack * stk,int sym, SYMBOLTYPE type, TreeNode * parent)
 {
     TreeNode * tnode = createTreeNode(); 
     tnode->val.sym.nonterminal = sym; 
     tnode->val.type = type;  
-    addTreeNode(parseTree, NULL, tnode); 
+    addTreeNode(parseTree, parent, tnode); 
     
     stackNODE * stkele = createStackEle(); 
     stkele = createStackEle(); 
@@ -731,14 +744,28 @@ void makeParseTree(int ** parse_table, FILE * fp){
     stkele->val.type = __ENDCODE;  
     push(stk, stkele); 
 
-    addToStackAndTree(parseTree, stk, STARTSYMBOL, NON_TERMINAL);
+    addToStackAndTree(parseTree, stk, STARTSYMBOL, NON_TERMINAL, NULL);
     TOKEN tok = getToken(fp); 
     while(tok.tokenId!=TK_EOF)
     {
         stackEle TOS = top(stk); 
         if(TOS.type == NON_TERMINAL)
         {
-            //parse_table[][] = 
+            int temp = parse_table[TOS.sym.nonterminal][tok.tokenId]; 
+            if(temp == -1)
+            {
+                
+            }
+            else if(temp == -2)
+            {
+                
+            }
+            else 
+            {
+                LLNODE * tail = 
+            }
+
+            
         }
     }
    
