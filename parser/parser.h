@@ -17,7 +17,7 @@ int addnonTerm();
 int addTerm();
 void create_hashTable();
 int getIndex(char *tok);
-Tree * makeParseTree(int ** parse_table, FILE * fp); 
+Tree * makeParseTree(ruleLL *grammar, int ** parse_table, FILE * fp);
 int** makeParseTable2(token_set* first, token_set* follow, ruleLL* grammar); 
 ruleLL * createGrammar(char * filename); 
 void computeFirst(token_set *firstSet, ruleLL* rules);

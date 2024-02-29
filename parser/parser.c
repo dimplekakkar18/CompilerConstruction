@@ -747,7 +747,7 @@ void addToStackAndTree(Tree * parseTree, stack * stk,int sym, SYMBOLTYPE type, T
     push(stk, stkele); 
 
 }
-Tree * makeParseTree(int ** parse_table, FILE * fp){
+Tree * makeParseTree(ruleLL *grammar, int ** parse_table, FILE * fp){
     stack * stk = getStack(); 
     Tree * parseTree = createTree(); 
 
@@ -758,13 +758,17 @@ Tree * makeParseTree(int ** parse_table, FILE * fp){
 
     addToStackAndTree(parseTree, stk, STARTSYMBOL, NON_TERMINAL, NULL);
     TOKEN tok = getToken(fp); 
-    while(tok.tokenId!=TK_EOF)
+    while(*tok.lexeme != EOF )
+    //for(int i = 0;i<400;i++)
     {
-        printf("**************************** DEBUG 5 \n"); 
         stackNODE * TOS = top(stk); 
+        if(TOS->val.type==NON_TERMINAL)printf("Top of stck %s Input at %s \n",nonterminals[TOS->val.sym.nonterminal],terminals[tok.tokenId]);
+        else if(TOS->val.type==TERMINAL)printf("Top of stack %s Input at %s \n",terminals[TOS->val.sym.terminal],terminals[tok.tokenId]);
         if(TOS->val.type == NON_TERMINAL)
         {
+
             int index = parse_table[TOS->val.sym.nonterminal][tok.tokenId]; 
+            //printf("%d\n",index);
             if(index == -1)
             {
                 
@@ -777,7 +781,7 @@ Tree * makeParseTree(int ** parse_table, FILE * fp){
             {
                 LLNODE * temp = grammar[index].tail; 
                 pop(stk); 
-                while(temp!=NULL)
+                while(temp->prev!=NULL)
                 {
                     if(temp->type == NON_TERMINAL)
                         addToStackAndTree(parseTree, stk, temp->sym.nonterminal, temp->type, TOS->treeref); 
@@ -794,6 +798,7 @@ Tree * makeParseTree(int ** parse_table, FILE * fp){
             {
                 pop(stk);
                 tok = getToken(fp); 
+                printf("lexeme is %s line no is %d",tok.lexeme,tok.lineNo);
             }
             else
             {

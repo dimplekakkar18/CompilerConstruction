@@ -61,7 +61,11 @@ int main(int argc, char * argv[]){
                     }      
                 break;  
             case 3:
+
+                createSymbolTable();
+                printf("xxx");
                 create_hashTable();
+                fp = fopen("clean.txt", "r"); 
                 ruleLL *rules = createGrammar("grammar.csv");
                 // print_rules(rules);
                 token_set *first_sets = malloc(sizeof(token_set) * NUM_NONTERMINALS);
@@ -84,7 +88,7 @@ int main(int argc, char * argv[]){
                 // }
                 int** pt = makeParseTable2(first_sets,follow_sets,rules);     
                 printf("**************************** DEBUG 3 \n");            
-                Tree * parseTree = makeParseTree(pt, fp); 
+                Tree * parseTree = makeParseTree(rules,pt,fp); 
                 printf("**************************** DEBUG 4 \n"); 
                 fp = fopen(argv[2], "w"); 
                 //bool fl = true; 
