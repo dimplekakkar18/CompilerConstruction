@@ -119,7 +119,8 @@ char *terminals[NUM_TERMINALS] = {
     "TK_AND",
     "TK_OR",
     "TK_DEFINETYPE",
-    "TK_AS"};
+    "TK_AS",
+    "TK_ERROR"};
 
 Element itoe (int i)
 {
@@ -739,7 +740,7 @@ void addToStackAndTree(Tree * parseTree, stack * stk,int sym, SYMBOLTYPE type, T
     else if(type==TERMINAL)
         tnode->val.sym.terminal = sym; 
     tnode->val.type = type;  
-    //addTreeNode(parseTree, parent, tnode); 
+    addTreeNode(parseTree, parent, tnode); 
     
     
     stackNODE * stkele = createStackEle(); 
@@ -767,9 +768,13 @@ Tree * makeParseTree(ruleLL *grammar, int ** parse_table, FILE * fp, FILE * erro
     while(*(tok.lexeme) != EOF )
     //for(int i = 0;i<400;i++)
     {
+        if(tok.tokenId==TK_ERROR){
+            tok = getToken(fp);
+            continue;
+        }
         stackEle TOS = top(stk)->val;
         TreeNode *treeref = top(stk)->treeref;
-        printf("%d\n", tok.tokenId);
+        printf("%s\n", terminals[tok.tokenId]);
         if(TOS.type==NON_TERMINAL)printf("Top of stck %s  Input at %s \n",nonterminals[TOS.sym.nonterminal],terminals[tok.tokenId]);
         else if(TOS.type==TERMINAL)printf("Top of stack %s  Input at %s \n",terminals[TOS.sym.terminal],terminals[tok.tokenId]);
         //if(parseTree->root->val.type==NON_TERMINAL)printf("Tree root is %s\n", nonterminals[parseTree->root->val.sym.nonterminal]);

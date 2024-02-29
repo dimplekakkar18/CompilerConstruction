@@ -1,0 +1,13 @@
+Line No 8: Error :Variable Identifier is longer than the prescribed length of 20 characters.
+Line no: 10 : Error: Unknown pattern <5000.7>
+Line no: 13 : Error: Unknown pattern <&&>
+Line No 28 : Error: Unknown Symbol <$>
+Line no: 29 : Error: Unknown pattern <<-->
+Line 43 Error: The token TK_SQL for lexeme [ does not match with the expected token TK_LIST 
+Line 47 Error: The token TK_SEM for lexeme ; does not match with the expected token TK_CL 
+Line 52 Error: The token TK_ELSE for lexeme else does not match with the expected token TK_SEM 
+Line 56 Error: Invalid Token TK_END encountered with value end stack top <otherStmts> 
+Line 60 Error: The token TK_MAIN for lexeme _main does not match with the expected token TK_END 
+Line 61 Error: The token TK_ID for lexeme b5 does not match with the expected token TK_COLON 
+Line 65 Error: Invalid Token TK_NUM encountered with value 1 stack top <moreRecID> 
+Line 65 Error: The token TK_SEM for lexeme ; does not match with the expected token TK_ASSIGNOP 

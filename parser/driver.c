@@ -83,8 +83,11 @@ int main(int argc, char * argv[]){
                     
                 break;  
             case 3:
+            
                 createSymbolTable();
+                printf("DEBUG");
                 create_hashTable();
+                printf("DEBUG2");
                 
                 fp = fopen("clean.txt", "r"); 
                 if(fp == NULL)
