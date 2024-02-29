@@ -324,7 +324,7 @@ void printTokenInfo(TOKEN tk, FILE * errorfile){
     print_token(tk.tokenId);
 }
 
-TOKEN getToken(FILE *fp)
+TOKEN getToken(FILE *fp, FILE * errorfile)
 {
     // token to be returned
     TOKEN token;
@@ -770,6 +770,10 @@ TOKEN getToken(FILE *fp)
                 token.lineNo = lineNo;
                 refreshPtr();
                 state=0;
+                if (len(token.lexeme)>20){
+                    fprintf(errorfile, "Line No %d: Error :Variable Identifier is longer than the prescribed length of 20 characters.\n",lineNo);
+                    token.tokenId = TK_ERROR;
+                }
                 return token;
                 break;
             }
@@ -788,6 +792,10 @@ TOKEN getToken(FILE *fp)
                 token.lineNo = lineNo;
                 refreshPtr();
                 state=0;
+                if (len(token.lexeme)>20){
+                    fprintf(errorfile, "Line No %d: Error :Variable Identifier is longer than the prescribed length of 20 characters.\n",lineNo);
+                    token.tokenId = TK_ERROR;
+                }
                 return token;
                 break;   
             }

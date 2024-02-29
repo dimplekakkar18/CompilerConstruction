@@ -25,7 +25,7 @@ void loadBuffer(char* buffer, FILE* fp);
 char getCharFromBuffers(FILE* fp);
 char* getLexeme();
 void refreshPtr();
-TOKEN getToken(FILE *fp);
+TOKEN getToken(FILE *fp, FILE* errorfile);
 int len(char * string); 
 void printTokenInfo(TOKEN tk, FILE * fp); 
 

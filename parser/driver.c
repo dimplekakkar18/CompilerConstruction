@@ -44,7 +44,6 @@ int main(int argc, char * argv[]){
                 // fclose(fp);
                 break; 
             case 2:
-                
                 fclose(fp);
                 fp = fopen("clean.txt", "r"); 
                 if(fp == NULL)
@@ -56,7 +55,7 @@ int main(int argc, char * argv[]){
                 //for(int i = 0;i<20;i++)
                     {
                         createSymbolTable();
-                        TOKEN token = getToken(fp);
+                        TOKEN token = getToken(fp, errorfile);
                         if (*token.lexeme == EOF){
                             // printf("*****\n");
                             break;
@@ -83,7 +82,7 @@ int main(int argc, char * argv[]){
                     
                 break;  
             case 3:
-            
+                lineNo = 1;
                 createSymbolTable();
                 printf("DEBUG");
                 create_hashTable();
