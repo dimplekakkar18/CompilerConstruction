@@ -35,6 +35,7 @@ void addTreeNode(Tree * parseTree, TreeNode * parent, TreeNode * child)
         parent->children[parent->numChild - 1] = child; 
         //make sure child isn't null 
         child->parent = parent; 
+        //printf("Parent is %s ",nonterminals[parent->val.sym.nonterminal]);
     }
 }
 
@@ -58,16 +59,16 @@ void printTreeNode(TreeNode * node)
     if(node->parent!=NULL)
     {
         if(node->val.type == NON_TERMINAL)
-        printf("Current Node: %s, Parent Node: %s, Line Number %d \t",nonterminals[node->val.sym.nonterminal],nonterminals[node->parent->val.sym.nonterminal],lineNo);
+        printf("Current Node: %s, Parent Node: %s, Line Number %d \n",nonterminals[node->val.sym.nonterminal],nonterminals[node->parent->val.sym.nonterminal],lineNo);
         else if(node->val.type == TERMINAL)
-        printf("Current Node: %s, Parent Node: %s, Line Number %d \t",terminals[node->val.sym.terminal],nonterminals[node->parent->val.sym.nonterminal],lineNo);
+        printf("Current Node: %s, Parent Node: %s, Line Number %d \n",terminals[node->val.sym.terminal],nonterminals[node->parent->val.sym.nonterminal],lineNo);
     }
     else 
     {
         if(node->val.type == NON_TERMINAL)
-        printf("Current Node: %s, Parent Node: ROOT, Line Number %d \t",nonterminals[node->val.sym.nonterminal],lineNo);
+        printf("Current Node: %s, Parent Node: ROOT, Line Number %d \n",nonterminals[node->val.sym.nonterminal],lineNo);
         else if(node->val.type == TERMINAL)
-        printf("Current Node: %s, Parent Node: ROOT, Line Number %d \t",terminals[node->val.sym.terminal],lineNo);
+        printf("Current Node: %s, Parent Node: ROOT, Line Number %d \n",terminals[node->val.sym.terminal],lineNo);
     }
 
 

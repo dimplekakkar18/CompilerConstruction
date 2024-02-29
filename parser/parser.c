@@ -763,15 +763,16 @@ Tree * makeParseTree(ruleLL *grammar, int ** parse_table, FILE * fp){
     while(*tok.lexeme != EOF )
     //for(int i = 0;i<400;i++)
     {
-        stackNODE * TOS = top(stk); 
-        if(TOS->val.type==NON_TERMINAL)printf("Top of stck %s  Input at %s \n",nonterminals[TOS->val.sym.nonterminal],terminals[tok.tokenId]);
-        else if(TOS->val.type==TERMINAL)printf("Top of stack %s  Input at %s \n",terminals[TOS->val.sym.terminal],terminals[tok.tokenId]);
-        if(parseTree->root->val.type==NON_TERMINAL)printf("Tree root is %s\n", nonterminals[parseTree->root->val.sym.nonterminal]);
-        else if(parseTree->root->val.type==TERMINAL)printf("Tree root is %s\n", terminals[parseTree->root->val.sym.terminal]);
-        if(TOS->val.type == NON_TERMINAL)
+        stackEle TOS = top(stk)->val;
+        TreeNode *treeref = top(stk)->treeref;
+        if(TOS.type==NON_TERMINAL)printf("Top of stck %s  Input at %s \n",nonterminals[TOS.sym.nonterminal],terminals[tok.tokenId]);
+        else if(TOS.type==TERMINAL)printf("Top of stack %s  Input at %s \n",terminals[TOS.sym.terminal],terminals[tok.tokenId]);
+        //if(parseTree->root->val.type==NON_TERMINAL)printf("Tree root is %s\n", nonterminals[parseTree->root->val.sym.nonterminal]);
+        //else if(parseTree->root->val.type==TERMINAL)printf("Tree root is %s\n", terminals[parseTree->root->val.sym.terminal]);
+        if(TOS.type == NON_TERMINAL)
         {
 
-            int index = parse_table[TOS->val.sym.nonterminal][tok.tokenId]; 
+            int index = parse_table[TOS.sym.nonterminal][tok.tokenId]; 
             //printf("%d\n",index);
             if(index == -1)
             {
@@ -786,14 +787,16 @@ Tree * makeParseTree(ruleLL *grammar, int ** parse_table, FILE * fp){
                 LLNODE * temp = grammar[index].tail; 
                 pop(stk); 
                 int i =0;
+                //printf("Inside while");
                 while(temp->prev!=NULL)
                 {
                     //printf("%d \n",temp->type);
-                    if(TOS->treeref==NULL) printf("HOW???????????????");
+                    //if(TOS.type==NON_TERMINAL)printf("Top of stck %s   \n",nonterminals[TOS.sym.nonterminal]);
+                    //else if(TOS.type==TERMINAL)printf("Top of stack %s \n",terminals[TOS.sym.terminal]);
                     if(temp->type == NON_TERMINAL)
-                        addToStackAndTree(parseTree, stk, temp->sym.nonterminal, temp->type, TOS->treeref); 
+                        addToStackAndTree(parseTree, stk, temp->sym.nonterminal, temp->type, treeref); 
                     else if(temp->type == TERMINAL)
-                        addToStackAndTree(parseTree, stk, temp->sym.terminal, temp->type, TOS->treeref); 
+                        addToStackAndTree(parseTree, stk, temp->sym.terminal, temp->type,treeref); 
 
                     temp = temp->prev; 
                     
@@ -802,7 +805,7 @@ Tree * makeParseTree(ruleLL *grammar, int ** parse_table, FILE * fp){
         }
         else
         {
-            if(tok.tokenId == TOS->val.sym.terminal)
+            if(tok.tokenId == TOS.sym.terminal)
             {
                 pop(stk);
                 tok = getToken(fp); 
@@ -810,7 +813,7 @@ Tree * makeParseTree(ruleLL *grammar, int ** parse_table, FILE * fp){
             }
             else
             {
-                printf("Line %d Error: The token %s for lexeme %s does not match with the expected token %s \n", lineNo, terminals[tok.tokenId], tok.lexeme, terminals[TOS->val.sym.terminal]); 
+                printf("Line %d Error: The token %s for lexeme %s does not match with the expected token %s \n", lineNo, terminals[tok.tokenId], tok.lexeme, terminals[TOS.sym.terminal]); 
                 pop(stk); 
             }
         }

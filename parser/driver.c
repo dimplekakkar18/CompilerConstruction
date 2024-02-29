@@ -37,9 +37,11 @@ int main(int argc, char * argv[]){
                 fp = fopen("clean.txt", "r"); 
                 break; 
             case 2:
+                
                 while (flag)
+                //for(int i = 0;i<20;i++)
                     {
-                        fp = fopen("clean.txt", "r"); 
+                        createSymbolTable();
                         TOKEN token = getToken(fp);
                         if (*token.lexeme == EOF){
                             // printf("*****\n");
