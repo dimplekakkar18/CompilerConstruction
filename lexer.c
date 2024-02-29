@@ -715,6 +715,7 @@ TOKEN getToken(FILE *fp)
                     token.lineNo = lineNo;
                 }
                 else{
+                    //printf("%d \n",id);
                     token.lexeme = lex;
                     token.tokenId = id;
                     token.lineNo = lineNo;
