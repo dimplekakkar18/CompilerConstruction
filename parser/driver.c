@@ -15,7 +15,13 @@ int main(int argc, char * argv[]){
     initializeBuffers();
     createSymbolTable();
     FILE *fp = fopen(argv[1], "r");
+    FILE * errorfile = fopen("errorfile.txt", "w");
     if (fp == NULL)
+    {
+        printf("Error opening file\n");
+        return -1;
+    }
+    if (errorfile == NULL)
     {
         printf("Error opening file\n");
         return -1;
@@ -38,8 +44,14 @@ int main(int argc, char * argv[]){
                 // fclose(fp);
                 break; 
             case 2:
+                
                 fclose(fp);
                 fp = fopen("clean.txt", "r"); 
+                if(fp == NULL)
+                {
+                    printf("Error opening file\n");
+                    return -1;
+                }
                 while (flag)
                 //for(int i = 0;i<20;i++)
                     {
@@ -54,12 +66,12 @@ int main(int argc, char * argv[]){
                         // } else if (token.tokenId == RNUM){
                         //     printf("%f\n", token.val.floatValue);
                         // }
-                        if(token.tokenId==TK_ID && len(token.lexeme)>20) printf("Line No %d: Error :Variable Identifier is longer than the prescribed length of 20 characters.\n",lineNo);
-                        else if (token.tokenId==TK_FIELDID && len(token.lexeme)>30) printf("Line No %d: Error :Field Identifier is longer than the prescribed length of 30 characters.\n",lineNo);
+                        if(token.tokenId==TK_ID && len(token.lexeme)>20) fprintf(errorfile, "Line No %d: Error :Variable Identifier is longer than the prescribed length of 20 characters.\n",lineNo);
+                        else if (token.tokenId==TK_FIELDID && len(token.lexeme)>30) fprintf(errorfile, "Line No %d: Error :Field Identifier is longer than the prescribed length of 30 characters.\n",lineNo);
                         else{
                             checkTokenID(token.lexeme, token.tokenId);
                             // printf("%d\n", checkTokenID(token.lexeme, token.tokenId));
-                            printTokenInfo(token); 
+                            printTokenInfo(token, errorfile); 
                         }
                         // printf("DO you want to continue? (1/0): ");
                         // scanf("%d", &flag);
@@ -68,11 +80,18 @@ int main(int argc, char * argv[]){
                     // fp = fopen("clean.txt", "r"); 
                     // fseek(fp, 0, SEEK_SET);
                     fclose(fp);
+                    
                 break;  
             case 3:
                 createSymbolTable();
                 create_hashTable();
+                
                 fp = fopen("clean.txt", "r"); 
+                if(fp == NULL)
+                {
+                    printf("Error opening file\n");
+                    return -1;
+                }
                 ruleLL *rules = createGrammar("grammar.csv");
                 // print_rules(rules);
                 token_set *first_sets = malloc(sizeof(token_set) * NUM_NONTERMINALS);
@@ -95,16 +114,22 @@ int main(int argc, char * argv[]){
                 // }
                 int** pt = makeParseTable2(first_sets,follow_sets,rules);     
                 printf("**************************** DEBUG 3 \n");            
-                Tree * parseTree = makeParseTree(rules,pt,fp); 
+                Tree * parseTree = makeParseTree(rules,pt,fp, errorfile); 
                 printf("**************************** DEBUG 4************* \n"); 
                 fclose(fp);
                 fp = fopen(argv[2], "w"); 
+                if(fp == NULL)
+                {
+                    printf("Error opening file\n");
+                    return -1;
+                }
                 //bool fl = true; 
 
                 //if(fl == true) 
                 printTree(parseTree); 
                 printf("\n");
                 fclose(fp);
+                fclose(errorfile); 
                 break; 
 
         }
