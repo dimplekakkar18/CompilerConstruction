@@ -10,3 +10,5 @@ All:
 		gcc -c -o driver.o driver.c
 		gcc -c -o treeADT.o treeADT.c
 		gcc -o exe stack.o set.o parser.o linkedList.o hash_table.o linked_listQ.o queue_ll.o lexer.o symboltable.o treeADT.o driver.o 
+		
+		
