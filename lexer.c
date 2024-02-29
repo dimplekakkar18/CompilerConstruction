@@ -302,17 +302,17 @@ void print_token(enum TOKENS token) {
     }
 }
 
-void printTokenInfo(TOKEN tk){
+void printTokenInfo(TOKEN tk, FILE * errorfile){
     if(tk.tokenId == TK_ERROR){
         // unknown symbol  
         // unknown pattern 
         // var id is having len > 20 - Done
         // field id is having len > 30 - Done
         if(len(tk.lexeme)==1 && (*tk.lexeme<'A' || *tk.lexeme>'Z')){
-            printf("Line No %d : Error: Unknown Symbol <%s>\n", lineNo, tk.lexeme);
+            fprintf(errorfile, "Line No %d : Error: Unknown Symbol <%s>\n", lineNo, tk.lexeme);
         }
         else{
-            printf("Line no: %d : Error: Unknown pattern <%s>\n", lineNo, tk.lexeme);
+            fprintf(errorfile, "Line no: %d : Error: Unknown pattern <%s>\n", lineNo, tk.lexeme);
         }
         return;
     }
