@@ -760,11 +760,12 @@ Tree * makeParseTree(ruleLL *grammar, int ** parse_table, FILE * fp){
 
     addToStackAndTree(parseTree, stk, STARTSYMBOL, NON_TERMINAL, NULL);
     TOKEN tok = getToken(fp); 
-    while(*tok.lexeme != EOF )
-    //for(int i = 0;i<400;i++)
+    // while(*tok.lexeme != EOF )
+    for(int i = 0;i<400;i++)
     {
         stackEle TOS = top(stk)->val;
         TreeNode *treeref = top(stk)->treeref;
+        printf("%d\n", tok.tokenId);
         if(TOS.type==NON_TERMINAL)printf("Top of stck %s  Input at %s \n",nonterminals[TOS.sym.nonterminal],terminals[tok.tokenId]);
         else if(TOS.type==TERMINAL)printf("Top of stack %s  Input at %s \n",terminals[TOS.sym.terminal],terminals[tok.tokenId]);
         //if(parseTree->root->val.type==NON_TERMINAL)printf("Tree root is %s\n", nonterminals[parseTree->root->val.sym.nonterminal]);

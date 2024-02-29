@@ -34,10 +34,12 @@ int main(int argc, char * argv[]){
                 break; 
             case 1:
                 removeComments(argv[1],"clean.txt");
-                fp = fopen("clean.txt", "r"); 
+                // fp = fopen("clean.txt", "r"); 
+                // fclose(fp);
                 break; 
             case 2:
-                
+                fclose(fp);
+                fp = fopen("clean.txt", "r"); 
                 while (flag)
                 //for(int i = 0;i<20;i++)
                     {
@@ -61,10 +63,13 @@ int main(int argc, char * argv[]){
                         }
                         // printf("DO you want to continue? (1/0): ");
                         // scanf("%d", &flag);
-                    }      
+                    } 
+                    // fclose(fp);
+                    // fp = fopen("clean.txt", "r"); 
+                    // fseek(fp, 0, SEEK_SET);
+                    fclose(fp);
                 break;  
             case 3:
-
                 createSymbolTable();
                 create_hashTable();
                 fp = fopen("clean.txt", "r"); 
@@ -92,17 +97,18 @@ int main(int argc, char * argv[]){
                 printf("**************************** DEBUG 3 \n");            
                 Tree * parseTree = makeParseTree(rules,pt,fp); 
                 printf("**************************** DEBUG 4************* \n"); 
+                fclose(fp);
                 fp = fopen(argv[2], "w"); 
                 //bool fl = true; 
 
                 //if(fl == true) 
                 printTree(parseTree); 
                 printf("\n");
+                fclose(fp);
                 break; 
 
         }
     }
-    fclose(fp); 
     return 0; 
 
 }
