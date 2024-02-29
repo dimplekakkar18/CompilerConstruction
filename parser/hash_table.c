@@ -227,7 +227,7 @@ void create_hashTable()
         }
     }
 
-    printf("Collisions : %d", num_collisions);
+    //printf("Collisions : %d", num_collisions);
 }
 
 int getIndex(char *tok)

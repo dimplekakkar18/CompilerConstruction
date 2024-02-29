@@ -39,6 +39,7 @@ int main(int argc, char * argv[]){
             case 2:
                 while (flag)
                     {
+                        fp = fopen("clean.txt", "r"); 
                         TOKEN token = getToken(fp);
                         if (*token.lexeme == EOF){
                             // printf("*****\n");
@@ -63,7 +64,6 @@ int main(int argc, char * argv[]){
             case 3:
 
                 createSymbolTable();
-                printf("xxx");
                 create_hashTable();
                 fp = fopen("clean.txt", "r"); 
                 ruleLL *rules = createGrammar("grammar.csv");
@@ -89,12 +89,13 @@ int main(int argc, char * argv[]){
                 int** pt = makeParseTable2(first_sets,follow_sets,rules);     
                 printf("**************************** DEBUG 3 \n");            
                 Tree * parseTree = makeParseTree(rules,pt,fp); 
-                printf("**************************** DEBUG 4 \n"); 
+                printf("**************************** DEBUG 4************* \n"); 
                 fp = fopen(argv[2], "w"); 
                 //bool fl = true; 
 
                 //if(fl == true) 
                 printTree(parseTree); 
+                printf("\n");
                 break; 
 
         }

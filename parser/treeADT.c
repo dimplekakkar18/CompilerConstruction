@@ -23,8 +23,10 @@ void addTreeNode(Tree * parseTree, TreeNode * parent, TreeNode * child)
         printf("Tree not created! \n");
         return; 
     }
-    if(parseTree->root == NULL || parent == NULL)
+    if(parseTree->root == NULL || parent==NULL)
     {
+        if(parseTree->root==NULL)printf("******************************************root null\n");
+        else if(parent==NULL)printf("*******************************************parent null\n");
         parseTree->root = child; 
     }
     else{
@@ -38,6 +40,7 @@ void addTreeNode(Tree * parseTree, TreeNode * parent, TreeNode * child)
 
 void printTreeNode(TreeNode * node)
 {
+    
     if(node == NULL) return;
 
     if(node->numChild == 0)
@@ -46,7 +49,7 @@ void printTreeNode(TreeNode * node)
             printf("%s \t",nonterminals[node->val.sym.nonterminal]);
 
         else if(node->val.type == TERMINAL)
-            printf("%s \t",terminals[node->val.sym.terminal]);   
+           printf("%s \t",terminals[node->val.sym.terminal]);   
         
         return;
     }
@@ -84,6 +87,7 @@ void printTree(Tree * parseTree)
         printf("Tree is empty! \n");
         return;
     }
+    
     printTreeNode(parseTree->root); 
 }
 

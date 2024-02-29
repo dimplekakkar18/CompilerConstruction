@@ -22,4 +22,5 @@ int** makeParseTable2(token_set* first, token_set* follow, ruleLL* grammar);
 ruleLL * createGrammar(char * filename); 
 void computeFirst(token_set *firstSet, ruleLL* rules);
 void generateFollow(ruleLL* grammar, token_set* follow, token_set* first); 
+void print_rules(ruleLL* rules);
 #endif
