@@ -112,7 +112,9 @@ char *_terminals[NUM_TERMINALS] = {
     "TK_AND",
     "TK_OR",
     "TK_DEFINETYPE",
-    "TK_AS","TK_ERROR"};
+    "TK_AS",
+    "TK_ERROR",
+    "TK_BIGLENERROR"};
 int calculateHash(char *word)
 {
     int hash_value = 0;

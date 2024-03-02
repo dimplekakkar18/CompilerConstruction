@@ -8,8 +8,9 @@
 #define PRIME 31
 #define NUM_NONTERMINALS 50
 #define NUM_RULES 90
-#define NUM_TERMINALS 57
-#define END_CODE 59 // num_terminals +2
+#define NUM_TERMINALS 58
+#define END_CODE 60 // num_terminals +20
+
 #define STARTSYMBOL __program__
 
 typedef enum NONTERMINAL

@@ -1,5 +1,4 @@
 Line No 8: Error :Variable Identifier is longer than the prescribed length of 20 characters.
-Line no: 8 : Error: Unknown pattern <d4cbcccccccccccccbbbbbbbbdddd5222222222222633333333333377>
 Line no: 10 : Error: Unknown pattern <5000.7>
 Line no: 13 : Error: Unknown pattern <&&>
 Line No 28 : Error: Unknown Symbol <$>
@@ -7,8 +6,15 @@ Line no: 29 : Error: Unknown pattern <<-->
 Line 7 Error: The token TK_SQL for lexeme [ does not match with the expected token TK_LIST 
 Line No 8: Error :Variable Identifier is longer than the prescribed length of 20 characters.
 Line 8 Error: The token TK_SEM for lexeme ; does not match with the expected token TK_ID 
+Line 10 Error: Invalid Token TK_SEM encountered with value ; stack top <arithmeticExpression> 
 Line 11 Error: The token TK_SEM for lexeme ; does not match with the expected token TK_CL 
+Line 13 Error: Invalid Token TK_OP encountered with value ( stack top <logicalOp> 
+Line 15 Error: Invalid Token TK_ELSE encountered with value else stack top <moreRecID> 
 Line 16 Error: The token TK_ELSE for lexeme else does not match with the expected token TK_SEM 
-Line 20 Error: Invalid Token TK_END encountered with value end stack top <otherStmts> Line 24 Error: The token TK_MAIN for lexeme _main does not match with the expected token TK_END 
+Line 20 Error: Invalid Token TK_END encountered with value end stack top <otherStmts> 
+Line 24 Error: The token TK_MAIN for lexeme _main does not match with the expected token TK_END 
 Line 25 Error: The token TK_ID for lexeme b5 does not match with the expected token TK_COLON 
-Line 29 Error: Invalid Token TK_NUM encountered with value 1 stack top <moreRecID> Line 29 Error: The token TK_SEM for lexeme ; does not match with the expected token TK_ASSIGNOP 
+Line 29 Error: Invalid Token TK_NUM encountered with value 1 stack top <moreRecID> 
+Line 29 Error: The token TK_SEM for lexeme ; does not match with the expected token TK_ASSIGNOP 
+Line 29 Error: Invalid Token TK_SEM encountered with value ; stack top <arithmeticExpression> 
+Line 31 Error: Invalid Token TK_ASSIGNOP encountered with value <--- stack top <f1> 

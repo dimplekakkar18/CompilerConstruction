@@ -78,9 +78,10 @@ enum TOKENS {
     TK_DEFINETYPE,
     TK_AS,
     TK_ERROR,
+    TK_BIGLENERROR,
     TK_EOF,
     EPSILON,
-    TK_COMMENT  // Add TK_COMMENT at the end
+    TK_COMMENT,  // Add TK_COMMENT at the end
 };
 
 

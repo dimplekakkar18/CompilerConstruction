@@ -65,13 +65,13 @@ int main(int argc, char * argv[]){
                         // } else if (token.tokenId == RNUM){
                         //     printf("%f\n", token.val.floatValue);
                         // }
-                        if(token.tokenId==TK_ID && len(token.lexeme)>20) fprintf(errorfile, "Line No %d: Error :Variable Identifier is longer than the prescribed length of 20 characters.\n",lineNo);
-                        else if (token.tokenId==TK_FIELDID && len(token.lexeme)>30) fprintf(errorfile, "Line No %d: Error :Field Identifier is longer than the prescribed length of 30 characters.\n",lineNo);
-                        else{
-                            checkTokenID(token.lexeme, token.tokenId);
-                            // printf("%d\n", checkTokenID(token.lexeme, token.tokenId));
-                            printTokenInfo(token, errorfile); 
-                        }
+                        // if(token.tokenId==TK_ID && len(token.lexeme)>20) fprintf(errorfile, "Line No %d: Error :Variable Identifier is longer than the prescribed length of 20 characters.\n",lineNo);
+                        // else if (token.tokenId==TK_FIELDID && len(token.lexeme)>30) fprintf(errorfile, "Line No %d: Error :Field Identifier is longer than the prescribed length of 30 characters.\n",lineNo);
+                        // else{
+                        checkTokenID(token.lexeme, token.tokenId);
+                        // printf("%d\n", checkTokenID(token.lexeme, token.tokenId));
+                        printTokenInfo(token, errorfile); 
+                        // }
                         // printf("DO you want to continue? (1/0): ");
                         // scanf("%d", &flag);
                     } 
@@ -116,7 +116,7 @@ int main(int argc, char * argv[]){
                 // }
                 int** pt = makeParseTable2(first_sets,follow_sets,rules);     
                 printf("**************************** DEBUG 3 \n");            
-                Tree * parseTree = makeParseTree(rules,pt,fp, errorfile); 
+                Tree * parseTree = makeParseTree(rules,pt,fp, errorfile,first_sets); 
                 printf("**************************** DEBUG 4************* \n"); 
                 fclose(fp);
                 fp = fopen(argv[2], "w"); 
@@ -128,7 +128,7 @@ int main(int argc, char * argv[]){
                 //bool fl = true; 
 
                 //if(fl == true) 
-                printTree(parseTree); 
+                // printTree(parseTree); 
                 printf("\n");
                 fclose(fp);
                 fclose(errorfile); 

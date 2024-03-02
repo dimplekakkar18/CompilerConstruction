@@ -120,7 +120,8 @@ char *terminals[NUM_TERMINALS] = {
     "TK_OR",
     "TK_DEFINETYPE",
     "TK_AS",
-    "TK_ERROR"};
+    "TK_ERROR",
+    "TK_BIGLENERROR"};
 
 Element itoe (int i)
 {
@@ -721,9 +722,9 @@ int** makeParseTable2(token_set* first, token_set* follow, ruleLL* grammar) {
                 // {
                 //     parseTable[i][j]=-2; //-2 stands for synch 
                 // }
-                if(parseTable[i][j]==-1 && (j == TK_ELSE || j == TK_IF || j == TK_WHILE || j == TK_UNION|| j == TK_RECORD || j == TK_FUNID || j == TK_MAIN || j == TK_THEN || j == TK_DEFINETYPE))
+                if((parseTable[i][j]==-1 || parseTable[i][j]==-2) && (j == TK_ELSE || j == TK_IF || j == TK_WHILE || j == TK_UNION|| j == TK_RECORD || j == TK_FUNID || j == TK_MAIN || j == TK_THEN || j == TK_DEFINETYPE))
                 {
-                    parseTable[i][j]=-2; //-2 stands for synch 
+                    parseTable[i][j]=-3; //-2 stands for synch 
                 }
             }
         }
@@ -754,7 +755,7 @@ void addToStackAndTree(Tree * parseTree, stack * stk,int sym, SYMBOLTYPE type, T
     push(stk, stkele); 
 
 }
-Tree * makeParseTree(ruleLL *grammar, int ** parse_table, FILE * fp, FILE * errorfile){
+Tree * makeParseTree(ruleLL *grammar, int ** parse_table, FILE * fp, FILE * errorfile, token_set* firstSet){
     stack * stk = getStack(); 
     Tree * parseTree = createTree(); 
 
@@ -765,14 +766,16 @@ Tree * makeParseTree(ruleLL *grammar, int ** parse_table, FILE * fp, FILE * erro
 
     addToStackAndTree(parseTree, stk, STARTSYMBOL, NON_TERMINAL, NULL);
     TOKEN tok = getToken(fp, errorfile); 
+    int flag = 1;
     while(*(tok.lexeme) != EOF )
     //for(int i = 0;i<400;i++)
     {
-        if(tok.tokenId==TK_ERROR){
+        if(tok.tokenId==TK_ERROR || tok.tokenId == TK_BIGLENERROR){
             tok = getToken(fp, errorfile);
             continue;
         }
         stackEle TOS = top(stk)->val;
+        if(TOS.type == __ENDCODE) return parseTree;
         TreeNode *treeref = top(stk)->treeref;
         printf("%s\n", terminals[tok.tokenId]);
         if(TOS.type==NON_TERMINAL)printf("Top of stck %s  Input at %s \n",nonterminals[TOS.sym.nonterminal],terminals[tok.tokenId]);
@@ -784,17 +787,46 @@ Tree * makeParseTree(ruleLL *grammar, int ** parse_table, FILE * fp, FILE * erro
 
             int index = parse_table[TOS.sym.nonterminal][tok.tokenId]; 
             //printf("%d\n",index);
+            if(index < 0){
+                // if(kthBitSet(&firstSet[TOS.sym.nonterminal].set, EPSILON)){
+                //     TreeNode * tnode = createTreeNode(); 
+                //     tnode->val.type = __EPSILON;  
+                //     addTreeNode(parseTree, top(stk)->treeref, tnode); 
+                //     pop(stk);
+                //     continue;
+                // }
+            }
             if(index == -1)
             {
-                fprintf(errorfile,"Line %d Error: Invalid Token %s encountered with value %s stack top %s ", lineNo, terminals[tok.tokenId],tok.lexeme,nonterminals[TOS.sym.nonterminal]); 
+                if(flag!=0)
+                    fprintf(errorfile,"Line %d Error: Invalid Token %s encountered with value %s stack top %s \n", lineNo, terminals[tok.tokenId],tok.lexeme,nonterminals[TOS.sym.nonterminal]); 
                 tok = getToken(fp, errorfile); 
             }
             else if(index == -2)
             {
+                // if(kthBitSet(&firstSet[TOS.sym.nonterminal].set, EPSILON)){
+                //     TreeNode * tnode = createTreeNode(); 
+                //     tnode->val.type = __EPSILON;  
+                //     addTreeNode(parseTree, top(stk)->treeref, tnode); 
+                //     pop(stk);
+                //     continue;
+                // }
+                if(flag!=0)
+                    fprintf(errorfile,"Line %d Error: Invalid Token %s encountered with value %s stack top %s \n", lineNo, terminals[tok.tokenId],tok.lexeme,nonterminals[TOS.sym.nonterminal]); 
                 pop(stk); 
+            }
+            else if(index == -3)
+            {
+                if(flag!=0)
+                    fprintf(errorfile,"Line %d Error: Invalid Token %s encountered with value %s stack top %s \n", lineNo-1, terminals[tok.tokenId],tok.lexeme,nonterminals[TOS.sym.nonterminal]); 
+                pop(stk); 
+            }
+            if(index<0){
+                flag = 0;
             }
             else 
             {
+                flag = 1;
                 LLNODE * temp = grammar[index].tail; 
                 pop(stk); 
                 int i =0;
@@ -830,6 +862,7 @@ Tree * makeParseTree(ruleLL *grammar, int ** parse_table, FILE * fp, FILE * erro
             }
             else
             {
+                
                 fprintf(errorfile, "Line %d Error: The token %s for lexeme %s does not match with the expected token %s \n", lineNo, terminals[tok.tokenId], tok.lexeme, terminals[TOS.sym.terminal]); 
                 pop(stk); 
             }
