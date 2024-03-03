@@ -10,10 +10,10 @@
 #include "../lexer.h"
 #include <stdbool.h> 
 #include "treeADT.h"
+#include <time.h>
+
 int main(int argc, char * argv[]){
     int choice = 0; 
-    initializeBuffers();
-    createSymbolTable();
     FILE *fp = fopen(argv[1], "r");
     FILE * errorfile = fopen("errorfile.txt", "w");
     if (fp == NULL)
@@ -26,6 +26,10 @@ int main(int argc, char * argv[]){
         printf("Error opening file\n");
         return -1;
     }
+    clock_t start_time, end_time;
+    double total_CPU_time, total_CPU_time_in_seconds;
+
+    start_time = clock();
     int flag = 1;
 
     while(1){
@@ -35,16 +39,35 @@ int main(int argc, char * argv[]){
         {
             case 0: 
                 printf("Exiting...\n"); 
-                fclose(fp); 
+                //fclose(fp); 
                 return 0; 
                 break; 
             case 1:
                 removeComments(argv[1],"clean.txt");
                 // fp = fopen("clean.txt", "r"); 
-                fclose(fp);
+                //fclose(fp);
+                fp = NULL;
+                // FILE *fp2 = fopen("clean.txt", "r");
+                // if (fp2 == NULL) {
+                //     printf("Error opening file.\n");
+                //     //return 1; // Return with error code
+                // }
+
+                // // Read and print the contents of the file
+                // int c;
+                // while ((c = fgetc(fp2)) != EOF) {
+                //     putchar(c);
+                // }
+
+                // // Close the file
+                // fclose(fp2);
+                printf("\n");
                 break; 
             case 2:
-                fp = fopen("clean.txt", "r"); 
+            
+                initializeBuffers();
+                createSymbolTable();
+                fp = fopen(argv[1], "r"); 
                 if(fp == NULL)
                 {
                     printf("Error opening file\n");
@@ -80,13 +103,14 @@ int main(int argc, char * argv[]){
                 lineNo = 1;
                 createSymbolTable();
                 create_hashTable();
-                
-                fseek(fp, 0, SEEK_SET);
+                fp = fopen(argv[1], "r"); 
+                errorfile = fopen("errorfile.txt", "r");
                 if(fp == NULL)
                 {
                     printf("Error opening file\n");
                     return -1;
                 }
+                fseek(fp,0,SEEK_SET);
                 initializeBuffers();
                 // printf("DEBUB  %ld",ftell(fp));
                 
@@ -108,10 +132,8 @@ int main(int argc, char * argv[]){
                 //     printSet(&follow_sets[i]);
                 //     printf("\n");
                 // }
-                int** pt = makeParseTable2(first_sets,follow_sets,rules);     
-                printf("**************************** DEBUG 3 \n");            
+                int** pt = makeParseTable2(first_sets,follow_sets,rules);                
                 Tree * parseTree = makeParseTree(rules,pt,fp, errorfile,first_sets); 
-                printf("**************************** DEBUG 4************* \n"); 
                 fclose(fp);
                 fp = fopen(argv[2], "w"); 
                 if(fp == NULL)
@@ -119,14 +141,30 @@ int main(int argc, char * argv[]){
                     printf("Error opening file\n");
                     return -1;
                 }
-                //bool fl = true; 
-
-                //if(fl == true) 
-                printTree(parseTree); 
+                
+                printTree(parseTree,fp); 
                 printf("\n");
                 fclose(fp);
                 fclose(errorfile); 
+
+                FILE* fp2= fopen("errorfile.txt","r");
+                if (fp == NULL) {
+                    printf("Error opening file.\n");
+                }
+                int c;
+                while ((c = fgetc(fp2)) != EOF) {
+                    putchar(c);
+                }
+
+                fclose(fp2);
                 break; 
+            case 4:
+                end_time = clock();
+                total_CPU_time = (double) (end_time - start_time);
+                total_CPU_time_in_seconds = total_CPU_time / CLOCKS_PER_SEC;
+                printf("Total CPU time: %f\n", total_CPU_time);
+                printf("Total CPU time in seconds: %f\n", total_CPU_time_in_seconds);
+                break;
 
         }
     }

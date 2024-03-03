@@ -47,11 +47,11 @@ char *nonterminals[NUM_NONTERMINALS] = {
     "<ioStmt>",
     "<arithmeticExpression>",
     "<term>",
-    "<t1>",
-    "<t0>",
+    "<expPrime>",
+    "<lowPrecedenceOperators>",
     "<factor>",
-    "<f1>",
-    "<f0>",
+    "<termPrime>",
+    "<highPrecedenceOperators>",
     "<booleanExpression>",
     "<logicalOp>",
     "<relationalOp>",
@@ -61,7 +61,7 @@ char *nonterminals[NUM_NONTERMINALS] = {
     "<more_ids>",
     "<definetypestmt>",
     "<A>",
-    "<optelse>"};
+    "<elsePart>"};
 
 char *terminals[NUM_TERMINALS] = {
     "TK_MAIN",
@@ -722,7 +722,7 @@ int** makeParseTable2(token_set* first, token_set* follow, ruleLL* grammar) {
                 // {
                 //     parseTable[i][j]=-2; //-2 stands for synch 
                 // }
-                if((parseTable[i][j]==-1 || parseTable[i][j]==-2) && (j == TK_ELSE || j == TK_IF || j == TK_WHILE || j == TK_UNION|| j == TK_RECORD || j == TK_FUNID || j == TK_MAIN || j == TK_THEN || j == TK_DEFINETYPE))
+                if((parseTable[i][j]==-1 || parseTable[i][j]==-2) && (j == TK_ELSE || j == TK_IF || j == TK_WHILE || j == TK_UNION|| j == TK_RECORD || j == TK_FUNID || j == TK_MAIN || j == TK_THEN || j == TK_DEFINETYPE || j == TK_READ || j == TK_WRITE || j == TK_RETURN || j == TK_END || j == TK_ENDIF || j == TK_ENDRECORD || j == TK_ENDUNION || j == TK_ENDWHILE))
                 {
                     parseTable[i][j]=-3; //-2 stands for synch 
                 }
@@ -771,23 +771,34 @@ Tree * makeParseTree(ruleLL *grammar, int ** parse_table, FILE * fp, FILE * erro
     //for(int i = 0;i<400;i++)
     {
         // printf("DEBUGXY    %s",tok.lexeme);
+        if(tok.tokenId==TK_COMMENT){
+            tok = getToken(fp, errorfile);
+            continue;
+        }
+
+        if(tok.tokenId==TK_EOF)
+        {
+            break;
+        }
         if(tok.tokenId==TK_ERROR || tok.tokenId == TK_BIGLENERROR){
             tok = getToken(fp, errorfile);
             continue;
         }
+        
+         
+        
         stackEle TOS = top(stk)->val;
         if(TOS.type == __ENDCODE) return parseTree;
         TreeNode *treeref = top(stk)->treeref;
-        printf("%s\n", terminals[tok.tokenId]);
-        if(TOS.type==NON_TERMINAL)printf("Top of stck %s  Input at %s \n",nonterminals[TOS.sym.nonterminal],terminals[tok.tokenId]);
-        else if(TOS.type==TERMINAL)printf("Top of stack %s  Input at %s \n",terminals[TOS.sym.terminal],terminals[tok.tokenId]);
+        // printf("%s\n", terminals[tok.tokenId]);
+     //   if(TOS.type==NON_TERMINAL)printf("Top of stck %s  Input at %s \n",nonterminals[TOS.sym.nonterminal],terminals[tok.tokenId]);
+       // else if(TOS.type==TERMINAL)printf("Top of stack %s  Input at %s \n",terminals[TOS.sym.terminal],terminals[tok.tokenId]);
         //if(parseTree->root->val.type==NON_TERMINAL)printf("Tree root is %s\n", nonterminals[parseTree->root->val.sym.nonterminal]);
         //else if(parseTree->root->val.type==TERMINAL)printf("Tree root is %s\n", terminals[parseTree->root->val.sym.terminal]);
         if(TOS.type == NON_TERMINAL)
         {
-
-            int index = parse_table[TOS.sym.nonterminal][tok.tokenId]; 
-            //printf("%d\n",index);
+            
+            int index = parse_table[TOS.sym.nonterminal][tok.tokenId];
             if(index < 0){
                 // if(kthBitSet(&firstSet[TOS.sym.nonterminal].set, EPSILON)){
                 //     TreeNode * tnode = createTreeNode(); 
@@ -855,6 +866,7 @@ Tree * makeParseTree(ruleLL *grammar, int ** parse_table, FILE * fp, FILE * erro
         }
         else
         {
+            
             if(tok.tokenId == TOS.sym.terminal)
             {
                 pop(stk);
@@ -864,7 +876,7 @@ Tree * makeParseTree(ruleLL *grammar, int ** parse_table, FILE * fp, FILE * erro
             else
             {
                 
-                fprintf(errorfile, "Line %d Error: The token %s for lexeme %s does not match with the expected token %s \n", lineNo, terminals[tok.tokenId], tok.lexeme, terminals[TOS.sym.terminal]); 
+                fprintf( errorfile,"Line %d Error: The token %s for lexeme %s does not match with the expected token %s \n", lineNo, terminals[tok.tokenId], tok.lexeme, terminals[TOS.sym.terminal]); 
                 pop(stk); 
             }
         }

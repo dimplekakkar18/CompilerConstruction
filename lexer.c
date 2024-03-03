@@ -16,7 +16,7 @@ int start, end;
 // line number
 int lineNo = 1;
 
-int flag[] = {0,0};
+int flag[2];
 
 int lexemeSize;
 
@@ -39,6 +39,7 @@ void removeComments(char *test_file, char *clean_file)
             flag=1;
         }
         else if(flag==0 && c!='%'){
+            printf("%c",c);
             fputc(c, fp2);
         }
         else if(flag==1 && c=='\n'){
@@ -62,14 +63,22 @@ void initializeBuffers(){
     start = 0;
     end = 0;
     lineNo = 1;
+    flag[0] = flag[1] = 0;
 }
 
 void loadBuffer(char* buffer, FILE* fp){
     int numBytes = fread(buffer, sizeof(char), MAX_BUFF_SIZE, fp);
-    printf("DBEB%s",buffer);
     if(numBytes < MAX_BUFF_SIZE){
         buffer[numBytes] = EOF;
     }
+    // char c = buffer[0];
+    // int i = 1;
+    // while(c!=EOF&&i<MAX_BUFF_SIZE)
+    // {
+    //     printf("%d ", c);
+    //     c = buffer[i];
+    //     i++;
+    // }
 }
 
 char getCharFromBuffers(FILE* fp){
@@ -310,10 +319,12 @@ void printTokenInfo(TOKEN tk, FILE * errorfile){
         // var id is having len > 20 - Done
         // field id is having len > 30 - Done
         if(len(tk.lexeme)==1 && (*tk.lexeme<'A' || *tk.lexeme>'Z')){
-            fprintf(errorfile, "Line No %d : Error: Unknown Symbol <%s>\n", lineNo, tk.lexeme);
+            printf( "Line No %d : Error: Unknown Symbol <%s>\n", lineNo, tk.lexeme);
+            fprintf( errorfile,"Line No %d : Error: Unknown Symbol <%s>\n", lineNo, tk.lexeme);
         }
         else{
-            fprintf(errorfile, "Line no: %d : Error: Unknown pattern <%s>\n", lineNo, tk.lexeme);
+            printf( "Line no: %d : Error: Unknown pattern <%s>\n", lineNo, tk.lexeme);
+            fprintf( errorfile,"Line no: %d : Error: Unknown pattern <%s>\n", lineNo, tk.lexeme);
         }
         return;
     }
@@ -340,8 +351,9 @@ TOKEN getToken(FILE *fp, FILE * errorfile)
     lexemeSize = 0;
 
     while (state >= 0)
-    {
+    {   
         c = getCharFromBuffers(fp);
+
         // increment lexemeSize
         lexemeSize++;
         switch (state)
@@ -354,7 +366,7 @@ TOKEN getToken(FILE *fp, FILE * errorfile)
                 end++;
                 break;
             }
-            else if(c==' '|| c=='\t')
+            else if(c==' '|| c=='\t'|| c=='\r')
             {
                 state=4;
                 end++;
@@ -684,7 +696,7 @@ TOKEN getToken(FILE *fp, FILE * errorfile)
             }
         
         case 4:
-            if ( c == ' ' || c == '\t'){
+            if ( c == ' ' || c == '\t'|| c=='\r'){
                 state=4;
                 end++;
                 break;
@@ -718,6 +730,7 @@ TOKEN getToken(FILE *fp, FILE * errorfile)
                     token.tokenId = TK_FIELDID;
                     token.lineNo = lineNo;
                     if (len(token.lexeme)>30){
+                        printf( "Line No %d: Error :Field Identifier is longer than the prescribed length of 30 characters.\n",lineNo);
                         fprintf(errorfile, "Line No %d: Error :Field Identifier is longer than the prescribed length of 30 characters.\n",lineNo);
                         token.tokenId = TK_BIGLENERROR;
                     }
@@ -755,7 +768,8 @@ TOKEN getToken(FILE *fp, FILE * errorfile)
                 refreshPtr();
                 state = 0;
                 if (len(token.lexeme)>30){
-                    fprintf(errorfile, "Line No %d: Error :Field Identifier is longer than the prescribed length of 30 characters.\n",lineNo);
+                    printf( "Line No %d: Error :Field Identifier is longer than the prescribed length of 30 characters.\n",lineNo);
+                    fprintf( errorfile,"Line No %d: Error :Field Identifier is longer than the prescribed length of 30 characters.\n",lineNo);
                     token.tokenId = TK_BIGLENERROR;
                 }
                 return token;
@@ -783,7 +797,7 @@ TOKEN getToken(FILE *fp, FILE * errorfile)
                 refreshPtr();
                 state=0;
                 if (len(token.lexeme)>20){
-                    fprintf(errorfile, "Line No %d: Error :Variable Identifier is longer than the prescribed length of 20 characters.\n",lineNo);
+                    printf( "Line No %d: Error :Variable Identifier is longer than the prescribed length of 20 characters.\n",lineNo);
                     token.tokenId = TK_BIGLENERROR;
                 }
                 return token;
@@ -805,7 +819,7 @@ TOKEN getToken(FILE *fp, FILE * errorfile)
                 refreshPtr();
                 state=0;
                 if (len(token.lexeme)>20){
-                    fprintf(errorfile, "Line No %d: Error :Variable Identifier is longer than the prescribed length of 20 characters.\n",lineNo);
+                    printf( "Line No %d: Error :Variable Identifier is longer than the prescribed length of 20 characters.\n",lineNo);
                     token.tokenId = TK_BIGLENERROR;
                 }
                 return token;
