@@ -70,6 +70,14 @@ void loadBuffer(char* buffer, FILE* fp){
     if(numBytes < MAX_BUFF_SIZE){
         buffer[numBytes] = EOF;
     }
+    // char c = buffer[0];
+    // int i = 1;
+    // while(c!=EOF&&i<MAX_BUFF_SIZE)
+    // {
+    //     printf("%d ", c);
+    //     c = buffer[i];
+    //     i++;
+    // }
 }
 
 char getCharFromBuffers(FILE* fp){
@@ -342,7 +350,7 @@ TOKEN getToken(FILE *fp, FILE * errorfile)
     while (state >= 0)
     {   
         c = getCharFromBuffers(fp);
-        
+
         // increment lexemeSize
         lexemeSize++;
         switch (state)
@@ -355,7 +363,7 @@ TOKEN getToken(FILE *fp, FILE * errorfile)
                 end++;
                 break;
             }
-            else if(c==' '|| c=='\t')
+            else if(c==' '|| c=='\t'|| c=='\r')
             {
                 state=4;
                 end++;
@@ -685,7 +693,7 @@ TOKEN getToken(FILE *fp, FILE * errorfile)
             }
         
         case 4:
-            if ( c == ' ' || c == '\t'){
+            if ( c == ' ' || c == '\t'|| c=='\r'){
                 state=4;
                 end++;
                 break;

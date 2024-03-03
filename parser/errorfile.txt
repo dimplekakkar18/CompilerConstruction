@@ -1,58 +1,0 @@
-Line No 3 : Error: Unknown Symbol <>
-Line No 4 : Error: Unknown Symbol <>
-Line No 5 : Error: Unknown Symbol <>
-Line No 6 : Error: Unknown Symbol <>
-Line No 7 : Error: Unknown Symbol <>
-Line No 8 : Error: Unknown Symbol <>
-Line No 9 : Error: Unknown Symbol <>
-Line No 10 : Error: Unknown Symbol <>
-Line No 11 : Error: Unknown Symbol <>
-Line No 12 : Error: Unknown Symbol <>
-Line No 13 : Error: Unknown Symbol <>
-Line No 14 : Error: Unknown Symbol <>
-Line No 15 : Error: Unknown Symbol <>
-Line No 16 : Error: Unknown Symbol <>
-Line No 17 : Error: Unknown Symbol <>
-Line No 18 : Error: Unknown Symbol <>
-Line No 19 : Error: Unknown Symbol <>
-Line No 20 : Error: Unknown Symbol <>
-Line No 21 : Error: Unknown Symbol <>
-Line No 22 : Error: Unknown Symbol <>
-Line No 23 : Error: Unknown Symbol <>
-Line No 24 : Error: Unknown Symbol <>
-Line No 27 : Error: Unknown Symbol <>
-Line No 28 : Error: Unknown Symbol <>
-Line No 29 : Error: Unknown Symbol <>
-Line No 30 : Error: Unknown Symbol <>
-Line No 31 : Error: Unknown Symbol <>
-Line No 32 : Error: Unknown Symbol <>
-Line No 33 : Error: Unknown Symbol <>
-Line No 34 : Error: Unknown Symbol <>
-Line No 35 : Error: Unknown Symbol <>
-Line No 36 : Error: Unknown Symbol <>
-Line No 37 : Error: Unknown Symbol <>
-Line No 38 : Error: Unknown Symbol <>
-Line No 39 : Error: Unknown Symbol <>
-Line No 40 : Error: Unknown Symbol <>
-Line No 41 : Error: Unknown Symbol <>
-Line No 42 : Error: Unknown Symbol <>
-Line No 43 : Error: Unknown Symbol <>
-Line No 44 : Error: Unknown Symbol <>
-Line No 45 : Error: Unknown Symbol <>
-Line No 46 : Error: Unknown Symbol <>
-Line No 47 : Error: Unknown Symbol <>
-Line No 48 : Error: Unknown Symbol <>
-Line No 49 : Error: Unknown Symbol <>
-Line No 50 : Error: Unknown Symbol <>
-Line No 51 : Error: Unknown Symbol <>
-Line No 52 : Error: Unknown Symbol <>
-Line No 53 : Error: Unknown Symbol <>
-Line No 54 : Error: Unknown Symbol <>
-Line No 55 : Error: Unknown Symbol <>
-Line No 56 : Error: Unknown Symbol <>
-Line No 57 : Error: Unknown Symbol <>
-Line No 58 : Error: Unknown Symbol <>
-Line No 59 : Error: Unknown Symbol <>
-Line No 60 : Error: Unknown Symbol <>
-Line No 61 : Error: Unknown Symbol <>
-Line 54 Error: Invalid Token TK_DOT encountered with value . stack top <term> 
