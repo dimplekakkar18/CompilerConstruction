@@ -10,6 +10,8 @@
 #include "../lexer.h"
 #include <stdbool.h> 
 #include "treeADT.h"
+#include <time.h>
+
 int main(int argc, char * argv[]){
     int choice = 0; 
     FILE *fp = fopen(argv[1], "r");
@@ -24,6 +26,10 @@ int main(int argc, char * argv[]){
         printf("Error opening file\n");
         return -1;
     }
+    clock_t start_time, end_time;
+    double total_CPU_time, total_CPU_time_in_seconds;
+
+    start_time = clock();
     int flag = 1;
 
     while(1){
@@ -33,13 +39,13 @@ int main(int argc, char * argv[]){
         {
             case 0: 
                 printf("Exiting...\n"); 
-                fclose(fp); 
+                //fclose(fp); 
                 return 0; 
                 break; 
             case 1:
                 removeComments(argv[1],"clean.txt");
                 // fp = fopen("clean.txt", "r"); 
-                fclose(fp);
+                //fclose(fp);
                 fp = NULL;
                 // FILE *fp2 = fopen("clean.txt", "r");
                 // if (fp2 == NULL) {
@@ -61,7 +67,7 @@ int main(int argc, char * argv[]){
             
                 initializeBuffers();
                 createSymbolTable();
-                fp = fopen("clean.txt", "r"); 
+                fp = fopen(argv[1], "r"); 
                 if(fp == NULL)
                 {
                     printf("Error opening file\n");
@@ -97,15 +103,14 @@ int main(int argc, char * argv[]){
                 lineNo = 1;
                 createSymbolTable();
                 create_hashTable();
-                if(fp != NULL)
-                    fseek(fp, 0, SEEK_SET);
-                else
-                    fp = fopen("clean.txt", "r"); 
+                fp = fopen(argv[1], "r"); 
+                errorfile = fopen("errorfile.txt", "r");
                 if(fp == NULL)
                 {
                     printf("Error opening file\n");
                     return -1;
                 }
+                fseek(fp,0,SEEK_SET);
                 initializeBuffers();
                 // printf("DEBUB  %ld",ftell(fp));
                 
@@ -142,6 +147,13 @@ int main(int argc, char * argv[]){
                 fclose(fp);
                 fclose(errorfile); 
                 break; 
+            case 4:
+                end_time = clock();
+                total_CPU_time = (double) (end_time - start_time);
+                total_CPU_time_in_seconds = total_CPU_time / CLOCKS_PER_SEC;
+                printf("Total CPU time: %f\n", total_CPU_time);
+                printf("Total CPU time in seconds: %f\n", total_CPU_time_in_seconds);
+                break;
 
         }
     }

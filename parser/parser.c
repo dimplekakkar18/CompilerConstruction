@@ -62,7 +62,7 @@ char *nonterminals[NUM_NONTERMINALS] = {
     "<definetypestmt>",
     "<A>",
     "<elsePart>"};
-    
+
 char *terminals[NUM_TERMINALS] = {
     "TK_MAIN",
     "TK_INT",
@@ -771,6 +771,10 @@ Tree * makeParseTree(ruleLL *grammar, int ** parse_table, FILE * fp, FILE * erro
     //for(int i = 0;i<400;i++)
     {
         // printf("DEBUGXY    %s",tok.lexeme);
+        if(tok.tokenId==TK_COMMENT){
+            tok = getToken(fp, errorfile);
+            continue;
+        }
 
         if(tok.tokenId==TK_EOF)
         {
