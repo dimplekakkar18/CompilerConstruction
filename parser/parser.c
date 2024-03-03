@@ -778,7 +778,6 @@ Tree * makeParseTree(ruleLL *grammar, int ** parse_table, FILE * fp, FILE * erro
         }
         if(tok.tokenId==TK_ERROR || tok.tokenId == TK_BIGLENERROR){
             tok = getToken(fp, errorfile);
-            printf("DEB %s\n",tok.lexeme);
             continue;
         }
         

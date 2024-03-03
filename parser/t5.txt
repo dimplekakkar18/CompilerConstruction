@@ -51,7 +51,7 @@ _main
 	type int : b5;
 	type int : d5cb34567;
 	type record #variantrecord: b5c6;
-	b5c6 <--- b5c6.tag + d4.s.ln.beginpoint.x - b5c6.s.tr.base.beginpoint.y; 
+	b5c6 <--- b5c6.tag +  .ln.beginpoint.x - b5c6.s.tr.base.beginpoint.y; 
 	b5 <--- b5 +1;
 	d4 <--- b5c6 / d5cb34567;
 	write(d4);

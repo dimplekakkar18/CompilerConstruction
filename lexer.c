@@ -16,7 +16,7 @@ int start, end;
 // line number
 int lineNo = 1;
 
-int flag[] = {0,0};
+int flag[2];
 
 int lexemeSize;
 
@@ -62,6 +62,7 @@ void initializeBuffers(){
     start = 0;
     end = 0;
     lineNo = 1;
+    flag[0] = flag[1] = 0;
 }
 
 void loadBuffer(char* buffer, FILE* fp){
@@ -339,8 +340,9 @@ TOKEN getToken(FILE *fp, FILE * errorfile)
     lexemeSize = 0;
 
     while (state >= 0)
-    {
+    {   
         c = getCharFromBuffers(fp);
+        
         // increment lexemeSize
         lexemeSize++;
         switch (state)
