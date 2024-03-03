@@ -320,9 +320,11 @@ void printTokenInfo(TOKEN tk, FILE * errorfile){
         // field id is having len > 30 - Done
         if(len(tk.lexeme)==1 && (*tk.lexeme<'A' || *tk.lexeme>'Z')){
             printf( "Line No %d : Error: Unknown Symbol <%s>\n", lineNo, tk.lexeme);
+            fprintf( errorfile,"Line No %d : Error: Unknown Symbol <%s>\n", lineNo, tk.lexeme);
         }
         else{
             printf( "Line no: %d : Error: Unknown pattern <%s>\n", lineNo, tk.lexeme);
+            fprintf( errorfile,"Line no: %d : Error: Unknown pattern <%s>\n", lineNo, tk.lexeme);
         }
         return;
     }
@@ -729,6 +731,7 @@ TOKEN getToken(FILE *fp, FILE * errorfile)
                     token.lineNo = lineNo;
                     if (len(token.lexeme)>30){
                         printf( "Line No %d: Error :Field Identifier is longer than the prescribed length of 30 characters.\n",lineNo);
+                        fprintf(errorfile, "Line No %d: Error :Field Identifier is longer than the prescribed length of 30 characters.\n",lineNo);
                         token.tokenId = TK_BIGLENERROR;
                     }
                 }
@@ -766,6 +769,7 @@ TOKEN getToken(FILE *fp, FILE * errorfile)
                 state = 0;
                 if (len(token.lexeme)>30){
                     printf( "Line No %d: Error :Field Identifier is longer than the prescribed length of 30 characters.\n",lineNo);
+                    fprintf( errorfile,"Line No %d: Error :Field Identifier is longer than the prescribed length of 30 characters.\n",lineNo);
                     token.tokenId = TK_BIGLENERROR;
                 }
                 return token;

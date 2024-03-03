@@ -146,6 +146,17 @@ int main(int argc, char * argv[]){
                 printf("\n");
                 fclose(fp);
                 fclose(errorfile); 
+
+                FILE* fp2= fopen("errorfile.txt","r");
+                if (fp == NULL) {
+                    printf("Error opening file.\n");
+                }
+                int c;
+                while ((c = fgetc(fp2)) != EOF) {
+                    putchar(c);
+                }
+
+                fclose(fp2);
                 break; 
             case 4:
                 end_time = clock();
