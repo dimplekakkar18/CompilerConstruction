@@ -68,7 +68,6 @@ typedef enum NONTERMINAL
 
 }NONTERMINAL;
 
-
 typedef union SYMBOL{
     enum TOKENS terminal; 
     NONTERMINAL nonterminal; 

@@ -47,11 +47,11 @@ char *nonterminals[NUM_NONTERMINALS] = {
     "<ioStmt>",
     "<arithmeticExpression>",
     "<term>",
-    "<t1>",
-    "<t0>",
+    "<expPrime>",
+    "<lowPrecedenceOperators>",
     "<factor>",
-    "<f1>",
-    "<f0>",
+    "<termPrime>",
+    "<highPrecedenceOperators>",
     "<booleanExpression>",
     "<logicalOp>",
     "<relationalOp>",
@@ -61,8 +61,8 @@ char *nonterminals[NUM_NONTERMINALS] = {
     "<more_ids>",
     "<definetypestmt>",
     "<A>",
-    "<optelse>"};
-
+    "<elsePart>"};
+    
 char *terminals[NUM_TERMINALS] = {
     "TK_MAIN",
     "TK_INT",
