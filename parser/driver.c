@@ -141,6 +141,19 @@ int main(int argc, char * argv[]){
                 printf("\n");
                 fclose(fp);
                 fclose(errorfile); 
+                // Read and print the contents of the file
+
+                FILE* fp2= fopen("errorfile.txt","r");
+                if (fp == NULL) {
+                    printf("Error opening file.\n");
+                }
+                int c;
+                while ((c = fgetc(fp2)) != EOF) {
+                    putchar(c);
+                }
+
+                fclose(fp2);
+                
                 break; 
 
         }
