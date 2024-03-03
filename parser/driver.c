@@ -42,6 +42,7 @@ int main(int argc, char * argv[]){
                 removeComments(argv[1],"clean.txt");
                 // fp = fopen("clean.txt", "r"); 
                 fclose(fp);
+                fp = NULL;
                 break; 
             case 2:
                 fp = fopen("clean.txt", "r"); 
@@ -80,13 +81,16 @@ int main(int argc, char * argv[]){
                 lineNo = 1;
                 createSymbolTable();
                 create_hashTable();
-                
-                fseek(fp, 0, SEEK_SET);
+                if(fp != NULL)
+                    fseek(fp, 0, SEEK_SET);
+                else
+                    fp = fopen("clean.txt", "r"); 
                 if(fp == NULL)
                 {
                     printf("Error opening file\n");
                     return -1;
                 }
+                printf("DEBUG   %ld",ftell(fp));
                 initializeBuffers();
                 // printf("DEBUB  %ld",ftell(fp));
                 
