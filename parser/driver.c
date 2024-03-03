@@ -68,6 +68,12 @@ int main(int argc, char * argv[]){
                 initializeBuffers();
                 createSymbolTable();
                 fp = fopen(argv[1], "r"); 
+                //  errorfile = fopen("errorfile.txt", "r");
+                // if(errorfile == NULL)
+                // {
+                //     printf("Error opening file\n");
+                //     return -1;
+                // }
                 if(fp == NULL)
                 {
                     printf("Error opening file\n");
@@ -104,7 +110,13 @@ int main(int argc, char * argv[]){
                 createSymbolTable();
                 create_hashTable();
                 fp = fopen(argv[1], "r"); 
-                errorfile = fopen("errorfile.txt", "r");
+                // errorfile = fopen("errorfile.txt", "r");
+                // if(errorfile == NULL)
+                // {
+                //     printf("Error opening file\n");
+                //     return -1;
+                // }
+
                 if(fp == NULL)
                 {
                     printf("Error opening file\n");
@@ -146,6 +158,12 @@ int main(int argc, char * argv[]){
                 printf("\n");
                 fclose(fp);
                 fclose(errorfile); 
+                FILE* fp2 = fopen("errorfile.txt","r");
+                int d;
+                while ((d = fgetc(errorfile)) != EOF) {
+                    putchar(d);
+                }
+                fclose(fp2);
                 break; 
             case 4:
                 end_time = clock();
