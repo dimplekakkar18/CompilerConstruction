@@ -771,10 +771,19 @@ Tree * makeParseTree(ruleLL *grammar, int ** parse_table, FILE * fp, FILE * erro
     //for(int i = 0;i<400;i++)
     {
         // printf("DEBUGXY    %s",tok.lexeme);
+
+        if(tok.tokenId==TK_EOF)
+        {
+            break;
+        }
         if(tok.tokenId==TK_ERROR || tok.tokenId == TK_BIGLENERROR){
             tok = getToken(fp, errorfile);
+            printf("DEB %s\n",tok.lexeme);
             continue;
         }
+        
+         
+        
         stackEle TOS = top(stk)->val;
         if(TOS.type == __ENDCODE) return parseTree;
         TreeNode *treeref = top(stk)->treeref;
@@ -785,9 +794,8 @@ Tree * makeParseTree(ruleLL *grammar, int ** parse_table, FILE * fp, FILE * erro
         //else if(parseTree->root->val.type==TERMINAL)printf("Tree root is %s\n", terminals[parseTree->root->val.sym.terminal]);
         if(TOS.type == NON_TERMINAL)
         {
-
-            int index = parse_table[TOS.sym.nonterminal][tok.tokenId]; 
-            //printf("%d\n",index);
+            
+            int index = parse_table[TOS.sym.nonterminal][tok.tokenId];
             if(index < 0){
                 // if(kthBitSet(&firstSet[TOS.sym.nonterminal].set, EPSILON)){
                 //     TreeNode * tnode = createTreeNode(); 
@@ -855,6 +863,7 @@ Tree * makeParseTree(ruleLL *grammar, int ** parse_table, FILE * fp, FILE * erro
         }
         else
         {
+            
             if(tok.tokenId == TOS.sym.terminal)
             {
                 pop(stk);

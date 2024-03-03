@@ -66,7 +66,6 @@ void initializeBuffers(){
 
 void loadBuffer(char* buffer, FILE* fp){
     int numBytes = fread(buffer, sizeof(char), MAX_BUFF_SIZE, fp);
-    printf("DBEB%s",buffer);
     if(numBytes < MAX_BUFF_SIZE){
         buffer[numBytes] = EOF;
     }

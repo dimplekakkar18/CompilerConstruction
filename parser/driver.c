@@ -12,8 +12,6 @@
 #include "treeADT.h"
 int main(int argc, char * argv[]){
     int choice = 0; 
-    initializeBuffers();
-    createSymbolTable();
     FILE *fp = fopen(argv[1], "r");
     FILE * errorfile = fopen("errorfile.txt", "w");
     if (fp == NULL)
@@ -45,6 +43,9 @@ int main(int argc, char * argv[]){
                 fp = NULL;
                 break; 
             case 2:
+            
+                initializeBuffers();
+                createSymbolTable();
                 fp = fopen("clean.txt", "r"); 
                 if(fp == NULL)
                 {
@@ -90,7 +91,6 @@ int main(int argc, char * argv[]){
                     printf("Error opening file\n");
                     return -1;
                 }
-                printf("DEBUG   %ld",ftell(fp));
                 initializeBuffers();
                 // printf("DEBUB  %ld",ftell(fp));
                 
