@@ -41,10 +41,9 @@ int main(int argc, char * argv[]){
             case 1:
                 removeComments(argv[1],"clean.txt");
                 // fp = fopen("clean.txt", "r"); 
-                // fclose(fp);
+                fclose(fp);
                 break; 
             case 2:
-                fclose(fp);
                 fp = fopen("clean.txt", "r"); 
                 if(fp == NULL)
                 {
@@ -75,31 +74,27 @@ int main(int argc, char * argv[]){
                         // printf("DO you want to continue? (1/0): ");
                         // scanf("%d", &flag);
                     } 
-                    // fclose(fp);
-                    // fp = fopen("clean.txt", "r"); 
-                    // fseek(fp, 0, SEEK_SET);
-                    fclose(fp);
                     
                 break;  
             case 3:
                 lineNo = 1;
                 createSymbolTable();
-                printf("DEBUG");
                 create_hashTable();
-                printf("DEBUG2");
                 
-                fp = fopen("clean.txt", "r"); 
+                fseek(fp, 0, SEEK_SET);
                 if(fp == NULL)
                 {
                     printf("Error opening file\n");
                     return -1;
                 }
+                initializeBuffers();
+                // printf("DEBUB  %ld",ftell(fp));
+                
                 ruleLL *rules = createGrammar("grammar.csv");
                 // print_rules(rules);
                 token_set *first_sets = malloc(sizeof(token_set) * NUM_NONTERMINALS);
                 token_set *follow_sets = malloc(sizeof(token_set) * NUM_NONTERMINALS);
                 computeFirst(first_sets,rules);
-                printf("**************************** DEBUG 1 \n"); 
                 // for (int i = 0; i < NUM_NONTERMINALS; i++)
                 // {
                 //     printf("First(%s): ", nonterminals[i]);
@@ -107,7 +102,6 @@ int main(int argc, char * argv[]){
                 //     printf("\n");
                 // }
                 generateFollow(rules,follow_sets,first_sets);
-                printf("**************************** DEBUG 2 \n"); 
                 // for (int i = 0; i < NUM_NONTERMINALS; i++)
                 // {
                 //     printf("Follow(%s): ", nonterminals[i]);
@@ -128,7 +122,7 @@ int main(int argc, char * argv[]){
                 //bool fl = true; 
 
                 //if(fl == true) 
-                // printTree(parseTree); 
+                printTree(parseTree); 
                 printf("\n");
                 fclose(fp);
                 fclose(errorfile); 

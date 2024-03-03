@@ -770,6 +770,7 @@ Tree * makeParseTree(ruleLL *grammar, int ** parse_table, FILE * fp, FILE * erro
     while(*(tok.lexeme) != EOF )
     //for(int i = 0;i<400;i++)
     {
+        // printf("DEBUGXY    %s",tok.lexeme);
         if(tok.tokenId==TK_ERROR || tok.tokenId == TK_BIGLENERROR){
             tok = getToken(fp, errorfile);
             continue;
