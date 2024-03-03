@@ -41,7 +41,7 @@ void addTreeNode(Tree * parseTree, TreeNode * parent, TreeNode * child)
     }
     
 }
-void printTreeNode(TreeNode *node, int level)
+void printTreeNode(TreeNode *node, int level, FILE* fp)
 {
     if (node == NULL)
         return;
@@ -49,7 +49,7 @@ void printTreeNode(TreeNode *node, int level)
     // Print indentation based on the level of the node
     for (int i = 0; i < level; i++)
     {
-        printf("    ");
+        fprintf(fp,"    ");
     }
 
     // if (node->numChild == 0)
@@ -58,17 +58,17 @@ void printTreeNode(TreeNode *node, int level)
     // }
 
     if (node->val.type == NON_TERMINAL)
-        printf("Current Node: %s, Parent Node: %s, Line Number %d\n",
+        fprintf(fp,"Current Node: %s, Parent Node: %s, Line Number %d\n",
                nonterminals[node->val.sym.nonterminal],
                (node->parent != NULL) ? nonterminals[node->parent->val.sym.nonterminal] : "ROOT",
                lineNo);
     else if (node->val.type == TERMINAL)
-           printf("Current Node: %s, Parent Node: %s, Line Number %d\n",
+           fprintf(fp,"Current Node: %s, Parent Node: %s, Line Number %d\n",
                terminals[node->val.sym.terminal],
                (node->parent != NULL) ? nonterminals[node->parent->val.sym.nonterminal] : "ROOT",
                lineNo);
     else if(node->val.type == __EPSILON)
-            printf("Current Node: EPSILON, Parent Node: %s, Line Number %d\n",
+            fprintf(fp,"Current Node: EPSILON, Parent Node: %s, Line Number %d\n",
                (node->parent != NULL) ? nonterminals[node->parent->val.sym.nonterminal] : "ROOT",
                lineNo);
         
@@ -80,19 +80,19 @@ void printTreeNode(TreeNode *node, int level)
 
     for (int i = 0; i < node->numChild; i++)
     {
-        printTreeNode(node->children[i], level + 1);
+        printTreeNode(node->children[i], level + 1,fp);
     }
 }
 
-void printTree(Tree *parseTree)
+void printTree(Tree *parseTree, FILE* fp)
 {
     if (parseTree->root == NULL)
     {
-        printf("Tree is empty!\n");
+        fprintf(fp,"Tree is empty!\n");
         return;
     }
 
-    printTreeNode(parseTree->root, 0);
+    printTreeNode(parseTree->root, 0,fp);
 }
 
 

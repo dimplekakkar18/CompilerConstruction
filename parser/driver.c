@@ -41,6 +41,21 @@ int main(int argc, char * argv[]){
                 // fp = fopen("clean.txt", "r"); 
                 fclose(fp);
                 fp = NULL;
+                // FILE *fp2 = fopen("clean.txt", "r");
+                // if (fp2 == NULL) {
+                //     printf("Error opening file.\n");
+                //     //return 1; // Return with error code
+                // }
+
+                // // Read and print the contents of the file
+                // int c;
+                // while ((c = fgetc(fp2)) != EOF) {
+                //     putchar(c);
+                // }
+
+                // // Close the file
+                // fclose(fp2);
+                printf("\n");
                 break; 
             case 2:
             
@@ -112,10 +127,8 @@ int main(int argc, char * argv[]){
                 //     printSet(&follow_sets[i]);
                 //     printf("\n");
                 // }
-                int** pt = makeParseTable2(first_sets,follow_sets,rules);     
-                printf("**************************** DEBUG 3 \n");            
+                int** pt = makeParseTable2(first_sets,follow_sets,rules);                
                 Tree * parseTree = makeParseTree(rules,pt,fp, errorfile,first_sets); 
-                printf("**************************** DEBUG 4************* \n"); 
                 fclose(fp);
                 fp = fopen(argv[2], "w"); 
                 if(fp == NULL)
@@ -123,10 +136,8 @@ int main(int argc, char * argv[]){
                     printf("Error opening file\n");
                     return -1;
                 }
-                //bool fl = true; 
-
-                //if(fl == true) 
-                printTree(parseTree); 
+                
+                printTree(parseTree,fp); 
                 printf("\n");
                 fclose(fp);
                 fclose(errorfile); 
