@@ -17,7 +17,7 @@
 #define NUM_NONTERMINALS 50
 #define NUM_RULES 90
 #define NUM_TERMINALS 59
-#define END_CODE 61 // num_terminals +20
+#define END_CODE 61 // num_terminals +2
 
 #define STARTSYMBOL __program__
 
@@ -100,6 +100,6 @@ typedef struct hash_ele
 
 extern char* nonterminals[NUM_NONTERMINALS]; 
 extern char* terminals[NUM_TERMINALS]; 
-extern hash_ele hash_table[HASH_TABLE_SIZE];
+extern hash_ele hash_table[HASH_TABLE_SIZE]; 
 
 #endif

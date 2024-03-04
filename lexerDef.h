@@ -90,7 +90,7 @@ enum TOKENS {
     TK_BIGFIELDERROR,
     TK_EOF,
     EPSILON,
-    TK_COMMENT,  // Add TK_COMMENT at the end
+    TK_COMMENT,
 };
 
 

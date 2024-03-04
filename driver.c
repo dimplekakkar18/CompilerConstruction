@@ -87,27 +87,15 @@ int main(int argc, char * argv[]){
                 }
                 fseek(fp,0,SEEK_SET);
                 initializeBuffers();
-                // printf("DEBUB  %ld",ftell(fp));
                 
                 ruleLL *rules = createGrammar("grammar.csv");
-                // print_rules(rules);
                 token_set *first_sets = malloc(sizeof(token_set) * NUM_NONTERMINALS);
                 token_set *follow_sets = malloc(sizeof(token_set) * NUM_NONTERMINALS);
                 computeFirst(first_sets,rules);
-                // for (int i = 0; i < NUM_NONTERMINALS; i++)
-                // {
-                //     printf("First(%s): ", nonterminals[i]);
-                //     printSet(&first_sets[i]);
-                //     printf("\n");
-                // }
+
                 generateFollow(rules,follow_sets,first_sets);
-                // for (int i = 0; i < NUM_NONTERMINALS; i++)
-                // {
-                //     printf("Follow(%s): ", nonterminals[i]);
-                //     printSet(&follow_sets[i]);
-                //     printf("\n");
-                // }
-                int** pt = makeParseTable2(first_sets,follow_sets,rules);                
+ 
+                int** pt = makeParseTable(first_sets,follow_sets,rules);                
                 Tree * parseTree = parseInputSourceCode(rules,pt,fp,first_sets); 
                 fclose(fp);
                 fp = fopen(argv[2], "w"); 

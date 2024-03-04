@@ -129,7 +129,6 @@ int calculateHash(char *word)
     for (int i = 0; i < strlen(word); i++)
     {
         hash_value = (hash_value * PRIME + word[i]) % HASH_TABLE_SIZE;
-        // hash_value = ((hash_value << 5) + hash_value) + kwname[i];
     }
     return hash_value;
 }
@@ -237,7 +236,6 @@ void create_hashTable()
         }
     }
 
-    //printf("Collisions : %d", num_collisions);
 }
 
 int getIndex(char *tok)

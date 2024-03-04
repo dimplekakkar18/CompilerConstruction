@@ -35,8 +35,6 @@ void addTreeNode(Tree * parseTree, TreeNode * parent, TreeNode * child)
     }
     if(parseTree->root == NULL || parent==NULL)
     {
-        // if(parseTree->root==NULL)printf("******************************************root null\n");
-        // else if(parent==NULL)printf("*******************************************parent null\n");
         parseTree->root = child; 
     }
     else{
@@ -45,8 +43,6 @@ void addTreeNode(Tree * parseTree, TreeNode * parent, TreeNode * child)
         parent->children[parent->numChild - 1] = child; 
         //make sure child isn't null 
         child->parent = parent; 
-
-        //printf("Parent is %s ",nonterminals[parent->val.sym.nonterminal]);
     }
     
 }

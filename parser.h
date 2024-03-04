@@ -17,7 +17,7 @@ int addTerm();
 void create_hashTable();
 int getIndex(char *tok);
 Tree * parseInputSourceCode(ruleLL *grammar, int ** parse_table, FILE * fp, token_set* firstSet);
-int** makeParseTable2(token_set* first, token_set* follow, ruleLL* grammar); 
+int** makeParseTable(token_set* first, token_set* follow, ruleLL* grammar); 
 ruleLL * createGrammar(char * filename); 
 void computeFirst(token_set *firstSet, ruleLL* rules);
 void generateFollow(ruleLL* grammar, token_set* follow, token_set* first); 

@@ -29,5 +29,5 @@ void freeNode(ruleLL *list);
 void freeLL(ruleLL *list);
 void freeGrammar(ruleLL *grammar);
 
-extern ruleLL grammar[NUM_RULES]; //FIX
+extern ruleLL grammar[NUM_RULES]; 
 #endif 

@@ -20,7 +20,7 @@ int addTerm();
 void create_hashTable();
 int getIndex(char *tok);
 Tree * parseInputSourceCode(ruleLL *grammar, int ** parse_table, FILE * fp, token_set* firstSet);
-int** makeParseTable2(token_set* first, token_set* follow, ruleLL* grammar); 
+int** makeParseTable(token_set* first, token_set* follow, ruleLL* grammar); 
 ruleLL * createGrammar(char * filename); 
 void computeFirst(token_set *firstSet, ruleLL* rules);
 void generateFollow(ruleLL* grammar, token_set* follow, token_set* first); 
@@ -242,22 +242,6 @@ int setContains(token_set* sets, int term)
         return 0;
 }
 
-// void propogateStackFollow(stack *st, token_set* follow, int * changed)
-// {
-//     int temp = pop(st);
-//     while (st->count > 0)
-//     {
-//         int temp2 = pop(st);
-//         if((follow[temp2].set | follow[temp].set) != follow[temp2].set)
-//         {
-//             printf("DEBUGGER*************\n");
-//             *changed = 1; // setting changed
-//             //printf("flagged at propogate stack\n");
-//         }
-//         follow[temp2].set |= follow[temp].set;
-//         temp = temp2;
-//     }
-// }
 void computeFirst(token_set *firstSet, ruleLL* rules)
 {
     for (int i = 0; i < NUM_NONTERMINALS; i++)      // all the firstsets are init to 0 (empty set)
@@ -274,22 +258,13 @@ void computeFirst(token_set *firstSet, ruleLL* rules)
             addToken(&firstSet[rules[i].head->sym.nonterminal], EPSILON);   // include EPSILON in first(LHS)
             setKthBit(&nullable, rules[i].head->sym.nonterminal);            // LHS is a nullable non-terminal
             isDone[i] = 1;
-            // printf("%lld******************* %d \n", nullable, i);
-
-            // printf("***** %d %lld %lld %d\n", i, nullable, (nullable&(((long long int)1)<<rules[i].head->tnt.nonterm)), rules[i].head->tnt.nonterm);
-            // printf("*********%d %d %lld\n", i, rules[i].head->tnt.nonterm, nullable);
         }
         else if(rules[i].head->next->type==TERMINAL){    // RHS is a TERMINAL
-            // printf("***** %d %d*******\n", i, rules[i].head->next->tnt.tok);
             addToken(&firstSet[rules[i].head->sym.nonterminal], rules[i].head->next->sym.terminal);   // include this TERMINAL in first(LHS)
             isDone[i] = 1;
         }
     }
-    // printf("%lld\n",nullable);
-    // printf("%d\n", (nullable&(1LL<<(35)))!=0);
-    for(int i = 0; i < NUM_NONTERMINALS; i++){
-        // printf("***DEBUGGER %d %d***\n", i, kthBitSet(&nullable, i)!=0);
-    }
+
     // compute nullable
     long long int temp = 0;
     int cnt = 0;
@@ -324,9 +299,7 @@ void computeFirst(token_set *firstSet, ruleLL* rules)
             addToken(&firstSet[i], EPSILON);
         }
     }
-    for(int i = 0; i < NUM_NONTERMINALS; i++){
-        // printf("***DEBUGGER %d %d***\n", i, kthBitSet(&nullable, i)!=0);
-    }
+ 
     //create adjacency list
     long long int adj[NUM_NONTERMINALS];   
     for(int i = 0; i < NUM_NONTERMINALS; i++){
@@ -353,12 +326,7 @@ void computeFirst(token_set *firstSet, ruleLL* rules)
             }
         // }
     }
-    // for(int i = 0; i < NUM_NONTERMINALS; i++){
-    //     for(int j = 0; j < NUM_NONTERMINALS; j++){
-    //         if(kthBitSet(&adj[i], j))
-    //             printf("%s -> %s\n", nonterminals[i], nonterminals[j]);
-    //     }
-    // }
+
     // do topoSort
     int n = NUM_NONTERMINALS;
     int inDegree[n];
@@ -375,10 +343,8 @@ void computeFirst(token_set *firstSet, ruleLL* rules)
     }
     Queue* q = createQueue();
     for(int i = 0; i < NUM_NONTERMINALS; i++){
-        // printf("%d %d\n", i, inDegree[i]);
         if(inDegree[i]==0){
             enqueue(q, itoe(i));
-            // printf("%d\n", front(q)->int_value);
         }
     }
     int topo[NUM_NONTERMINALS];
@@ -389,7 +355,6 @@ void computeFirst(token_set *firstSet, ruleLL* rules)
         int node = front(q)->int_value;
         dequeue(q);
         topo[itr++] = node;
-        // printf("%d\n", itr);
         for(int it = 0; it < NUM_NONTERMINALS; it++){
             if(kthBitSet(&adj[node], it)){
                 inDegree[it]--;
@@ -399,9 +364,7 @@ void computeFirst(token_set *firstSet, ruleLL* rules)
     }
     destroyQueue(q);
     // compute the first in this order
-    for(int i = 0; i < NUM_NONTERMINALS; i++){
-        // printf("%s\n", nonterminals[topo[i]]);
-    }
+
     for(int i = NUM_NONTERMINALS-1; i >= 0; i--){
         for(int j = 0; j < NUM_RULES; j++){
             LLNODE* node = rules[j].head;             // node points to lhs
@@ -444,8 +407,6 @@ void generateFollow(ruleLL* grammar, token_set* follow, token_set* first)
     }
     addToSet(&follow[0],END_CODE);
     int changed = 1;
-    // int changedNT[NUM_NONTERMINALS] = {0};
-    // LLNODE *grammar[NUM_RULES];
     stack *st = getStack();
     while (changed)
     {
@@ -514,7 +475,7 @@ void generateFollow(ruleLL* grammar, token_set* follow, token_set* first)
     }
 }
 
-int** makeParseTable2(token_set* first, token_set* follow, ruleLL* grammar) {
+int** makeParseTable(token_set* first, token_set* follow, ruleLL* grammar) {
     //each cell stores the corresponding grammar rule number
     int** parseTable = (int**)malloc(NUM_NONTERMINALS * sizeof(int*));  
     if (parseTable == NULL) {
@@ -653,10 +614,9 @@ Tree * parseInputSourceCode(ruleLL *grammar, int ** parse_table, FILE * fp, toke
     addToStackAndTree(parseTree, stk, STARTSYMBOL, NON_TERMINAL, NULL, 0, "---");
     TOKEN tok = getToken(fp); 
     int flag = 1;
+    int errflag=0;
     while(*(tok.lexeme) != EOF )
-    //for(int i = 0;i<400;i++)
     {
-        // printf("DEBUGXY    %s",tok.lexeme);
         if(tok.tokenId==TK_COMMENT){
             tok = getToken(fp);
             continue;
@@ -678,24 +638,11 @@ Tree * parseInputSourceCode(ruleLL *grammar, int ** parse_table, FILE * fp, toke
         stackEle TOS = top(stk)->val;
         if(TOS.type == __ENDCODE) return parseTree;
         TreeNode *treeref = top(stk)->treeref;
-        // printf("%s\n", terminals[tok.tokenId]);
-     //   if(TOS.type==NON_TERMINAL)printf("Top of stck %s  Input at %s \n",nonterminals[TOS.sym.nonterminal],terminals[tok.tokenId]);
-       // else if(TOS.type==TERMINAL)printf("Top of stack %s  Input at %s \n",terminals[TOS.sym.terminal],terminals[tok.tokenId]);
-        //if(parseTree->root->val.type==NON_TERMINAL)printf("Tree root is %s\n", nonterminals[parseTree->root->val.sym.nonterminal]);
-        //else if(parseTree->root->val.type==TERMINAL)printf("Tree root is %s\n", terminals[parseTree->root->val.sym.terminal]);
+ 
         if(TOS.type == NON_TERMINAL)
         {
             
             int index = parse_table[TOS.sym.nonterminal][tok.tokenId];
-            if(index < 0){
-                // if(kthBitSet(&firstSet[TOS.sym.nonterminal].set, EPSILON)){
-                //     TreeNode * tnode = createTreeNode(); 
-                //     tnode->val.type = __EPSILON;  
-                //     addTreeNode(parseTree, top(stk)->treeref, tnode); 
-                //     pop(stk);
-                //     continue;
-                // }
-            }
             if(index == -1)
             {
                 if(flag!=0)
@@ -704,13 +651,6 @@ Tree * parseInputSourceCode(ruleLL *grammar, int ** parse_table, FILE * fp, toke
             }
             else if(index == -2)
             {
-                // if(kthBitSet(&firstSet[TOS.sym.nonterminal].set, EPSILON)){
-                //     TreeNode * tnode = createTreeNode(); 
-                //     tnode->val.type = __EPSILON;  
-                //     addTreeNode(parseTree, top(stk)->treeref, tnode); 
-                //     pop(stk);
-                //     continue;
-                // }
                 if(flag!=0)
                     printf("Line %d Error: Invalid Token %s encountered with value %s stack top %s \n", lineNo, terminals[tok.tokenId],tok.lexeme,nonterminals[TOS.sym.nonterminal]); 
                 pop(stk); 
@@ -723,6 +663,7 @@ Tree * parseInputSourceCode(ruleLL *grammar, int ** parse_table, FILE * fp, toke
             }
             if(index<0){
                 flag = 0;
+                errflag=1;
             }
             else 
             {
@@ -730,12 +671,8 @@ Tree * parseInputSourceCode(ruleLL *grammar, int ** parse_table, FILE * fp, toke
                 LLNODE * temp = grammar[index].tail; 
                 pop(stk); 
                 int i =0;
-                //printf("Inside while");
                 while(temp->prev!=NULL)
                 {
-                    //printf("%d \n",temp->type);
-                    //if(TOS.type==NON_TERMINAL)printf("Top of stck %s   \n",nonterminals[TOS.sym.nonterminal]);
-                    //else if(TOS.type==TERMINAL)printf("Top of stack %s \n",terminals[TOS.sym.terminal]);
                     if(temp->type == NON_TERMINAL)
                         addToStackAndTree(parseTree, stk, temp->sym.nonterminal, temp->type, treeref, tok.lineNo, "---"); 
                     else if(temp->type == TERMINAL)
@@ -759,7 +696,6 @@ Tree * parseInputSourceCode(ruleLL *grammar, int ** parse_table, FILE * fp, toke
                 treeref->lexeme = tok.lexeme; 
                 pop(stk);
                 tok = getToken(fp); 
-                //printf("lexeme is %s line no is %d \n",tok.lexeme,tok.lineNo);
             }
             else
             {
@@ -772,6 +708,11 @@ Tree * parseInputSourceCode(ruleLL *grammar, int ** parse_table, FILE * fp, toke
             }
         }
     }
+    if(errflag == 0) {
+        printf("\nInput source code is syntactically correct...........\n");
+        printf("Parse Tree created successfully! \n");
+    }
+    else printf("\nParse tree could not be constructed, the input file is NOT syntactially correct........\n");
     return parseTree; 
 }
 
