@@ -8,6 +8,8 @@ typedef struct TreeNode{
     struct TreeNode * parent; 
     int numChild;  
     tree_ele val; 
+    int lineNumber;
+    char * lexeme;  
 } TreeNode; 
 
 typedef struct Tree{

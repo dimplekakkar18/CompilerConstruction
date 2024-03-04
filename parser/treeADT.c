@@ -14,6 +14,7 @@ TreeNode * createTreeNode(){
     node->children = NULL; 
     node->numChild = 0; 
     node->val.type = NONE; 
+    node->lexeme = NULL; 
     return node; 
 }
 
@@ -41,46 +42,29 @@ void addTreeNode(Tree * parseTree, TreeNode * parent, TreeNode * child)
     }
     
 }
-void printParseTreeNode(TreeNode *node, int level, FILE* fp)
+void printParseTreeNode(TreeNode *node, FILE* fp)
 {
     if (node == NULL)
         return;
-
-    // Print indentation based on the level of the node
-    for (int i = 0; i < level; i++)
-    {
-        fprintf(fp,"    ");
-    }
-
-    // if (node->numChild == 0)
-    // {
-        
-    // }
+    if(node->numChild !=0)
+        printParseTreeNode(node->children[node->numChild-1],fp);
 
     if (node->val.type == NON_TERMINAL)
-        fprintf(fp,"Current Node: %s, Parent Node: %s, Line Number %d\n",
-               nonterminals[node->val.sym.nonterminal],
-               (node->parent != NULL) ? nonterminals[node->parent->val.sym.nonterminal] : "ROOT",
-               lineNo);
+        fprintf(fp,"Lexeme: %-20s Line Number: %-20d Token Name: %-30s Parent Node: %-30s isLeafNode: NO            CurrentNode Symbol: %-30s \n",
+               node->lexeme,node->lineNumber,nonterminals[node->val.sym.nonterminal],
+               (node->parent != NULL) ? nonterminals[node->parent->val.sym.nonterminal] : "ROOT",nonterminals[node->val.sym.nonterminal]);
     else if (node->val.type == TERMINAL)
-           fprintf(fp,"Current Node: %s, Parent Node: %s, Line Number %d\n",
-               terminals[node->val.sym.terminal],
-               (node->parent != NULL) ? nonterminals[node->parent->val.sym.nonterminal] : "ROOT",
-               lineNo);
+        fprintf(fp,"Lexeme: %-20s Line Number: %-20d Token Name: %-30s Parent Node: %-30s isLeafNode: YES           CurrentNode Symbol: %-30s \n",
+               node->lexeme,node->lineNumber,terminals[node->val.sym.terminal],
+               (node->parent != NULL) ? nonterminals[node->parent->val.sym.nonterminal] : "ROOT",terminals[node->val.sym.nonterminal]);
     else if(node->val.type == __EPSILON)
-            fprintf(fp,"Current Node: EPSILON, Parent Node: %s, Line Number %d\n",
-               (node->parent != NULL) ? nonterminals[node->parent->val.sym.nonterminal] : "ROOT",
-               lineNo);
-        
-    // else if (node->val.type == TERMINAL)
-    //     printf("Current Node: %s, Parent Node: %s, Line Number %d\n",
-    //            terminals[node->val.sym.terminal],
-    //            (node->parent != NULL) ? nonterminals[node->parent->val.sym.nonterminal] : "ROOT",
-    //            lineNo);
+            fprintf(fp,"Lexeme: %-20s Line Number: %-20d Token Name: %-30s Parent Node: %-30s isLeafNode: YES           CurrentNode Symbol: %-30s\n",
+               node->lexeme,node->lineNumber,"EPSILON", 
+               (node->parent != NULL) ? nonterminals[node->parent->val.sym.nonterminal] : "ROOT","EPSILON");
 
-    for (int i = 0; i < node->numChild; i++)
+    for (int i = node->numChild - 2; i >= 0; i--)
     {
-        printParseTreeNode(node->children[i], level + 1,fp);
+        printParseTreeNode(node->children[i],fp);
     }
 }
 
@@ -92,7 +76,7 @@ void printParseTree(Tree *parseTree, FILE* fp)
         return;
     }
 
-    printParseTreeNode(parseTree->root, 0,fp);
+    printParseTreeNode(parseTree->root,fp);
 }
 
 

@@ -16,6 +16,7 @@ identifierNode *createSymbolNode(char *identifierName, int tokenID);
 int insertToSymbolTable(char * identifierName, int tokenID);
 int searchSymbolTable(char *identifierName);
 int checkTokenID(char *identifierName, int tokenID);
+void destroySymbolTable(); 
 
 
 // Contents of your header file go here

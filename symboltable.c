@@ -8,7 +8,7 @@
 #define PRIME 31
 
 
-symbolTableLL *symbolTable[HASH_TABLE_SIZE];
+symbolTableLL * symbolTable[HASH_TABLE_SIZE];
 
 int calcHash(char *identifier)
 {
@@ -135,14 +135,18 @@ int checkTokenID(char *identifierName, int tokenID)
     return -1;
 }
 
-// void insertKeyWord()
-// {
+void destroySymbolTable()
+{
+    for (int i = 0; i < HASH_TABLE_SIZE; i++)
+    {
+        while (symbolTable[i]->head!=NULL){
+            // Save the reference to the next node
+            identifierNode* curr = symbolTable[i]->head;
+            symbolTable[i]->head = curr->next;
+            free(curr);
 
-// }
+        }
+        free(symbolTable[i]);     
+    }
+}
 
-// int main(){
-
-//     createSymbolTable(); 
-//     // insertKeyWord();
-
-// }

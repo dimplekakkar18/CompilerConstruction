@@ -163,6 +163,7 @@ int main(int argc, char * argv[]){
                 while ((d = fgetc(errorfile)) != EOF) {
                     putchar(d);
                 }
+                destroySymbolTable(); 
                 fclose(fp2);
                 break; 
             case 4:
