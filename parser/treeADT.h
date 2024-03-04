@@ -17,7 +17,7 @@ typedef struct Tree{
 Tree  * createTree(); 
 TreeNode * createTreeNode();
 void addTreeNode(Tree * parseTree, TreeNode * parent, TreeNode * child);
-void printTree(Tree * parseTree, FILE* fp);
+void printParseTree(Tree * parseTree, FILE* fp);
 void destroyTree(Tree * parseTree);
 extern int lineNo; 
 #endif

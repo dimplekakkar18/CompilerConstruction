@@ -41,7 +41,7 @@ void addTreeNode(Tree * parseTree, TreeNode * parent, TreeNode * child)
     }
     
 }
-void printTreeNode(TreeNode *node, int level, FILE* fp)
+void printParseTreeNode(TreeNode *node, int level, FILE* fp)
 {
     if (node == NULL)
         return;
@@ -80,11 +80,11 @@ void printTreeNode(TreeNode *node, int level, FILE* fp)
 
     for (int i = 0; i < node->numChild; i++)
     {
-        printTreeNode(node->children[i], level + 1,fp);
+        printParseTreeNode(node->children[i], level + 1,fp);
     }
 }
 
-void printTree(Tree *parseTree, FILE* fp)
+void printParseTree(Tree *parseTree, FILE* fp)
 {
     if (parseTree->root == NULL)
     {
@@ -92,7 +92,7 @@ void printTree(Tree *parseTree, FILE* fp)
         return;
     }
 
-    printTreeNode(parseTree->root, 0,fp);
+    printParseTreeNode(parseTree->root, 0,fp);
 }
 
 
