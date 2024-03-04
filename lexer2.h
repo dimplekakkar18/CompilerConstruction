@@ -79,6 +79,7 @@ enum TOKENS {
     TK_AS,
     TK_ERROR,
     TK_BIGLENERROR,
+    TK_BIGFIELDERROR,
     TK_EOF,
     EPSILON,
     TK_COMMENT,  // Add TK_COMMENT at the end

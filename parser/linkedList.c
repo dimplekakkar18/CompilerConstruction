@@ -41,5 +41,32 @@ void addNewNode(LLNODE * node, ruleLL* rule)
 }
 
 
+void freeNode(ruleLL* list) {
+    // Free the memory allocated for the node
+    if(list->head==NULL)return;
+    LLNODE* temp = list->head;
+    list->head = temp->next;
+    free(temp);
+}
 
+void freeLL(ruleLL *list) {
+    if(list->head==NULL){
+        free(list);
+        return;
+    }
+
+    while(list->head!=NULL){
+        freeNode(list);
+    }
+    
+}
+
+void freeGrammar(ruleLL *grammar) {
+    // Free memory for each rule
+    for (int i = 0; i < NUMRULES; i++) {
+        freeLL(&grammar[i]);
+    }
+    // Free memory for the grammar array
+    free(grammar);
+}
 

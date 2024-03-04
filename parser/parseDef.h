@@ -8,8 +8,8 @@
 #define PRIME 31
 #define NUM_NONTERMINALS 50
 #define NUM_RULES 90
-#define NUM_TERMINALS 58
-#define END_CODE 60 // num_terminals +20
+#define NUM_TERMINALS 59
+#define END_CODE 61 // num_terminals +20
 
 #define STARTSYMBOL __program__
 
