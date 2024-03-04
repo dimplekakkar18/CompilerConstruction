@@ -154,7 +154,7 @@ int main(int argc, char * argv[]){
                     return -1;
                 }
                 
-                printTree(parseTree,fp); 
+                printParseTree(parseTree,fp); 
                 printf("\n");
                 fclose(fp);
                 fclose(errorfile); 
