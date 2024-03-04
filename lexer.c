@@ -340,7 +340,12 @@ void printTokenInfo(TOKEN tk, FILE * errorfile){
     printf("Line no. %d\tLexeme %-20s\tToken ", lineNo, tk.lexeme);
     print_token(tk.tokenId);
 }
-
+/**
+ *  The following function retrieves the next token from the input file.
+ *   fp is The input file pointer.
+ *    errorfile is The file pointer for error logging.
+ *    TOKEN is The next token extracted from the input file.
+ */
 TOKEN getToken(FILE *fp, FILE * errorfile)
 {
     // token to be returned
@@ -351,13 +356,14 @@ TOKEN getToken(FILE *fp, FILE * errorfile)
     int state = 0;
     char *lexeme;
     lexemeSize = 0;
-
+// Loop to traverse through different states of the Finite Automaton
     while (state >= 0)
     {   
-        c = getCharFromBuffers(fp);
+        c = getCharFromBuffers(fp);  // Retrieve the next character from the input file
 
         // increment lexemeSize
         lexemeSize++;
+        // Switch statement to handle different states
         switch (state)
         {
         // start state
@@ -374,30 +380,30 @@ TOKEN getToken(FILE *fp, FILE * errorfile)
                 end++;
                 break;
             }
-            else if ( c == '\n'){
+            else if ( c == '\n'){   // Check for newline character
                 end++;
                 state=4;
                 lineNo++;
                 break;
-            }
+            } // Check for identifiers starting with letters except b,c or d
             else if((c=='a')||(c>='e'&& c<='z'))
             {
                 state=5;
                 end++;
                 break;
-            }
+            }  // Check for identifiers starting with 'b', 'c', or 'd'
             else if(c=='b'|| c=='c' || c=='d')
             {
                 state=6;
                 end++;
                 break;
-            }
+            }  // Check for numeric literals
             else if( c>='0' && c<='9')
             {
                 state=9;
                 end++;
                 break;
-            }
+            }  // Check for other characters like underscore, pound sign, etc.
             else if( c =='_' )
             {
                 state=16;
@@ -409,23 +415,23 @@ TOKEN getToken(FILE *fp, FILE * errorfile)
                 state=19;
                 end++;
                 break;
-            }
-            else if (c == '[')
+            }  // Check for various symbols
+            else if (c == '[')     // Handling the case of '[' symbol
             {
-                end++; // if in out function we take token from st to end-1
-                char* lex = getLexeme(); //populate the token
+                end++; // getToken returns token from start pointer to end-1 pointer
+                char* lex = getLexeme(); //populate the lexeme of the corresponding token
                 token.lexeme = lex;
                 token.tokenId = TK_SQL;
                 token.lineNo = lineNo;
-                refreshPtr();
+                refreshPtr();   //to make start pointer = end pointer
                 state=0;
                 return token;
                 break;
-            }
+            } // Check for other symbols like ']', ',', ';', etc.
             else if (c == ']')
             {
-                end++; // if in out function we take token from st to end-1
-                char* lex = getLexeme(); //populate the token
+                end++; //  getToken returns token from start pointer to end-1 pointer
+                char* lex = getLexeme(); //populate the lexeme of the corresponding token
                 token.lexeme = lex;
                 token.tokenId = TK_SQR;
                 token.lineNo = lineNo;
@@ -436,8 +442,8 @@ TOKEN getToken(FILE *fp, FILE * errorfile)
             }
             else if (c == ',')
             {
-                end++; // if in out function we take token from st to end-1
-                char* lex = getLexeme(); //populate the token
+                end++; // getToken returns token from start pointer to end-1 pointer
+                char* lex = getLexeme(); //populate the lexeme of the corresponding token
                 token.lexeme = lex;
                 token.tokenId = TK_COMMA;
                 token.lineNo = lineNo;
@@ -445,11 +451,11 @@ TOKEN getToken(FILE *fp, FILE * errorfile)
                 state=0;
                 return token;
                 break;
-            }
+            }   // Handling the case of ',' symbol
             else if (c == ';')
-            {
-                end++; // if in out function we take token from st to end-1
-                char* lex = getLexeme(); //populate the token
+            { // Handling the case of ';' symbol
+                end++; // getToken returns token from start pointer to end-1 pointer
+                char* lex = getLexeme(); //populate the lexeme of the corresponding token
                 token.lexeme = lex;
                 token.tokenId = TK_SEM;
                 token.lineNo = lineNo;
@@ -457,11 +463,11 @@ TOKEN getToken(FILE *fp, FILE * errorfile)
                 state=0;
                 return token;
                 break;
-            }
+            } // Repeat for other symbols
             else if (c == ':')
-            {
-                end++; // if in out function we take token from st to end-1
-                char* lex = getLexeme(); //populate the token
+            { // Handling the case of ':' symbol
+                end++; // getToken returns token from start pointer to end-1 pointer
+                char* lex = getLexeme(); //populate the lexeme of the corresponding token
                 token.lexeme = lex;
                 token.tokenId = TK_COLON;
                 token.lineNo = lineNo;
@@ -471,9 +477,9 @@ TOKEN getToken(FILE *fp, FILE * errorfile)
                 break;
             }
             else if (c == '.')
-            {
-                end++; // if in out function we take token from st to end-1
-                char* lex = getLexeme(); //populate the token
+            { // Handling the case of '.' symbol
+                end++; // getToken returns token from start pointer to end-1 pointer
+                char* lex = getLexeme(); //populate the lexeme of the corresponding token
                 token.lexeme = lex;
                 token.tokenId = TK_DOT;
                 token.lineNo = lineNo;
@@ -481,11 +487,11 @@ TOKEN getToken(FILE *fp, FILE * errorfile)
                 state=0;
                 return token;
                 break;
-            }
+            } // Repeat for other symbols
             else if (c == '(')
-            {
-                end++; // if in out function we take token from st to end-1
-                char* lex = getLexeme(); //populate the token
+            {// Handling the case of '(' symbol
+                end++; // getToken returns token from start pointer to end-1 pointer
+                char* lex = getLexeme(); //populate the lexeme of the corresponding token
                 token.lexeme = lex;
                 token.tokenId = TK_OP;
                 token.lineNo = lineNo;
@@ -493,11 +499,11 @@ TOKEN getToken(FILE *fp, FILE * errorfile)
                 state=0;
                 return token;
                 break;
-            }
+            }  // Repeat for other symbols
             else if (c == ')')
-            {
-                end++; // if in out function we take token from st to end-1
-                char* lex = getLexeme(); //populate the token
+            {// Handling the case of ')' symbol
+                end++; // getToken returns token from start pointer to end-1 pointer
+                char* lex = getLexeme(); //populate the lexeme of the corresponding token
                 token.lexeme = lex;
                 token.tokenId = TK_CL;
                 token.lineNo = lineNo;
@@ -507,9 +513,9 @@ TOKEN getToken(FILE *fp, FILE * errorfile)
                 break;
             }
             else if (c == '+')
-            {
-                end++; // if in out function we take token from st to end-1
-                char* lex = getLexeme(); //populate the token
+            {// Handling the case of '+' symbol
+                end++; // getToken returns token from start pointer to end-1 pointer
+                char* lex = getLexeme(); //populate the lexeme of the corresponding token
                 token.lexeme = lex;
                 token.tokenId = TK_PLUS;
                 token.lineNo = lineNo;
@@ -520,8 +526,8 @@ TOKEN getToken(FILE *fp, FILE * errorfile)
             }
             else if (c == '-')
             {
-                end++; // if in out function we take token from st to end-1
-                char* lex = getLexeme(); //populate the token
+                end++; // getToken returns token from start pointer to end-1 pointer
+                char* lex = getLexeme(); //populate the lexeme of the corresponding token
                 token.lexeme = lex;
                 token.tokenId = TK_MINUS;
                 token.lineNo = lineNo;
@@ -531,11 +537,11 @@ TOKEN getToken(FILE *fp, FILE * errorfile)
                 break;
             }
             else if (c == '*')
-            {
-                end++; // if in out function we take token from st to end-1
-                char* lex = getLexeme(); //populate the token
+            {// Handling the case of '*' symbol
+                end++; // getToken returns token from start pointer to end-1 pointer
+                char* lex = getLexeme(); //populate the lexeme of the corresponding token
                 token.lexeme = lex;
-                token.tokenId = TK_MUL;
+                token.tokenId = TK_MUL;  //assigning the corresponding token ID to the token
                 token.lineNo = lineNo;
                 refreshPtr();
                 state=0;
@@ -544,8 +550,8 @@ TOKEN getToken(FILE *fp, FILE * errorfile)
             }
             else if (c == '/')
             {
-                end++; // if in out function we take token from st to end-1
-                char* lex = getLexeme(); //populate the token
+                end++; // getToken returns token from start pointer to end-1 pointer
+                char* lex = getLexeme(); //populate the lexeme of the corresponding token
                 token.lexeme = lex;
                 token.tokenId = TK_DIV;
                 token.lineNo = lineNo;
@@ -556,8 +562,8 @@ TOKEN getToken(FILE *fp, FILE * errorfile)
             }
             else if (c == '~')
             {
-                end++; // if in out function we take token from st to end-1
-                char* lex = getLexeme(); //populate the token
+                end++; // getToken returns token from start pointer to end-1 pointer
+                char* lex = getLexeme(); //populate the lexeme of the corresponding token
                 token.lexeme = lex;
                 token.tokenId = TK_NOT;
                 token.lineNo = lineNo;
@@ -631,8 +637,8 @@ TOKEN getToken(FILE *fp, FILE * errorfile)
             }
             else if ( c == '=')
             {
-                end++; // if in out function we take token from st to end-1
-                char* lex = getLexeme(); //populate the token
+                end++; // getToken returns token from start pointer to end-1 pointer
+                char* lex = getLexeme(); //populate the lexeme of the corresponding token
                 token.lexeme = lex;
                 token.tokenId = TK_LE;
                 token.lineNo = lineNo;
@@ -643,7 +649,7 @@ TOKEN getToken(FILE *fp, FILE * errorfile)
             }
             else
             {
-                char* lex = getLexeme(); //populate the token
+                char* lex = getLexeme(); //populate the lexeme of the corresponding token
                 token.lexeme = lex;
                 token.tokenId = TK_LT;
                 token.lineNo = lineNo;
@@ -662,7 +668,7 @@ TOKEN getToken(FILE *fp, FILE * errorfile)
             else
             {
                 end--;
-                char* lex = getLexeme(); //populate the token
+                char* lex = getLexeme(); //populate the lexeme of the corresponding token
                 token.lexeme = lex;
                 token.tokenId = TK_LT;
                 token.lineNo = lineNo;
@@ -675,8 +681,8 @@ TOKEN getToken(FILE *fp, FILE * errorfile)
         case 3:
             if ( c == '-')
             {
-                end++; // if in out function we take token from st to end-1
-                char* lex = getLexeme(); //populate the token
+                end++; // getToken returns token from start pointer to end-1 pointer
+                char* lex = getLexeme(); //populate the lexeme of the corresponding token
                 token.lexeme = lex;
                 token.tokenId = TK_ASSIGNOP;
                 token.lineNo = lineNo;
@@ -725,7 +731,7 @@ TOKEN getToken(FILE *fp, FILE * errorfile)
             }
             else 
             {
-                char* lex = getLexeme(); //populate the token
+                char* lex = getLexeme(); //populate the lexeme of the corresponding token
                 int id = searchSymbolTable(lex);
                 if(id == -1){
                     token.lexeme = lex;
@@ -763,7 +769,7 @@ TOKEN getToken(FILE *fp, FILE * errorfile)
             }
             else 
             {
-                char* lex = getLexeme(); //populate the token
+                char* lex = getLexeme(); //populate the lexeme of the corresponding token
                 token.lexeme = lex;
                 token.tokenId = TK_FIELDID;
                 token.lineNo = lineNo;
@@ -792,16 +798,14 @@ TOKEN getToken(FILE *fp, FILE * errorfile)
             }
             else 
             {
-                char* lex = getLexeme(); //populate the token
+                char* lex = getLexeme(); //populate the lexeme of the corresponding token
                 token.lexeme = lex;
                 token.tokenId = TK_ID;
                 token.lineNo = lineNo;
                 refreshPtr();
                 state=0;
                 if (len(token.lexeme)>20){
-                    // printf( "Line No %d: Error3 :Variable Identifier %s is longer than the prescribed length of 20 characters.\n",lineNo,token.lexeme);
-                    // fprintf( errorfile,"Line No %d: Error :Variable Identifier is longer than the prescribed length of 20 characters.\n",lineNo);
-                    token.tokenId = TK_BIGLENERROR;
+                    token.tokenId = TK_BIGLENERROR;  //This token is created to identify the errors which are exceeding the length
                 }
                 return token;
                 break;
@@ -815,15 +819,13 @@ TOKEN getToken(FILE *fp, FILE * errorfile)
             }
             else 
             {
-                char* lex = getLexeme(); //populate the token
+                char* lex = getLexeme(); //populate the lexeme of the corresponding token
                 token.lexeme = lex;
                 token.tokenId = TK_ID;
                 token.lineNo = lineNo;
                 refreshPtr();
                 state=0;
                 if (len(token.lexeme)>20){
-                    // printf( "Line No %d: Error 4 :Variable Identifier %s is longer than the prescribed length of 20 characters.\n",lineNo,token.lexeme);
-                    // fprintf( errorfile, "Line No %d: Error :Variable Identifier is longer than the prescribed length of 20 characters.\n",lineNo);
                     token.tokenId = TK_BIGLENERROR;
                 }
                 return token;
@@ -845,7 +847,7 @@ TOKEN getToken(FILE *fp, FILE * errorfile)
             }
             else
             {
-                char* lex = getLexeme(); //populate the token
+                char* lex = getLexeme(); //populate the lexeme of the corresponding token
                 token.lexeme = lex;
                 token.tokenId = TK_NUM;
                 token.lineNo = lineNo;
@@ -865,7 +867,7 @@ TOKEN getToken(FILE *fp, FILE * errorfile)
             else
             {
                 end--;
-                char* lex = getLexeme(); //populate the token
+                char* lex = getLexeme(); //populate the lexeme of the corresponding token
                 token.lexeme = lex;
                 token.tokenId = TK_NUM;
                 token.lineNo = lineNo;
@@ -902,7 +904,7 @@ TOKEN getToken(FILE *fp, FILE * errorfile)
             }
             else
             {
-                char* lex = getLexeme(); //populate the token
+                char* lex = getLexeme(); //populate the lexeme of the corresponding token
                 token.lexeme = lex;
                 token.tokenId = TK_RNUM;
                 token.lineNo = lineNo;
@@ -939,7 +941,7 @@ TOKEN getToken(FILE *fp, FILE * errorfile)
             if ( c >= '0' && c <= '9')
             {
                 end++; // if in out function we take token from st to end-1
-                char* lex = getLexeme(); //populate the token
+                char* lex = getLexeme(); //populate the lexeme of the corresponding token
                 token.lexeme = lex;
                 token.tokenId = TK_RNUM;
                 token.lineNo = lineNo;
@@ -1007,7 +1009,7 @@ TOKEN getToken(FILE *fp, FILE * errorfile)
             }
             else
             {
-                char* lex = getLexeme(); //populate the token
+                char* lex = getLexeme(); //populate the lexeme corresponding to the token
                 int id = searchSymbolTable(lex);
                 if(id == TK_MAIN){
                     token.lexeme = lex;
@@ -1033,7 +1035,7 @@ TOKEN getToken(FILE *fp, FILE * errorfile)
             }
             else
             {
-                char* lex = getLexeme(); //populate the token
+                char* lex = getLexeme(); //populate the lexeme of the corresponding token
                 token.lexeme = lex;
                 token.tokenId = TK_FUNID;
                 token.lineNo = lineNo;
@@ -1052,7 +1054,7 @@ TOKEN getToken(FILE *fp, FILE * errorfile)
             }
             else
             {
-                char* lex = getError(); //increment errorno
+                char* lex = getError(); //returns lexeme of the error
                 refreshPtr();
                 state=0;
                 token.lexeme = lex;
@@ -1070,7 +1072,7 @@ TOKEN getToken(FILE *fp, FILE * errorfile)
             }
             else
             {
-                char* lex = getLexeme(); //populate the token
+                char* lex = getLexeme(); //populate the lexeme of the corresponding token
                 token.lexeme = lex;
                 token.tokenId = TK_RUID;
                 token.lineNo = lineNo;
@@ -1101,8 +1103,8 @@ TOKEN getToken(FILE *fp, FILE * errorfile)
         case 22:
             if( c == '&')
             {
-                end++; // if in out function we take token from st to end-1
-                char* lex = getLexeme(); //populate the token
+                end++; // getToken returns token from start pointer to end-1 pointer
+                char* lex = getLexeme(); //populate the lexeme of the corresponding token
                 token.lexeme = lex;
                 token.tokenId = TK_AND;
                 token.lineNo = lineNo;
@@ -1143,8 +1145,8 @@ TOKEN getToken(FILE *fp, FILE * errorfile)
         case 24:
             if( c == '@')
             {
-                end++; // if in out function we take token from st to end-1
-                char* lex = getLexeme(); //populate the token
+                end++; //getToken returns token from start pointer to end-1 pointer
+                char* lex = getLexeme(); //populate the lexeme of the corresponding token
                 token.lexeme = lex;
                 token.tokenId = TK_OR;
                 token.lineNo = lineNo;
@@ -1166,8 +1168,8 @@ TOKEN getToken(FILE *fp, FILE * errorfile)
         case 25:
             if ( c == '=')
             {
-                end++; // if in out function we take token from st to end-1
-                char* lex = getLexeme(); //populate the token
+                end++; // getToken returns token from start pointer to end-1 pointer
+                char* lex = getLexeme(); //populate the lexeme of the corresponding token
                 token.lexeme = lex;
                 token.tokenId = TK_GE;
                 token.lineNo = lineNo;
@@ -1178,7 +1180,7 @@ TOKEN getToken(FILE *fp, FILE * errorfile)
             }
             else 
             {
-                char* lex = getLexeme(); //populate the token
+                char* lex = getLexeme(); //populate the lexeme of the corresponding token
                 token.lexeme = lex;
                 token.tokenId = TK_GT;
                 token.lineNo = lineNo;
@@ -1191,8 +1193,8 @@ TOKEN getToken(FILE *fp, FILE * errorfile)
         case 26:
             if ( c == '=')
             {
-                end++;// st to end - 1 
-                char* lex = getLexeme(); //populate the token
+                end++;// getToken returns token from start pointer to end-1 pointer
+                char* lex = getLexeme(); //populate the lexeme of the corresponding token
                 token.lexeme = lex;
                 token.tokenId = TK_NE;
                 token.lineNo = lineNo;
@@ -1215,8 +1217,8 @@ TOKEN getToken(FILE *fp, FILE * errorfile)
         case 27:
             if ( c == '=')
             {
-                end++;// st to end - 1 
-                char* lex = getLexeme(); //populate the token
+                end++;//getToken returns token from start pointer to end-1 pointer
+                char* lex = getLexeme(); //populate the lexeme of the corresponding token
                 token.lexeme = lex;
                 token.tokenId = TK_EQ;
                 token.lineNo = lineNo;
@@ -1243,7 +1245,7 @@ TOKEN getToken(FILE *fp, FILE * errorfile)
             }
             else
             {
-                end++;// st to end - 1 
+                end++;// getToken returns token from start pointer to end-1 pointer
                 char* lex = malloc(1*sizeof(char));
                 lex[0] = '%';
                 token.lexeme = lex;
@@ -1260,43 +1262,6 @@ TOKEN getToken(FILE *fp, FILE * errorfile)
     return token;
 }
 
-// int main()
-// {
-//     removeComments("./t1.txt","clean.txt");
-//     initializeBuffers();
-//     createSymbolTable();
-//     FILE *fp = fopen("./clean.txt", "r");
-//     if (fp == NULL)
-//     {
-//         printf("Error opening file\n");
-//         return -1;
-//     }
-//     int flag = 1;
-//     while (flag)
-//     {
-//         TOKEN token = getToken(fp);
-//         if (*token.lexeme == EOF){
-//             // printf("*****\n");
-//             break;
-//         }
-//         // if (token.tokenId == NUM){
-//         //     printf("%d\n", token.val.intValue);
-//         // } else if (token.tokenId == RNUM){
-//         //     printf("%f\n", token.val.floatValue);
-//         // }
-//         if(token.tokenId==TK_ID && len(token.lexeme)>20) printf("Line No %d: Error :Variable Identifier is longer than the prescribed length of 20 characters.\n",lineNo);
-//         else if (token.tokenId==TK_FIELDID && len(token.lexeme)>30) printf("Line No %d: Error :Field Identifier is longer than the prescribed length of 30 characters.\n",lineNo);
-//         else{
-//             checkTokenID(token.lexeme, token.tokenId);
-//             // printf("%d\n", checkTokenID(token.lexeme, token.tokenId));
-//             printTokenInfo(token); 
-//         }
-//         // printf("DO you want to continue? (1/0): ");
-//         // scanf("%d", &flag);
-//     }
-//     fclose(fp);
-//     return 0;
-// }
 
 
 

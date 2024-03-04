@@ -499,135 +499,9 @@ void generateFollow(ruleLL* grammar, token_set* follow, token_set* first)
     }
 }
 
-
-
-// ruleLL** makeParseTable(token_set* first, token_set* follow,ruleLL* grammar)   //grammar is a pointer to the first ruleLL struct
-// {
-//     // ruleLL** parseTable = (ruleLL*)malloc(NUM_NONTERMINALS * sizeof(ruleLL));
-//     // for(int i=0;i<NUM_NONTERMINALS;i++){
-//     //     for(int j=0;j<NUM_TERMINALS;j++){
-//     //         parseTable[i][j].head=NULL;
-//     //         parseTable[i][j].tail=NULL;
-//     //     }
-//     // }
-
-//     ruleLL** parseTable = (struct ruleLL*)malloc(NUM_NONTERMINALS * sizeof(struct ruleLL));
-//     if (parseTable == NULL) {
-//         printf("Memory allocation failed.");
-//         // exit(1);
-//     }
-
-//     // Allocate memory for each row of structs
-//     for (int i = 0; i < NUM_NONTERMINALS; ++i) {
-//         parseTable[i] = (struct ruleLL*)malloc(NUM_TERMINALS * sizeof(struct ruleLL));
-//         if (parseTable[i] == NULL) {
-//             printf("Memory allocation failed.");
-//             // exit(1);
-//         }
-//     }
-//     // printf("hi\n");
-//     for(int i=0; i<NUMRULES; i++)
-//     {
-//         // printf("reached2\n");   
-//         LLNODE* node = grammar[i].head;
-//         // printf("reached3\n");   
-//         // if(node==NULL){printf("HI");}
-//         //  printf("reached3\n");   
-//         // printf("%s",node->type);
-//         int flag=1;
-//         SYMBOL nt=node->sym;
-//         // printf("reached3\n");   
-
-//         node = node->next;
-//         // printf("hi2\n");
-//         while(flag &&( node != NULL))
-//         {
-//             // printf("check1\n");
-//             flag=0;
-//             if(node->type == TERMINAL){
-//                 parseTable[nt.nonterminal][node->sym.terminal]=grammar[i];
-//                 if(parseTable[nt.nonterminal][node->sym.terminal].head != NULL) printf("value stored\n");               
-//             }
-//             else if(node->type == __EPSILON)
-//             {
-//                 // printf("check\n");
-//                 long long int num = follow[node->sym.nonterminal].set;
-//                 int index = 0;
-//                 while (num) {
-//                     if (num & 1) {
-//                         parseTable[nt.nonterminal][index]=grammar[i];
-//                         if(parseTable[nt.nonterminal][node->sym.terminal].head != NULL) printf("value stored\n");  
-//                     }
-//                     num >>= 1;  // Right shift to check the next bit
-//                     ++index;
-//                 }
-                             
-                
-//             }
-//             else if(node->type == NON_TERMINAL)
-//             {
-//                 long long int num = first[node->sym.nonterminal].set;
-//                 int index = 0;
-//                 while (num) {
-//                     if(index == EPSILON && (num&1))
-//                     {
-//                         // printf("DEBUGER\n");
-//                         flag=1;
-//                         num>>=1;
-//                         continue;
-//                     }
-//                     if (num & 1) {
-//                         // printf("DEBUGER\n");
-//                         parseTable[nt.nonterminal][index]=grammar[i];
-//                         if(parseTable[nt.nonterminal][node->sym.terminal].head != NULL) printf("value stored\n");  
-//                     }
-//                     num >>= 1;  // Right shift to check the next bit
-//                     ++index;
-//                 }
-
-//                 // if(parseTable[nt.nonterminal][node->sym.terminal].head == NULL) printf("value not stored\n");
-//             }
-//             else{
-//                 printf("ignored\n");
-//             }
-
-//             if(flag==1) node=node->next;
-//         }
-
-//         if(flag){
-//             long long int num = follow[node->sym.nonterminal].set;
-//                 int index = 0;
-//                 while (num) {
-//                     if (num & 1) {
-//                         parseTable[nt.nonterminal][index]=grammar[i];
-//                     }
-//                     num >>= 1;  // Right shift to check the next bit
-//                     ++index;
-//                 }
-//         }
-
-//     }
-//     return parseTable;
-// }
-
 int** makeParseTable2(token_set* first, token_set* follow, ruleLL* grammar) {
-    // FILE* file = fopen("followSets.txt", "r");
-    // if (file == NULL) {
-    //     perror("Error opening file");
-    //     // exit(EXIT_FAILURE);
-    // }
-    // int index = 0;
-    // while (index!=NUM_NONTERMINALS) {
-    //     fscanf(file, "%lld", &follow[index].set);
-    //     index++;
-    //     if (index >= NUM_NONTERMINALS) {
-    //         break; // Prevent reading more lines than the size of the followset array
-    //     }
-    // }
-
-    // fclose(file);
-
-    int** parseTable = (int**)malloc(NUM_NONTERMINALS * sizeof(int*));
+    //each cell stores the corresponding grammar rule number
+    int** parseTable = (int**)malloc(NUM_NONTERMINALS * sizeof(int*));  
     if (parseTable == NULL) {
         printf("Memory allocation failed.");
         exit(1);
@@ -657,12 +531,12 @@ int** makeParseTable2(token_set* first, token_set* follow, ruleLL* grammar) {
         while (flag && (node != NULL)) {
             flag = 0;
             if (node->type == TERMINAL) {
-                parseTable[nt.nonterminal][node->sym.terminal] = i; // Store the rule index instead of grammar[i]
+                parseTable[nt.nonterminal][node->sym.terminal] = i; // Store the rule index
             } else if (node->type == __EPSILON) {
                 long long int num = follow[nt.nonterminal].set;
                 int index = 0;
                 while (num) {
-                    if (num & 1) {
+                    if (num & 1) { //set rule number for all terminals in follow of the nonterminal
                         parseTable[nt.nonterminal][index] = i;
                     }
                     num >>= 1; // Right shift to check the next bit
@@ -672,28 +546,27 @@ int** makeParseTable2(token_set* first, token_set* follow, ruleLL* grammar) {
                 long long int num = first[node->sym.nonterminal].set;
                 int index = 0;
                 while (num) {
-                    if (index == EPSILON && (num & 1)) {
+                    if (index == EPSILON && (num & 1)) { //set flag if the first set contains epsilon 
                         flag = 1;
                         num >>= 1;
                         continue;
                     }
-                    if (num & 1) {
+                    if (num & 1) { //set rule number for all terminals in first of the non-terminal
                         parseTable[nt.nonterminal][index] = i;
                     }
                     num >>= 1; // Right shift to check the next bit
                     ++index;
                 }
             }
-
             if (flag == 1)
                 node = node->next;
         }
 
-        if (flag) {
+        if (flag) { // if the first of RHS of a rule contains epsilon
             long long int num = follow[node->sym.nonterminal].set;
             int index = 0;
             while (num) {
-                if (num & 1) {
+                if (num & 1) { //set rule for all terminals in follow of the nonterminal(LHS)
                     parseTable[nt.nonterminal][index] = i;
                 }
                 num >>= 1; // Right shift to check the next bit
@@ -706,9 +579,9 @@ int** makeParseTable2(token_set* first, token_set* follow, ruleLL* grammar) {
             long long int nont = follow[i].set;
             for(int j=0;j<NUM_TERMINALS;j++)
             {
-                if(parseTable[i][j]==-1){
-                    if(nont & 1){
-                        parseTable[i][j]=-2; //-2 stands for synch 
+                if(parseTable[i][j]==-1){ 
+                    if(nont & 1){       // populating synchronizing tokens obtained from FOLLOW set of the nonterminal
+                        parseTable[i][j]=-2; //-2 stands for synch tokens
                     }
                 }
                 nont>>=1;
@@ -724,14 +597,13 @@ int** makeParseTable2(token_set* first, token_set* follow, ruleLL* grammar) {
                 // }
                 if((parseTable[i][j]==-1 || parseTable[i][j]==-2) && (j == TK_ELSE || j == TK_IF || j == TK_WHILE || j == TK_UNION|| j == TK_RECORD || j == TK_FUNID || j == TK_MAIN || j == TK_THEN || j == TK_DEFINETYPE || j == TK_READ || j == TK_WRITE || j == TK_RETURN || j == TK_END || j == TK_ENDIF || j == TK_ENDRECORD || j == TK_ENDUNION || j == TK_ENDWHILE))
                 {
-                    parseTable[i][j]=-3; //-2 stands for synch 
+                    parseTable[i][j]=-3; //-3 stands for additional tokens marking the beginning of a new statement 
                 }
             }
         }
 
     return parseTable;
 }
-
 void addToStackAndTree(Tree * parseTree, stack * stk,int sym, SYMBOLTYPE type, TreeNode * parent)
 {
     if(type==__EPSILON) return;
