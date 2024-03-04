@@ -15,13 +15,7 @@
 int main(int argc, char * argv[]){
     int choice = 0; 
     FILE *fp = fopen(argv[1], "r");
-    FILE * errorfile = fopen("errorfile.txt", "w");
     if (fp == NULL)
-    {
-        printf("Error opening file\n");
-        return -1;
-    }
-    if (errorfile == NULL)
     {
         printf("Error opening file\n");
         return -1;
@@ -39,28 +33,11 @@ int main(int argc, char * argv[]){
         {
             case 0: 
                 printf("Exiting...\n"); 
-                //fclose(fp); 
                 return 0; 
                 break; 
             case 1:
                 removeComments(argv[1],"clean.txt");
-                // fp = fopen("clean.txt", "r"); 
-                //fclose(fp);
                 fp = NULL;
-                // FILE *fp2 = fopen("clean.txt", "r");
-                // if (fp2 == NULL) {
-                //     printf("Error opening file.\n");
-                //     //return 1; // Return with error code
-                // }
-
-                // // Read and print the contents of the file
-                // int c;
-                // while ((c = fgetc(fp2)) != EOF) {
-                //     putchar(c);
-                // }
-
-                // // Close the file
-                // fclose(fp2);
                 printf("\n");
                 break; 
             case 2:
@@ -68,40 +45,22 @@ int main(int argc, char * argv[]){
                 initializeBuffers();
                 createSymbolTable();
                 fp = fopen(argv[1], "r"); 
-                //  errorfile = fopen("errorfile.txt", "r");
-                // if(errorfile == NULL)
-                // {
-                //     printf("Error opening file\n");
-                //     return -1;
-                // }
                 if(fp == NULL)
                 {
                     printf("Error opening file\n");
                     return -1;
                 }
                 while (flag)
-                //for(int i = 0;i<20;i++)
                     {
                         createSymbolTable();
-                        TOKEN token = getToken(fp, errorfile);
+                        TOKEN token = getToken(fp);
                         if (*token.lexeme == EOF){
                             // printf("*****\n");
                             break;
                         }
-                        // if (token.tokenId == NUM){
-                        //     printf("%d\n", token.val.intValue);
-                        // } else if (token.tokenId == RNUM){
-                        //     printf("%f\n", token.val.floatValue);
-                        // }
-                        // if(token.tokenId==TK_ID && len(token.lexeme)>20) fprintf(errorfile, "Line No %d: Error :Variable Identifier is longer than the prescribed length of 20 characters.\n",lineNo);
-                        // else if (token.tokenId==TK_FIELDID && len(token.lexeme)>30) fprintf(errorfile, "Line No %d: Error :Field Identifier is longer than the prescribed length of 30 characters.\n",lineNo);
-                        // else{
+
                         checkTokenID(token.lexeme, token.tokenId);
-                        // printf("%d\n", checkTokenID(token.lexeme, token.tokenId));
-                        printTokenInfo(token, errorfile); 
-                        // }
-                        // printf("DO you want to continue? (1/0): ");
-                        // scanf("%d", &flag);
+                        printTokenInfo(token); 
                     } 
                     
                 break;  
@@ -110,13 +69,6 @@ int main(int argc, char * argv[]){
                 createSymbolTable();
                 create_hashTable();
                 fp = fopen(argv[1], "r"); 
-                // errorfile = fopen("errorfile.txt", "r");
-                // if(errorfile == NULL)
-                // {
-                //     printf("Error opening file\n");
-                //     return -1;
-                // }
-
                 if(fp == NULL)
                 {
                     printf("Error opening file\n");
@@ -145,7 +97,7 @@ int main(int argc, char * argv[]){
                 //     printf("\n");
                 // }
                 int** pt = makeParseTable2(first_sets,follow_sets,rules);                
-                Tree * parseTree = makeParseTree(rules,pt,fp, errorfile,first_sets); 
+                Tree * parseTree = makeParseTree(rules,pt,fp,first_sets); 
                 fclose(fp);
                 fp = fopen(argv[2], "w"); 
                 if(fp == NULL)
@@ -157,13 +109,7 @@ int main(int argc, char * argv[]){
                 printTree(parseTree,fp); 
                 printf("\n");
                 fclose(fp);
-                fclose(errorfile); 
-                FILE* fp2 = fopen("errorfile.txt","r");
-                int d;
-                while ((d = fgetc(errorfile)) != EOF) {
-                    putchar(d);
-                }
-                fclose(fp2);
+                freeGrammar(rules);
                 break; 
             case 4:
                 end_time = clock();

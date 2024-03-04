@@ -7,7 +7,6 @@
 #define HASH_TABLE_SIZE 127 // Prime Number
 #define PRIME 31
 
-
 symbolTableLL *symbolTable[HASH_TABLE_SIZE];
 
 int calcHash(char *identifier)
@@ -61,14 +60,13 @@ void createSymbolTable()
         {"endrecord", TK_ENDRECORD},
         {"else", TK_ELSE},
         {"ERROR", TK_ERROR},
-        {"EOF", TK_EOF}
-};
+        {"EOF", TK_EOF}};
 
     for (int i = 0; i < NUM_KEYWORDS; i++)
     {
-        identifierNode* node = createSymbolNode(arr[i].keywordname,arr[i].tokenID);
+        identifierNode *node = createSymbolNode(arr[i].keywordname, arr[i].tokenID);
         int index = calcHash(node->identifierName);
-        insertToSymbolTable(node->identifierName,node->tokenID);
+        insertToSymbolTable(node->identifierName, node->tokenID);
     }
 }
 
@@ -81,28 +79,29 @@ identifierNode *createSymbolNode(char *identifierName, int tokenID)
     return newN;
 }
 
-int insertToSymbolTable(char * identifierName, int tokenID){
+int insertToSymbolTable(char *identifierName, int tokenID)
+{
     int index = calcHash(identifierName);
-    identifierNode * insertNode = createSymbolNode(identifierName, tokenID); 
-    identifierNode * temp = symbolTable[index]->head; 
+    identifierNode *insertNode = createSymbolNode(identifierName, tokenID);
+    identifierNode *temp = symbolTable[index]->head;
 
-    if(symbolTable[index]->size == 0)
+    if (symbolTable[index]->size == 0)
     {
-        symbolTable[index]->head = insertNode; 
-        symbolTable[index]->size++; 
-        return index; 
+        symbolTable[index]->head = insertNode;
+        symbolTable[index]->size++;
+        return index;
     }
-    else{
-        while(temp->next!=NULL)
+    else
+    {
+        while (temp->next != NULL)
         {
-            temp = temp->next; 
+            temp = temp->next;
         }
-        temp->next = insertNode; 
-        symbolTable[index]->size++;  
-        return index; 
+        temp->next = insertNode;
+        symbolTable[index]->size++;
+        return index;
     }
-    return -1; 
-
+    return -1;
 }
 int searchSymbolTable(char *identifierName)
 {
@@ -130,9 +129,29 @@ int checkTokenID(char *identifierName, int tokenID)
         int insert = insertToSymbolTable(identifierName, tokenID);
         if (insert == -1)
             printf("Error inserting lexeme to Symbol Table \n");
-        return tokenID; 
+        return tokenID;
     }
     return -1;
+}
+
+void freeSymbolTable()
+{
+    for (int i = 0; i < HASH_TABLE_SIZE; i++)
+    {
+        identifierNode *current = symbolTable[i]->head;
+        identifierNode *next;
+        while (current!= NULL)
+        {
+            // Save the reference to the next node
+            next = current->next;
+            // Free the memory allocated for the current node
+            free(current);
+            // Move to the next node
+            current = next;
+        }
+        free(symbolTable[i]);
+        if(symbolTable[i]==NULL) printf("xxx");
+    }
 }
 
 // void insertKeyWord()
@@ -142,7 +161,7 @@ int checkTokenID(char *identifierName, int tokenID)
 
 // int main(){
 
-//     createSymbolTable(); 
-//     // insertKeyWord();
+//     createSymbolTable();
+//     freeSymbolTable();
 
 // }

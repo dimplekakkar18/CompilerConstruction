@@ -17,6 +17,9 @@ typedef struct ruleLL{
 ruleLL* createLL();
 LLNODE * createNewNode(SYMBOL symbol, SYMBOLTYPE type);
 void addNewNode(LLNODE * node, ruleLL* rule);
+void freeNode(ruleLL *list);
+void freeLL(ruleLL *list);
+void freeGrammar(ruleLL *grammar);
 
 extern ruleLL grammar[NUM_RULES]; //FIX
 #endif 

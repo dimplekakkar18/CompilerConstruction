@@ -121,7 +121,7 @@ char *terminals[NUM_TERMINALS] = {
     "TK_DEFINETYPE",
     "TK_AS",
     "TK_ERROR",
-    "TK_BIGLENERROR"};
+    "TK_BIGLENERROR","TK_BIGFIELDERROR"};
 
 Element itoe (int i)
 {
@@ -627,7 +627,7 @@ void addToStackAndTree(Tree * parseTree, stack * stk,int sym, SYMBOLTYPE type, T
     push(stk, stkele); 
 
 }
-Tree * makeParseTree(ruleLL *grammar, int ** parse_table, FILE * fp, FILE * errorfile, token_set* firstSet){
+Tree * makeParseTree(ruleLL *grammar, int ** parse_table, FILE * fp, token_set* firstSet){
     stack * stk = getStack(); 
     Tree * parseTree = createTree(); 
 
@@ -637,14 +637,14 @@ Tree * makeParseTree(ruleLL *grammar, int ** parse_table, FILE * fp, FILE * erro
     push(stk, stkele); 
 
     addToStackAndTree(parseTree, stk, STARTSYMBOL, NON_TERMINAL, NULL);
-    TOKEN tok = getToken(fp, errorfile); 
+    TOKEN tok = getToken(fp); 
     int flag = 1;
     while(*(tok.lexeme) != EOF )
     //for(int i = 0;i<400;i++)
     {
         // printf("DEBUGXY    %s",tok.lexeme);
         if(tok.tokenId==TK_COMMENT){
-            tok = getToken(fp, errorfile);
+            tok = getToken(fp);
             continue;
         }
 
@@ -652,8 +652,10 @@ Tree * makeParseTree(ruleLL *grammar, int ** parse_table, FILE * fp, FILE * erro
         {
             break;
         }
-        if(tok.tokenId==TK_ERROR || tok.tokenId == TK_BIGLENERROR){
-            tok = getToken(fp, errorfile);
+        if(tok.tokenId==TK_ERROR || tok.tokenId == TK_BIGLENERROR || tok.tokenId==TK_BIGFIELDERROR){
+            printTokenInfo(tok);
+            tok = getToken(fp);
+            
             continue;
         }
         
@@ -683,8 +685,8 @@ Tree * makeParseTree(ruleLL *grammar, int ** parse_table, FILE * fp, FILE * erro
             if(index == -1)
             {
                 if(flag!=0)
-                    fprintf(errorfile,"Line %d Error: Invalid Token %s encountered with value %s stack top %s \n", lineNo, terminals[tok.tokenId],tok.lexeme,nonterminals[TOS.sym.nonterminal]); 
-                tok = getToken(fp, errorfile); 
+                    printf("Line %d Error: Invalid Token %s encountered with value %s stack top %s \n", lineNo, terminals[tok.tokenId],tok.lexeme,nonterminals[TOS.sym.nonterminal]); 
+                tok = getToken(fp); 
             }
             else if(index == -2)
             {
@@ -696,13 +698,13 @@ Tree * makeParseTree(ruleLL *grammar, int ** parse_table, FILE * fp, FILE * erro
                 //     continue;
                 // }
                 if(flag!=0)
-                    fprintf(errorfile,"Line %d Error: Invalid Token %s encountered with value %s stack top %s \n", lineNo, terminals[tok.tokenId],tok.lexeme,nonterminals[TOS.sym.nonterminal]); 
+                    printf("Line %d Error: Invalid Token %s encountered with value %s stack top %s \n", lineNo, terminals[tok.tokenId],tok.lexeme,nonterminals[TOS.sym.nonterminal]); 
                 pop(stk); 
             }
             else if(index == -3)
             {
                 if(flag!=0)
-                    fprintf(errorfile,"Line %d Error: Invalid Token %s encountered with value %s stack top %s \n", lineNo-1, terminals[tok.tokenId],tok.lexeme,nonterminals[TOS.sym.nonterminal]); 
+                    printf("Line %d Error: Invalid Token %s encountered with value %s stack top %s \n", lineNo-1, terminals[tok.tokenId],tok.lexeme,nonterminals[TOS.sym.nonterminal]); 
                 pop(stk); 
             }
             if(index<0){
@@ -742,13 +744,13 @@ Tree * makeParseTree(ruleLL *grammar, int ** parse_table, FILE * fp, FILE * erro
             if(tok.tokenId == TOS.sym.terminal)
             {
                 pop(stk);
-                tok = getToken(fp, errorfile); 
+                tok = getToken(fp); 
                 //printf("lexeme is %s line no is %d \n",tok.lexeme,tok.lineNo);
             }
             else
             {
                 
-                fprintf(errorfile, "Line %d Error: The token %s for lexeme %s does not match with the expected token %s \n", lineNo, terminals[tok.tokenId], tok.lexeme, terminals[TOS.sym.terminal]); 
+                printf("Line %d Error: The token %s for lexeme %s does not match with the expected token %s \n", lineNo, terminals[tok.tokenId], tok.lexeme, terminals[TOS.sym.terminal]); 
                 pop(stk); 
             }
         }

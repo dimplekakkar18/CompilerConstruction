@@ -43,7 +43,7 @@ _main
 	endrecord
 	definetype union #four as #shape
 	record #variantrecord
-		type int: tag;
+		type int: tagggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggg;
 		type #shape: s;
 	endrecord
 
