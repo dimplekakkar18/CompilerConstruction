@@ -329,7 +329,7 @@ void printTokenInfo(TOKEN tk, FILE * errorfile){
         return;
     }
     else if(tk.tokenId==TK_COMMENT){
-        printf("Line no. %d\tLexeme %-20s\tToken TK_COMMENT\n", lineNo++, tk.lexeme);
+        printf("Line no. %d\tLexeme %-20s\tToken TK_COMMENT\n", tk.lineNo, tk.lexeme);
         return;
     }
     else if(tk.tokenId==TK_BIGLENERROR){
@@ -1249,6 +1249,7 @@ TOKEN getToken(FILE *fp, FILE * errorfile)
                 token.lineNo = lineNo;
                 refreshPtr();
                 state = 0;
+                lineNo++;
                 return token;
                 break;
             }
