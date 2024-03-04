@@ -12,12 +12,9 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#include "lexer2.h"
+#include "lexerDef.h"
 
-// int lookUpTable();
-// int calculateHash(char *word);
-// int getKeyWordID(char *word);
-// void insertKeyWord();
+
 int calcHash(char *identifier);
 void createSymbolTable();
 identifierNode *createSymbolNode(char *identifierName, int tokenID);

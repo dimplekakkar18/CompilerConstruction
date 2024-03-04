@@ -8,7 +8,7 @@
 
 #ifndef SET_H
 #define SET_H
-#include "../lexer2.h"
+#include "lexerDef.h"
 
 // We have used a long long int as a bitset to implement set.
 // This is the most efficient implementation of a set as it occupies very less memory

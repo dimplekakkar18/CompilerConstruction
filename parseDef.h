@@ -8,7 +8,7 @@
 
 #ifndef PARSER_DEF_H
 #define PARSER_DEF_H
-#include "../lexer2.h"
+#include "lexerDef.h"
 #include "set.h"
 #include <stdio.h>
 #define NUMRULES 90
@@ -100,6 +100,6 @@ typedef struct hash_ele
 
 extern char* nonterminals[NUM_NONTERMINALS]; 
 extern char* terminals[NUM_TERMINALS]; 
-extern hash_ele hash_table[HASH_TABLE_SIZE]; //FIX
+extern hash_ele hash_table[HASH_TABLE_SIZE];
 
 #endif

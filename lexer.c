@@ -9,9 +9,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
-#include "lexer.h"
-#include "lexer2.h"
+#include "lexerDef.h"
 
 #define MAX_BUFF_SIZE 1024
 
@@ -26,7 +24,27 @@ int lineNo = 1;
 
 int flag[2];
 
+
 int lexemeSize;
+
+int calcHash(char *identifier);
+void createSymbolTable();
+identifierNode *createSymbolNode(char *identifierName, int tokenID);
+int insertToSymbolTable(char * identifierName, int tokenID);
+int searchSymbolTable(char *identifierName);
+int checkTokenID(char *identifierName, int tokenID);
+void destroySymbolTable(); 
+
+void removeComments(char *test_file, char *clean_file);
+void initializeBuffers();
+void loadBuffer(char* buffer, FILE* fp);
+char getCharFromBuffers(FILE* fp);
+char* getLexeme();
+void refreshPtr();
+TOKEN getToken(FILE *fp);
+int len(char * string); 
+void printTokenInfo(TOKEN tk); 
+
 
 char* getError(){
     char* str = getLexeme();
@@ -357,7 +375,7 @@ void printTokenInfo(TOKEN tk){
  *    errorfile is The file pointer for error logging.
  *    TOKEN is The next token extracted from the input file.
  */
-TOKEN getToken(FILE *fp)
+TOKEN getToken(FILE *fp) 
 {
     // token to be returned
     TOKEN token;

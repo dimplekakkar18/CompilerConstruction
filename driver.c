@@ -15,12 +15,15 @@
 #include "stack.h"
 #include "queue.h"
 #include "set.h"
-#include "../lexer.h"
+#include "lexer.h"
 #include <stdbool.h> 
 #include "treeADT.h"
 #include <time.h>
 
 int main(int argc, char * argv[]){
+    printf("FIRST and FOLLOW set automated\n");
+    printf("Both lexical and syntax analysis modules implemented\n");
+    printf("modules work with all the testcases 1,2,3 and 4\n");
     int choice = 0; 
     FILE *fp = fopen(argv[1], "r");
     if (fp == NULL)
@@ -105,7 +108,7 @@ int main(int argc, char * argv[]){
                 //     printf("\n");
                 // }
                 int** pt = makeParseTable2(first_sets,follow_sets,rules);                
-                Tree * parseTree = makeParseTree(rules,pt,fp,first_sets); 
+                Tree * parseTree = parseInputSourceCode(rules,pt,fp,first_sets); 
                 fclose(fp);
                 fp = fopen(argv[2], "w"); 
                 if(fp == NULL)

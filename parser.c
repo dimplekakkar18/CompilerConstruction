@@ -10,8 +10,21 @@
 #include "stack.h"
 #include "queue.h"
 #include "set.h"
-#include "../lexer.h"
-#include "parser.h"
+#include "lexer.h"
+#include "linkedList.h"
+#include "treeADT.h"
+
+int calculateHash(char *word);
+int addnonTerm();
+int addTerm();
+void create_hashTable();
+int getIndex(char *tok);
+Tree * parseInputSourceCode(ruleLL *grammar, int ** parse_table, FILE * fp, token_set* firstSet);
+int** makeParseTable2(token_set* first, token_set* follow, ruleLL* grammar); 
+ruleLL * createGrammar(char * filename); 
+void computeFirst(token_set *firstSet, ruleLL* rules);
+void generateFollow(ruleLL* grammar, token_set* follow, token_set* first); 
+void print_rules(ruleLL* rules);
 
 
 char *nonterminals[NUM_NONTERMINALS] = {
@@ -628,7 +641,7 @@ void addToStackAndTree(Tree * parseTree, stack * stk,int sym, SYMBOLTYPE type, T
     push(stk, stkele); 
 
 }
-Tree * makeParseTree(ruleLL *grammar, int ** parse_table, FILE * fp, token_set* firstSet){
+Tree * parseInputSourceCode(ruleLL *grammar, int ** parse_table, FILE * fp, token_set* firstSet){
     stack * stk = getStack(); 
     Tree * parseTree = createTree(); 
 
@@ -800,105 +813,25 @@ void printLinkedList(LLNODE* node) {
 
 void printParseTable(ruleLL** parseTable)
 {
-    // parseTable[0][0];
-    // printf("hii\n");
 
     for(int i=0;i<NUM_NONTERMINALS;i++)
     {
         for(int j=0;j<NUM_TERMINALS;j++)
         {
-           
-            // printf("reached 1\n");
             ruleLL ptr = parseTable[i][j];
-            // printf("%s", nonterminals[i]);
-            // printf("reached 2\n");
             if(ptr.head==NULL)
             {
                 printf("error");
             }
             else if(ptr.head->type==TERMINAL){
                 printf("%s", terminals[((ptr.head)->sym).terminal]);
-                // printf("%s",terminals[j]);
-                // printf("%s",);
-                // printf("%d",((ptr.head)->sym).terminal);
             }
             else if(ptr.head->type==NON_TERMINAL){
-                // printf("gone");
                 printf("%s",nonterminals[((ptr.head)->sym).nonterminal]);
-                // printf("%d",((ptr.head)->sym).nonterminal);
             }
-            // printf("%d",(ptr->head)->sym);
             
         }
         printf("\n");
     }
 }
-void printSet(token_set *set)
-{
-    long long cur = set->set;
-    if (cur == 0)
-    {
-        printf("EMPTY SET");
-        return;
-    }
-    for (int i = 0; i < NUM_TERMINALS; i++)
-    {
-        if (cur & 1)
-        {
-            printf("%s ", terminals[i]);
-        }
-        cur = cur >> 1;
-    }
-    if (isMember(set, EPSILON))
-    {
-        printf("EPSILON");
-    }
-    if (isMember(set, END_CODE))
-    {
-        printf("$");
-    }
-}
 
-// int main()
-// {
-//     create_hashTable();
-//     ruleLL *rules = createGrammar("grammar.csv");
-//     token_set *first_sets = malloc(sizeof(token_set) * NUM_NONTERMINALS);
-//     token_set *follow_sets = malloc(sizeof(token_set) * NUM_NONTERMINALS);
-//     computeFirst(first_sets,rules);
-//     for (int i = 0; i < NUM_NONTERMINALS; i++)
-//     {
-//         printf("First(%s): ", nonterminals[i]);
-//         printSet(&first_sets[i]);
-//         printf("\n");
-//     }
-
-//     generateFollow(rules,follow_sets,first_sets);
-//         for (int i = 0; i < NUM_NONTERMINALS; i++)
-//     {
-//         printf("Follow(%s): ", nonterminals[i]);
-//         printSet(&follow_sets[i]);
-//         printf("\n");
-//     }
-//     int** pt = makeParseTable2(first_sets,follow_sets,rules);
-//     printParseTable2(pt);
-//     // for (int i = 0; i < NUM_NONTERMINALS; i++)
-//     // {
-//     //     printf("First(%s): ", nonterminals[i]);
-//     //     printSet(&first_sets[i]);
-//     //     printf("\n");
-//     // }
-
-
-//     // ruleLL** pt = makeParseTable(first_sets,follow_sets,rules);
-
-//     // printf("hi\n");
-//     // pt[0][0];
-//     // printParseTable(pt);
-
-
-//     // printf("Enter the buffer size: ");
-//     // scanf("%d", &bufferSize);
-//     // makeParseTree("../../tests/t5.txt", "parseTree.txt");
-//     return 0;
-// }
