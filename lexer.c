@@ -333,6 +333,8 @@ void printTokenInfo(TOKEN tk, FILE * errorfile){
         return;
     }
     else if(tk.tokenId==TK_BIGLENERROR){
+        printf( "Line No %d: Error: Variable Identifier is longer than the prescribed length of 20 characters.\n",lineNo);
+        fprintf( errorfile,"Line No %d: Error :Variable Identifier is longer than the prescribed length of 20 characters.\n",lineNo);
         return;
     }
     printf("Line no. %d\tLexeme %-20s\tToken ", lineNo, tk.lexeme);
@@ -797,8 +799,8 @@ TOKEN getToken(FILE *fp, FILE * errorfile)
                 refreshPtr();
                 state=0;
                 if (len(token.lexeme)>20){
-                    printf( "Line No %d: Error3 :Variable Identifier %s is longer than the prescribed length of 20 characters.\n",lineNo,token.lexeme);
-                    fprintf( errorfile,"Line No %d: Error :Variable Identifier is longer than the prescribed length of 20 characters.\n",lineNo);
+                    // printf( "Line No %d: Error3 :Variable Identifier %s is longer than the prescribed length of 20 characters.\n",lineNo,token.lexeme);
+                    // fprintf( errorfile,"Line No %d: Error :Variable Identifier is longer than the prescribed length of 20 characters.\n",lineNo);
                     token.tokenId = TK_BIGLENERROR;
                 }
                 return token;
@@ -820,8 +822,8 @@ TOKEN getToken(FILE *fp, FILE * errorfile)
                 refreshPtr();
                 state=0;
                 if (len(token.lexeme)>20){
-                    printf( "Line No %d: Error 4 :Variable Identifier %s is longer than the prescribed length of 20 characters.\n",lineNo,token.lexeme);
-                    fprintf( errorfile, "Line No %d: Error :Variable Identifier is longer than the prescribed length of 20 characters.\n",lineNo);
+                    // printf( "Line No %d: Error 4 :Variable Identifier %s is longer than the prescribed length of 20 characters.\n",lineNo,token.lexeme);
+                    // fprintf( errorfile, "Line No %d: Error :Variable Identifier is longer than the prescribed length of 20 characters.\n",lineNo);
                     token.tokenId = TK_BIGLENERROR;
                 }
                 return token;
