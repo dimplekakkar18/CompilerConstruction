@@ -70,7 +70,7 @@ int main(int argc, char * argv[]){
                         checkTokenID(token.lexeme, token.tokenId);
                         printTokenInfo(token); 
                     } 
-                    
+                    destroySymbolTable();
                 break;  
             case 3:
                 lineNo = 1;

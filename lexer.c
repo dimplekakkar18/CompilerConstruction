@@ -111,6 +111,7 @@ char* getLexeme(){
     char *lexeme = calloc((end>start?(end-start+1):(end+2*MAX_BUFF_SIZE-start+1)), sizeof(char));
     int i = start;
     int pos = 0;
+    end = end%(2*MAX_BUFF_SIZE);
     for(i = start, pos = 0; i!=end; pos++, i=(i+1)%(MAX_BUFF_SIZE*2))
     {
         lexeme[pos] = (i>=MAX_BUFF_SIZE) ? buffer2[i-MAX_BUFF_SIZE] : buffer1[i];
