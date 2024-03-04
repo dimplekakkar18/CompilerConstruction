@@ -7,3 +7,4 @@ lexer.o
 final
 a.out
 clean.txt
+parser/.DS_Store

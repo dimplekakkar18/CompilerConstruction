@@ -1,15 +1,18 @@
+// Group - 29
+// Dimple - 2020B4A70632P
+// Raunak Bhalla - 2020B4A70859P
+// Shrestha Sharma - 2020B3A70817P
+// Radhika Gupta - 2020B4A70600P
+// Yasaswini Reddy S - 2020B1A71892
+// Akshat Shetye - 2021A7PS2426
+
 #include <stdlib.h>
 #include "stack.h"
 #include "queue.h"
 #include "set.h"
 #include "../lexer.h"
 #include "parser.h"
-// #define NUM_NONTERMINALS 50
-// #define NUM_TERMINALS 56
-// #define PRIME 853
-// #define HASH_TABLE_SIZE 1024
-// long long int follow[NUM_NONTERMINALS];
-// long long int first[NUM_NONTERMINALS];
+
 
 char *nonterminals[NUM_NONTERMINALS] = {
     "<program>",
@@ -574,33 +577,30 @@ int** makeParseTable2(token_set* first, token_set* follow, ruleLL* grammar) {
             }
         }
     }
-        for(int i=0;i<NUM_NONTERMINALS;i++)
+    for(int i=0;i<NUM_NONTERMINALS;i++)
+    {
+        long long int nont = follow[i].set;
+        for(int j=0;j<NUM_TERMINALS;j++)
         {
-            long long int nont = follow[i].set;
-            for(int j=0;j<NUM_TERMINALS;j++)
-            {
-                if(parseTable[i][j]==-1){ 
-                    if(nont & 1){       // populating synchronizing tokens obtained from FOLLOW set of the nonterminal
-                        parseTable[i][j]=-2; //-2 stands for synch tokens
-                    }
-                }
-                nont>>=1;
-            }
-        }
-        for(int i=0;i<NUM_NONTERMINALS;i++)
-        {
-            for(int j=0;j<NUM_TERMINALS;j++)
-            {
-                // if(parseTable[i][j]==-1 && (j == TK_END || j == TK_ENDRECORD || j == TK_ENDUNION || j == TK_ENDIF || j == TK_ENDWHILE || j == TK_SEM || j == TK_SQR || j == TK_CL ))
-                // {
-                //     parseTable[i][j]=-2; //-2 stands for synch 
-                // }
-                if((parseTable[i][j]==-1 || parseTable[i][j]==-2) && (j == TK_ELSE || j == TK_IF || j == TK_WHILE || j == TK_UNION|| j == TK_RECORD || j == TK_FUNID || j == TK_MAIN || j == TK_THEN || j == TK_DEFINETYPE || j == TK_READ || j == TK_WRITE || j == TK_RETURN || j == TK_END || j == TK_ENDIF || j == TK_ENDRECORD || j == TK_ENDUNION || j == TK_ENDWHILE))
-                {
-                    parseTable[i][j]=-3; //-3 stands for additional tokens marking the beginning of a new statement 
+            if(parseTable[i][j]==-1){ 
+                if(nont & 1){       // populating synchronizing tokens obtained from FOLLOW set of the nonterminal
+                    parseTable[i][j]=-2; //-2 stands for synch tokens
                 }
             }
+            nont>>=1;
         }
+    }
+    
+    for(int i=0;i<NUM_NONTERMINALS;i++)
+    {
+        for(int j=0;j<NUM_TERMINALS;j++)
+        {
+            if((parseTable[i][j]==-1 || parseTable[i][j]==-2) && (j == TK_ELSE || j == TK_IF || j == TK_WHILE || j == TK_UNION|| j == TK_RECORD || j == TK_FUNID || j == TK_MAIN || j == TK_THEN || j == TK_DEFINETYPE || j == TK_READ || j == TK_WRITE || j == TK_RETURN || j == TK_END || j == TK_ENDIF || j == TK_ENDRECORD || j == TK_ENDUNION || j == TK_ENDWHILE || j == TK_TYPE || j == TK_FUNID || j == TK_MAIN))
+            {
+                parseTable[i][j]=-3; //-3 stands for additional tokens marking the beginning of a new statement 
+            }
+        }
+    }
 
     return parseTable;
 }
@@ -739,8 +739,7 @@ Tree * makeParseTree(ruleLL *grammar, int ** parse_table, FILE * fp, token_set* 
             } 
         }
         else
-        {
-            
+        {  
             if(tok.tokenId == TOS.sym.terminal)
             {
                 pop(stk);
@@ -749,14 +748,16 @@ Tree * makeParseTree(ruleLL *grammar, int ** parse_table, FILE * fp, token_set* 
             }
             else
             {
-                
-                printf("Line %d Error: The token %s for lexeme %s does not match with the expected token %s \n", lineNo, terminals[tok.tokenId], tok.lexeme, terminals[TOS.sym.terminal]); 
+                if((TOS.sym.terminal == TK_SEM || TOS.sym.terminal == TK_SQR || TOS.sym.terminal == TK_CL) && (tok.tokenId == TK_ELSE || tok.tokenId == TK_IF || tok.tokenId == TK_WHILE || tok.tokenId == TK_UNION|| tok.tokenId == TK_RECORD || tok.tokenId == TK_FUNID || tok.tokenId == TK_MAIN || tok.tokenId == TK_THEN || tok.tokenId == TK_DEFINETYPE || tok.tokenId == TK_READ || tok.tokenId == TK_WRITE || tok.tokenId == TK_RETURN || tok.tokenId == TK_END || tok.tokenId == TK_ENDIF || tok.tokenId == TK_ENDRECORD || tok.tokenId == TK_ENDUNION || tok.tokenId == TK_ENDWHILE || tok.tokenId == TK_TYPE || tok.tokenId == TK_FUNID || tok.tokenId == TK_MAIN)){
+                    printf("Line %d Error: The token %s for lexeme %s does not match with the expected token %s \n", lineNo-1, terminals[tok.tokenId], tok.lexeme, terminals[TOS.sym.terminal]); 
+                }
+                else
+                    printf("Line %d Error: The token %s for lexeme %s does not match with the expected token %s \n", lineNo, terminals[tok.tokenId], tok.lexeme, terminals[TOS.sym.terminal]); 
                 pop(stk); 
             }
         }
     }
     return parseTree; 
-   
 }
 
 

@@ -1,13 +1,22 @@
+// Group - 29
+// Dimple - 2020B4A70632P
+// Raunak Bhalla - 2020B4A70859P
+// Shrestha Sharma - 2020B3A70817P
+// Radhika Gupta - 2020B4A70600P
+// Yasaswini Reddy S - 2020B1A71892
+// Akshat Shetye - 2021A7PS2426
+
 #ifndef SET_H
 #define SET_H
 #include "../lexer2.h"
 
-// Here a long long int is used to store the set of tokens.
-// The reason for this is that the number of tokens is 57 < 64.
-// So, the ith least significant bit of the set will correspond to the ith token of the enum TOKEN.
-// For example, if the first entry of the enum TOKEN is INTEGER,
-// then the least significant bit of the set will correspond to INTEGER.
-// The singleton set containing only INTEGER will be 1.
+// We have used a long long int as a bitset to implement set.
+// This is the most efficient implementation of a set as it occupies very less memory
+// and makes our code faster in terms of time complexity.
+// We have 58 tokens in the code representation of our grammar,
+// since 58 < 64 we can use this implementation.
+// a bit = 0 represents that token corresponding to corresponding position is not present in the set
+// and a bit = 1 represents that token corresponding to corresponding position is present in the set
 struct token_set
 {
     long long int set;
