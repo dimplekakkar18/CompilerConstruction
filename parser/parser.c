@@ -139,7 +139,7 @@ void setKthBit(long long int* n,int k){
     *n=((((long long int)1)<<k)|(*n));
 }
 
-char * customtrim(char * tok)
+char * removeWhitespace(char * tok)
 {
     int index = 0;
     while (tok[index] != '\0')
@@ -158,8 +158,8 @@ ruleLL *createGrammar(char* grammar_file)
 {
     FILE* fp = fopen(grammar_file, "r");
     char buffer[128];
-    struct LLNode *lhs;
-    struct LLNode *rhs;
+    struct LLNode *left;
+    struct LLNode *right;
     ruleLL *grammar = (ruleLL *)malloc(sizeof(ruleLL) * NUMRULES);
 
     if (fp == NULL)
@@ -178,14 +178,14 @@ ruleLL *createGrammar(char* grammar_file)
     while (fgets(buffer, 128, fp) != NULL)
     {
 
-        char *tok = strtok(buffer, delim); // Just extracting the lhs from each rule
+        char *tok = strtok(buffer, delim); // Just extracting the left hand side of each rule, i.e the nonterminal
 
         int index = getIndex(tok);
 
         if (hash_table[index].type == NON_TERMINAL)
         {
-            lhs = createNewNode(hash_table[index].sym, NON_TERMINAL);
-            addNewNode(lhs, &grammar[i]);
+            left = createNewNode(hash_table[index].sym, NON_TERMINAL);
+            addNewNode(left, &grammar[i]);
         }
         else
         {
@@ -195,10 +195,10 @@ ruleLL *createGrammar(char* grammar_file)
         tok = strtok(NULL, delim); // NULL in the first entry means it'll start tokenizing from where it left off, i.e RHS
         while (tok != NULL)
         {
-            tok = customtrim(tok);
+            tok = removeWhitespace(tok);
             int index = getIndex(tok);
-            rhs = createNewNode(hash_table[index].sym, hash_table[index].type);
-            addNewNode(rhs, &grammar[i]);
+            right = createNewNode(hash_table[index].sym, hash_table[index].type);
+            addNewNode(right, &grammar[i]);
             tok = strtok(NULL, delim);
         }
         i++;
@@ -207,7 +207,6 @@ ruleLL *createGrammar(char* grammar_file)
 
     return grammar;
 }
-// hash function
 
 
 int addToSet(token_set* sets, int term)
@@ -604,7 +603,7 @@ int** makeParseTable2(token_set* first, token_set* follow, ruleLL* grammar) {
 
     return parseTable;
 }
-void addToStackAndTree(Tree * parseTree, stack * stk,int sym, SYMBOLTYPE type, TreeNode * parent)
+void addToStackAndTree(Tree * parseTree, stack * stk,int sym, SYMBOLTYPE type, TreeNode * parent, int lineNumber, char * lexeme)
 {
     if(type==__EPSILON) return;
     TreeNode * tnode = createTreeNode(); 
@@ -613,6 +612,8 @@ void addToStackAndTree(Tree * parseTree, stack * stk,int sym, SYMBOLTYPE type, T
     else if(type==TERMINAL)
         tnode->val.sym.terminal = sym; 
     tnode->val.type = type;  
+    tnode->lineNumber = lineNumber; 
+    tnode->lexeme = lexeme; 
     addTreeNode(parseTree, parent, tnode); 
     
     
@@ -636,7 +637,7 @@ Tree * makeParseTree(ruleLL *grammar, int ** parse_table, FILE * fp, token_set* 
     stkele->val.type = __ENDCODE;  
     push(stk, stkele); 
 
-    addToStackAndTree(parseTree, stk, STARTSYMBOL, NON_TERMINAL, NULL);
+    addToStackAndTree(parseTree, stk, STARTSYMBOL, NON_TERMINAL, NULL, 0, "---");
     TOKEN tok = getToken(fp); 
     int flag = 1;
     while(*(tok.lexeme) != EOF )
@@ -723,13 +724,13 @@ Tree * makeParseTree(ruleLL *grammar, int ** parse_table, FILE * fp, token_set* 
                     //if(TOS.type==NON_TERMINAL)printf("Top of stck %s   \n",nonterminals[TOS.sym.nonterminal]);
                     //else if(TOS.type==TERMINAL)printf("Top of stack %s \n",terminals[TOS.sym.terminal]);
                     if(temp->type == NON_TERMINAL)
-                        addToStackAndTree(parseTree, stk, temp->sym.nonterminal, temp->type, treeref); 
+                        addToStackAndTree(parseTree, stk, temp->sym.nonterminal, temp->type, treeref, tok.lineNo, "---"); 
                     else if(temp->type == TERMINAL)
-                        addToStackAndTree(parseTree, stk, temp->sym.terminal, temp->type,treeref); 
+                        addToStackAndTree(parseTree, stk, temp->sym.terminal, temp->type,treeref,tok.lineNo,tok.lexeme); 
                     else if(temp->type == __EPSILON)
                         {
                             TreeNode * tnode = createTreeNode(); 
-                            tnode->val.type = temp->type;  
+                            tnode->val.type = temp->type;   
                             addTreeNode(parseTree, treeref, tnode);                            
                         }
 
@@ -742,6 +743,7 @@ Tree * makeParseTree(ruleLL *grammar, int ** parse_table, FILE * fp, token_set* 
         {  
             if(tok.tokenId == TOS.sym.terminal)
             {
+                treeref->lexeme = tok.lexeme; 
                 pop(stk);
                 tok = getToken(fp); 
                 //printf("lexeme is %s line no is %d \n",tok.lexeme,tok.lineNo);

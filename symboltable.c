@@ -142,34 +142,18 @@ int checkTokenID(char *identifierName, int tokenID)
     return -1;
 }
 
-void freeSymbolTable()
+void destroySymbolTable()
 {
     for (int i = 0; i < HASH_TABLE_SIZE; i++)
     {
-        identifierNode *current = symbolTable[i]->head;
-        identifierNode *next;
-        while (current!= NULL)
-        {
+        while (symbolTable[i]->head!=NULL){
             // Save the reference to the next node
-            next = current->next;
-            // Free the memory allocated for the current node
-            free(current);
-            // Move to the next node
-            current = next;
+            identifierNode* curr = symbolTable[i]->head;
+            symbolTable[i]->head = curr->next;
+            free(curr);
+
         }
-        free(symbolTable[i]);
-        if(symbolTable[i]==NULL) printf("xxx");
+        free(symbolTable[i]);     
     }
 }
 
-// void insertKeyWord()
-// {
-
-// }
-
-// int main(){
-
-//     createSymbolTable();
-//     freeSymbolTable();
-
-// }
