@@ -64,7 +64,7 @@ int main(int argc, char * argv[]){
                 printf("\n");
                 break; 
             case 2:
-            
+                lineNo = 1;
                 initializeBuffers();
                 createSymbolTable();
                 fp = fopen(argv[1], "r"); 
