@@ -151,27 +151,13 @@ void setKthBit(long long int* n,int k){
     *n=((((long long int)1)<<k)|(*n));
 }
 
-char * removeWhitespace(char * tok)
-{
-    int index = 0;
-    while (tok[index] != '\0')
-    {
-        if (tok[index] == '\n' || tok[index] == '\r' || tok[index] == ' ' || tok[index] == '\t')
-        {
-            tok[index] = '\0';
-            break;
-        }
-        index++;
-    }
-    return tok;
-}
 
 ruleLL *createGrammar(char* grammar_file)
 {
     FILE* fp = fopen(grammar_file, "r");
-    char buffer[128];
-    struct LLNode *left;
-    struct LLNode *right;
+    char buffer[130];
+    struct LLNode *lhs;
+    struct LLNode *rhs;
     ruleLL *grammar = (ruleLL *)malloc(sizeof(ruleLL) * NUMRULES);
 
     if (fp == NULL)
@@ -187,31 +173,33 @@ ruleLL *createGrammar(char* grammar_file)
     int i = 0;
     char delim[] = ",\n";
 
-    while (fgets(buffer, 128, fp) != NULL)
+    while (fgets(buffer, 130, fp) != NULL)
     {
 
-        char *tok = strtok(buffer, delim); // Just extracting the left hand side of each rule, i.e the nonterminal
+        char *tok = strtok(buffer, delim); // Just extracting the lhs from each rule
 
         int index = getIndex(tok);
+        
+        for(int j =0;tok!=NULL;j++)
+        {
+            if(j==0){
+                if (hash_table[index].type == NON_TERMINAL){
+                    lhs = createNewNode(hash_table[index].sym, NON_TERMINAL);
+                    addNewNode(lhs, &grammar[i]);
+                    tok = strtok(NULL, delim);
+                }
+                else{
+                    printf("Error : rule stasrts with Terminal\n");
+                }
 
-        if (hash_table[index].type == NON_TERMINAL)
-        {
-            left = createNewNode(hash_table[index].sym, NON_TERMINAL);
-            addNewNode(left, &grammar[i]);
-        }
-        else
-        {
-            printf("Error: rule starts with a terminal \n");
-        }
-
-        tok = strtok(NULL, delim); // NULL in the first entry means it'll start tokenizing from where it left off, i.e RHS
-        while (tok != NULL)
-        {
-            tok = removeWhitespace(tok);
-            int index = getIndex(tok);
-            right = createNewNode(hash_table[index].sym, hash_table[index].type);
-            addNewNode(right, &grammar[i]);
-            tok = strtok(NULL, delim);
+            }
+            else{
+                int index = getIndex(tok);
+                if(hash_table[index].type==NONE || index==-1) printf ("Wrong terminal %s \n",tok);
+                rhs = createNewNode(hash_table[index].sym, hash_table[index].type);
+                addNewNode(rhs, &grammar[i]);
+                tok = strtok(NULL, delim);
+            }
         }
         i++;
     }
@@ -219,7 +207,6 @@ ruleLL *createGrammar(char* grammar_file)
 
     return grammar;
 }
-
 
 int addToSet(token_set* sets, int term)
 {

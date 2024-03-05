@@ -63,7 +63,6 @@ int main(int argc, char * argv[]){
                 }
                 while (flag)
                     {
-                        createSymbolTable();
                         TOKEN token = getToken(fp);
                         if (*token.lexeme == EOF){
                             // printf("*****\n");

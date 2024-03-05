@@ -10,8 +10,7 @@
 #include <string.h>
 #include <stdio.h>
 
-ruleLL grammar[NUM_RULES];
-
+// Array of non-terminals and terminals in the language for creating the rules
 char *_nonterminals[NUM_NONTERMINALS] = {
     "<program>",
     "<otherFunctions>",
@@ -123,16 +122,23 @@ char *_terminals[NUM_TERMINALS] = {
     "TK_AS",
     "TK_ERROR",
     "TK_BIGLENERROR","TK_BIGFIELDERROR"};
+
+// Function to calculate a hash value for a given string
 int calculateHash(char *word)
 {
     int hash_value = 0;
     for (int i = 0; i < strlen(word); i++)
     {
+        /*Update hash_value as iterate through the string using a hash function
+        By using a prime number in the hash function, the likelihood of generating the
+        same hash value for different keys is reduced, thus minimizing collisions*/
         hash_value = (hash_value * PRIME + word[i]) % HASH_TABLE_SIZE;
     }
     return hash_value;
 }
 
+
+// Function to add all non-terminals to the hash table
 int addnonTerm(){
     
     int num_collisions = 0;
@@ -148,6 +154,7 @@ int addnonTerm(){
 
         else
         {
+            // Handle collisions with Quadartic probing
             int probe = 1;
             int newIndex;
             while (1)
@@ -167,6 +174,8 @@ int addnonTerm(){
     return num_collisions;
 }
 
+
+// Function to add all terminals to the hash table
 int addTerm(){
     int num_collisions = 0;
     for (int i = 0; i < NUM_TERMINALS; i++)
@@ -181,6 +190,7 @@ int addTerm(){
 
         else
         {
+            // Handle collisions with Quadartic probing 
             int probe = 1;
             int newIndex;
             while (1)
@@ -205,6 +215,7 @@ void create_hashTable()
     int num_collisions = 0;
     for (int i = 0; i < HASH_TABLE_SIZE; i++)
     {
+        // INitialize all entries of hash table as NONE
         hash_table[i].type = NONE;
     }
 
@@ -212,6 +223,7 @@ void create_hashTable()
     num_collisions += addnonTerm();
     num_collisions += addTerm();
 
+    // Add EPSILON to the hash table
     char *eps = "EPSILON";
     int eps_index = calculateHash(eps);
     if (hash_table[eps_index].type == NONE)
@@ -220,7 +232,7 @@ void create_hashTable()
     }
     else
     {
-
+        // handle collision with quadratic probing
         int probe = 1;
         int newIndex;
         while (1)
@@ -235,14 +247,14 @@ void create_hashTable()
             probe++;
         }
     }
-
 }
 
+// Function to find the index of the given string in the hash table
 int getIndex(char *tok)
 {
     int currIndex = calculateHash(tok);
 
-    // check if the token exists at the calculated index
+    // check if the token exists at the calculated index , verify its type and return the index if the string matches
     if (hash_table[currIndex].type != NONE)
     {
         if (hash_table[currIndex].type == TERMINAL)
@@ -262,9 +274,10 @@ int getIndex(char *tok)
         }
     }
 
+    // in case of collisions , update index with quadratic probing
+
     int probe = 1;
     int newIndex;
-
     while (1)
     {
         newIndex = (currIndex + probe * probe) % HASH_TABLE_SIZE;
