@@ -28,6 +28,6 @@ void generateFollow(ruleLL* grammar, token_set* follow, token_set* first);      
 // This function adds a symbol to both the parse tree and the stack during the LL(1) parsing process,
 // creating a corresponding tree node and stack element with information such as symbol type, line number, 
 // and lexeme.
-void addToStackAndTree(Tree * parseTree, stack * stk,int sym, SYMBOLTYPE type, TreeNode * parent, int lineNumber, char * lexeme); 
+//void addToStackAndTree(Tree * parseTree, stack * stk,int sym, SYMBOLTYPE type, TreeNode * parent, int lineNumber, char * lexeme); 
 
 #endif
