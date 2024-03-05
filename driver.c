@@ -14,7 +14,6 @@
 #include <stdlib.h>
 #include "stack.h"
 #include "queue.h"
-#include "set.h"
 #include "lexer.h"
 #include <stdbool.h> 
 #include "treeADT.h"
@@ -23,7 +22,7 @@
 int main(int argc, char * argv[]){
     printf("FIRST and FOLLOW set automated\n");
     printf("Both lexical and syntax analysis modules implemented\n");
-    printf("modules work with all the testcases 1,2,3 and 4\n");
+    printf("modules 1,2,3 and 4 work with all the testcases \n");
     int choice = 0; 
     FILE *fp = fopen(argv[1], "r");
     if (fp == NULL)
@@ -88,14 +87,14 @@ int main(int argc, char * argv[]){
                 initializeBuffers();
                 
                 ruleLL *rules = createGrammar("grammar.csv");
-                token_set *first_sets = malloc(sizeof(token_set) * NUM_NONTERMINALS);
-                token_set *follow_sets = malloc(sizeof(token_set) * NUM_NONTERMINALS);
+                long long int *first_sets = malloc(sizeof(long long int) * NUM_NONTERMINALS);
+                long long int *follow_sets = malloc(sizeof(long long int) * NUM_NONTERMINALS);
                 computeFirst(first_sets,rules);
 
                 generateFollow(rules,follow_sets,first_sets);
  
                 int** pt = makeParseTable(first_sets,follow_sets,rules);                
-                Tree * parseTree = parseInputSourceCode(rules,pt,fp,first_sets); 
+                Tree * parseTree = parseInputSourceCode(rules,pt,fp); 
                 fclose(fp);
                 fp = fopen(argv[2], "w"); 
                 if(fp == NULL)

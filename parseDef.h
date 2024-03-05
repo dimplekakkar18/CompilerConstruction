@@ -9,7 +9,6 @@
 #ifndef PARSER_DEF_H
 #define PARSER_DEF_H
 #include "lexerDef.h"
-#include "set.h"
 #include <stdio.h>
 #define NUMRULES 90
 #define HASH_TABLE_SIZE 487

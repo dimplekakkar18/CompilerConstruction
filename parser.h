@@ -16,11 +16,11 @@ int addnonTerm();                                                               
 int addTerm();                                                                                    // Adds a terminal to the set of terminals in the grammar.
 void create_hashTable();                                                                          // Creates a hash table for efficient indexing of non-terminals and terminals.
 int getIndex(char *tok);                                                                          // Retrieves the index of a given token (non-terminal or terminal) from the hash table.
-Tree * parseInputSourceCode(ruleLL *grammar, int ** parse_table, FILE * fp, token_set* firstSet); // Parses the input source code using a LL(1) parsing approach and constructs a parse tree.
-int ** makeParseTable(token_set* first, token_set* follow, ruleLL* grammar);                      // Constructs and returns the LL(1) parsing table for the given grammar.
+Tree * parseInputSourceCode(ruleLL *grammar, int ** parse_table, FILE * fp); // Parses the input source code using a LL(1) parsing approach and constructs a parse tree.
+int ** makeParseTable(long long int* first, long long int* follow, ruleLL* grammar);                      // Constructs and returns the LL(1) parsing table for the given grammar.
 ruleLL * createGrammar(char * filename);                                                          // Reads a grammar file and creates a linked list representation of the grammar rules.
-void computeFirst(token_set *firstSet, ruleLL* rules);                                            // Computes the FIRST sets for each non-terminal in the grammar.
-void generateFollow(ruleLL* grammar, token_set* follow, token_set* first);                        // Generates the FOLLOW sets for each non-terminal in the grammar.
+void computeFirst(long long int *firstSet, ruleLL* rules);                                            // Computes the FIRST sets for each non-terminal in the grammar.
+void generateFollow(ruleLL* grammar, long long int* follow, long long int* first);                        // Generates the FOLLOW sets for each non-terminal in the grammar.
 
 
 //.............AUXILLARY FUNCTION..................:
