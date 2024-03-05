@@ -634,6 +634,7 @@ Tree * parseInputSourceCode(ruleLL *grammar, int ** parse_table, FILE * fp, toke
         if(tok.tokenId==TK_ERROR || tok.tokenId == TK_BIGLENERROR || tok.tokenId==TK_BIGFIELDERROR){
             printTokenInfo(tok);
             tok = getToken(fp);
+            errflag =1;
             continue;
         }
         
