@@ -9,7 +9,6 @@
 #include <stdlib.h>
 #include "stack.h"
 #include "queue.h"
-#include "set.h"
 #include "lexer.h"
 #include "linkedList.h"
 #include "treeADT.h"
@@ -19,11 +18,11 @@ int addnonTerm();
 int addTerm();
 void create_hashTable();
 int getIndex(char *tok);
-Tree * parseInputSourceCode(ruleLL *grammar, int ** parse_table, FILE * fp, token_set* firstSet);
-int** makeParseTable(token_set* first, token_set* follow, ruleLL* grammar); 
+Tree * parseInputSourceCode(ruleLL *grammar, int ** parse_table, FILE * fp);
+int** makeParseTable(long long int* first, long long int* follow, ruleLL* grammar); 
 ruleLL * createGrammar(char * filename); 
-void computeFirst(token_set *firstSet, ruleLL* rules);
-void generateFollow(ruleLL* grammar, token_set* follow, token_set* first); 
+void computeFirst(long long int *firstSet, ruleLL* rules);
+void generateFollow(ruleLL* grammar, long long int* follow, long long int* first); 
 void print_rules(ruleLL* rules);
 
 
@@ -222,31 +221,36 @@ ruleLL *createGrammar(char* grammar_file)
 }
 
 
-int addToSet(token_set* sets, int term)
+int addToSet(long long int* set, int term)
 {
     long long int termval = ((long long)1) << term;
 
-    if (sets->set & termval)
+    if (*set & termval)
         return 0; // this val already set
 
-    sets->set |= termval;
+    *set |= termval;
     return 1;
 }
 
-int setContains(token_set* sets, int term)
+int setContains(long long int* sets, int term)
 {
     long long int termval = ((long long)1) << term;
-    if (sets->set & termval)
+    if (*sets & termval)
         return 1;
     else
         return 0;
 }
 
-void computeFirst(token_set *firstSet, ruleLL* rules)
+void removeFromSet(long long int *ts, enum TOKENS tok)
+{
+    *ts &= ~((long long)1 << tok);
+}
+
+void computeFirst(long long int *firstSet, ruleLL* rules)
 {
     for (int i = 0; i < NUM_NONTERMINALS; i++)      // all the firstsets are init to 0 (empty set)
     {
-        firstSet[i].set = 0;
+        firstSet[i] = 0;
     }
     int isDone[NUM_RULES];                          // isDone means we are done with that rule
     long long int nullable = 0;                     // the non-terminals which are nullable have the bit set
@@ -255,12 +259,12 @@ void computeFirst(token_set *firstSet, ruleLL* rules)
     }
     for(int i = 0; i < NUM_RULES; i++){
         if(rules[i].head->next->type==__EPSILON){               // RHS is EPSILON
-            addToken(&firstSet[rules[i].head->sym.nonterminal], EPSILON);   // include EPSILON in first(LHS)
-            setKthBit(&nullable, rules[i].head->sym.nonterminal);            // LHS is a nullable non-terminal
+            addToSet(&firstSet[rules[i].head->sym.nonterminal], EPSILON);   // include EPSILON in first(LHS)
+            addToSet(&nullable, rules[i].head->sym.nonterminal);            // LHS is a nullable non-terminal
             isDone[i] = 1;
         }
         else if(rules[i].head->next->type==TERMINAL){    // RHS is a TERMINAL
-            addToken(&firstSet[rules[i].head->sym.nonterminal], rules[i].head->next->sym.terminal);   // include this TERMINAL in first(LHS)
+            addToSet(&firstSet[rules[i].head->sym.nonterminal], rules[i].head->next->sym.terminal);   // include this TERMINAL in first(LHS)
             isDone[i] = 1;
         }
     }
@@ -281,7 +285,7 @@ void computeFirst(token_set *firstSet, ruleLL* rules)
                         break;
                     }
                     else{
-                        if(!kthBitSet(&nullable, node->sym.nonterminal)){            // if in RHS there are non-terminal which are yet not nullable, we cannot go ahead with them
+                        if(!setContains(&nullable, node->sym.nonterminal)){            // if in RHS there are non-terminal which are yet not nullable, we cannot go ahead with them
                             break;
                         }
                     }
@@ -289,14 +293,14 @@ void computeFirst(token_set *firstSet, ruleLL* rules)
                 }
                 if(node==NULL){
                     isDone[i] = 1;
-                    setKthBit(&nullable, temp1->sym.nonterminal);         // if we have reached the end it means this LHS non term is nullable
+                    addToSet(&nullable, temp1->sym.nonterminal);         // if we have reached the end it means this LHS non term is nullable
                 }
             }
         }
     }
     for(int i = 0; i < NUM_NONTERMINALS; i++){
-        if(kthBitSet(&nullable, i)){
-            addToken(&firstSet[i], EPSILON);
+        if(setContains(&nullable, i)){
+            addToSet(&firstSet[i], EPSILON);
         }
     }
  
@@ -317,11 +321,11 @@ void computeFirst(token_set *firstSet, ruleLL* rules)
                 if(node->type==TERMINAL){
                     break;
                 }
-                else if(!kthBitSet(&nullable, node->sym.nonterminal)){  // non nullable
-                    setKthBit(&adj[temp->sym.nonterminal], node->sym.nonterminal);
+                else if(!setContains(&nullable, node->sym.nonterminal)){  // non nullable
+                    addToSet(&adj[temp->sym.nonterminal], node->sym.nonterminal);
                     break;
                 }
-                setKthBit(&adj[temp->sym.nonterminal], node->sym.nonterminal);  // nullable
+                addToSet(&adj[temp->sym.nonterminal], node->sym.nonterminal);  // nullable
                 node = node->next;
             }
         // }
@@ -329,14 +333,14 @@ void computeFirst(token_set *firstSet, ruleLL* rules)
 
     // do topoSort
     int n = NUM_NONTERMINALS;
-    int inDegree[n];
+    int inDegree[NUM_NONTERMINALS];
     for(int i = 0; i < n; i++){
         inDegree[i]= 0;
     }
     int itr = 0;
     for(int i = 0; i < n; i++){
         for(int j = 0; j < NUM_NONTERMINALS; j++){
-            if(kthBitSet(&adj[i], j)){
+            if(setContains(&adj[i], j)){
                 inDegree[j]++;
             }
         }
@@ -356,7 +360,7 @@ void computeFirst(token_set *firstSet, ruleLL* rules)
         dequeue(q);
         topo[itr++] = node;
         for(int it = 0; it < NUM_NONTERMINALS; it++){
-            if(kthBitSet(&adj[node], it)){
+            if(setContains(&adj[node], it)){
                 inDegree[it]--;
                 if(inDegree[it]==0)  enqueue(q, itoe(it));
             }
@@ -378,32 +382,30 @@ void computeFirst(token_set *firstSet, ruleLL* rules)
                 continue;
             }
             else{
-                while(node!=NULL && node->type==NON_TERMINAL && kthBitSet(&nullable, node->sym.nonterminal)){       //nullable
-                    token_set temp = firstSet[node->sym.nonterminal];                       
-                    removeToken(&temp, EPSILON);                                     
-                    firstSet[temp1->sym.nonterminal].set |= temp.set;       
+                while(node!=NULL && node->type==NON_TERMINAL && setContains(&nullable, node->sym.nonterminal)){       //nullable
+                    long long int temp = firstSet[node->sym.nonterminal];                       
+                    removeFromSet(&temp, EPSILON);                                     
+                    firstSet[temp1->sym.nonterminal] |= temp;       
                     node = node->next;
                 }
                 if(node!=NULL && node->type==NON_TERMINAL){             // reached a non-nullable => include the first of RHS into first of LHS
-                    token_set temp = firstSet[node->sym.nonterminal];                       
-                    removeToken(&temp, EPSILON);                                     
-                    firstSet[temp1->sym.nonterminal].set |= temp.set;       
+                    long long int temp = firstSet[node->sym.nonterminal];                       
+                    removeFromSet(&temp, EPSILON);                                     
+                    firstSet[temp1->sym.nonterminal] |= temp;       
                 }                     
                 else if(node!=NULL){
-                    firstSet[temp1->sym.nonterminal].set |= (1LL<<(node->sym.terminal));
+                    firstSet[temp1->sym.nonterminal] |= (1LL<<(node->sym.terminal));
                 }          
             }
         }
     }
 }
 
-void printSet(token_set *set);//remove later
-
-void generateFollow(ruleLL* grammar, token_set* follow, token_set* first)
+void generateFollow(ruleLL* grammar, long long int* follow, long long int* first)
 {
     for (int i = 0; i < NUM_NONTERMINALS; i++)      // all the firstsets are init to 0 (empty set)
     {
-        follow[i].set = 0;
+        follow[i] = 0;
     }
     addToSet(&follow[0],END_CODE);
     int changed = 1;
@@ -429,10 +431,10 @@ void generateFollow(ruleLL* grammar, token_set* follow, token_set* first)
                 LLNODE * tempnode=node->next;
                 while((tempnode!=NULL)&&(tempnode->type==NON_TERMINAL)&&(setContains(&first[tempnode->sym.nonterminal], EPSILON)))
                 {
-                    long long int temp = follow[node->sym.nonterminal].set | first[tempnode->sym.nonterminal].set;
-                    if(follow[node->sym.nonterminal].set != temp){
+                    long long int temp = follow[node->sym.nonterminal] | first[tempnode->sym.nonterminal];
+                    if(follow[node->sym.nonterminal] != temp){
                         changed = 1; // setting changed
-                        follow[node->sym.nonterminal].set = temp;
+                        follow[node->sym.nonterminal] = temp;
                     }
                     
                     tempnode = tempnode->next;
@@ -440,10 +442,10 @@ void generateFollow(ruleLL* grammar, token_set* follow, token_set* first)
 
                 if (tempnode== NULL)
                 {
-                    if ((follow[node->sym.nonterminal].set | follow[grammar[i].head->sym.nonterminal].set)!=follow[node->sym.nonterminal].set)
+                    if ((follow[node->sym.nonterminal] | follow[grammar[i].head->sym.nonterminal])!=follow[node->sym.nonterminal])
                     {
                         changed = 1;   
-                        follow[node->sym.nonterminal].set |= follow[grammar[i].head->sym.nonterminal].set;
+                        follow[node->sym.nonterminal] |= follow[grammar[i].head->sym.nonterminal];
                     }
                     continue;
                 }
@@ -458,11 +460,11 @@ void generateFollow(ruleLL* grammar, token_set* follow, token_set* first)
                     continue;
                 }
                 // handled next being terminal
-                long long int temp = follow[node->sym.nonterminal].set | first[tempnode->sym.nonterminal].set;
-                if(follow[node->sym.nonterminal].set != temp){
+                long long int temp = follow[node->sym.nonterminal] | first[tempnode->sym.nonterminal];
+                if(follow[node->sym.nonterminal] != temp){
 
                     changed = 1; // setting changed
-                    follow[node->sym.nonterminal].set = temp;
+                    follow[node->sym.nonterminal] = temp;
                 }
             }
         }
@@ -471,11 +473,11 @@ void generateFollow(ruleLL* grammar, token_set* follow, token_set* first)
     long long int epsv = (long long)1 <<EPSILON; //remove epsilon
     for (int i = 0; i < NUM_RULES; i++)
     {
-        follow[i].set &= ~epsv;
+        follow[i] &= ~epsv;
     }
 }
 
-int** makeParseTable(token_set* first, token_set* follow, ruleLL* grammar) {
+int** makeParseTable(long long int* first, long long int* follow, ruleLL* grammar) {
     //each cell stores the corresponding grammar rule number
     int** parseTable = (int**)malloc(NUM_NONTERMINALS * sizeof(int*));  
     if (parseTable == NULL) {
@@ -509,7 +511,7 @@ int** makeParseTable(token_set* first, token_set* follow, ruleLL* grammar) {
             if (node->type == TERMINAL) {
                 parseTable[nt.nonterminal][node->sym.terminal] = i; // Store the rule index
             } else if (node->type == __EPSILON) {
-                long long int num = follow[nt.nonterminal].set;
+                long long int num = follow[nt.nonterminal];
                 int index = 0;
                 while (num) {
                     if (num & 1) { //set rule number for all terminals in follow of the nonterminal
@@ -519,7 +521,7 @@ int** makeParseTable(token_set* first, token_set* follow, ruleLL* grammar) {
                     ++index;
                 }
             } else if (node->type == NON_TERMINAL) {
-                long long int num = first[node->sym.nonterminal].set;
+                long long int num = first[node->sym.nonterminal];
                 int index = 0;
                 while (num) {
                     if (index == EPSILON && (num & 1)) { //set flag if the first set contains epsilon 
@@ -539,7 +541,7 @@ int** makeParseTable(token_set* first, token_set* follow, ruleLL* grammar) {
         }
 
         if (flag) { // if the first of RHS of a rule contains epsilon
-            long long int num = follow[node->sym.nonterminal].set;
+            long long int num = follow[node->sym.nonterminal];
             int index = 0;
             while (num) {
                 if (num & 1) { //set rule for all terminals in follow of the nonterminal(LHS)
@@ -552,7 +554,7 @@ int** makeParseTable(token_set* first, token_set* follow, ruleLL* grammar) {
     }
     for(int i=0;i<NUM_NONTERMINALS;i++)
     {
-        long long int nont = follow[i].set;
+        long long int nont = follow[i];
         for(int j=0;j<NUM_TERMINALS;j++)
         {
             if(parseTable[i][j]==-1){ 
@@ -602,7 +604,7 @@ void addToStackAndTree(Tree * parseTree, stack * stk,int sym, SYMBOLTYPE type, T
     push(stk, stkele); 
 
 }
-Tree * parseInputSourceCode(ruleLL *grammar, int ** parse_table, FILE * fp, token_set* firstSet){
+Tree * parseInputSourceCode(ruleLL *grammar, int ** parse_table, FILE * fp){ //long long int* firstSet){
     stack * stk = getStack(); 
     Tree * parseTree = createTree(); 
 

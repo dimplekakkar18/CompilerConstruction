@@ -16,11 +16,11 @@ int addnonTerm();
 int addTerm();
 void create_hashTable();
 int getIndex(char *tok);
-Tree * parseInputSourceCode(ruleLL *grammar, int ** parse_table, FILE * fp, token_set* firstSet);
-int** makeParseTable(token_set* first, token_set* follow, ruleLL* grammar); 
+Tree * parseInputSourceCode(ruleLL *grammar, int ** parse_table, FILE * fp);
+int** makeParseTable(long long int* first, long long int* follow, ruleLL* grammar); 
 ruleLL * createGrammar(char * filename); 
-void computeFirst(token_set *firstSet, ruleLL* rules);
-void generateFollow(ruleLL* grammar, token_set* follow, token_set* first); 
+void computeFirst(long long int *firstSet, ruleLL* rules);
+void generateFollow(ruleLL* grammar, long long int* follow, long long int* first); 
 void print_rules(ruleLL* rules);
 
 #endif
