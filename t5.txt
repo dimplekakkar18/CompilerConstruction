@@ -5,7 +5,7 @@ _unionfunction  input parameter list [record #two d5cc34, #point b5c6]
 output parameter list[real d3];
 
 	record #two
-		type #point: beginpoint$;
+		type #point: beginpoint;
 		type #point: endpoint;
 	endrecord
 

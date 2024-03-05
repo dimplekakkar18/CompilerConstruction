@@ -1,0 +1,22 @@
+%Following function computes the factorial of user defined integer numbers
+%The variable d3 maintains the factorial of number
+_fact  input parameter list [int d5cc34]  
+output list[int d3];
+	type int : b5b567;
+	type int : d3
+	d3 <--- 1;
+	while ( b5b567 >= 0);
+		d3 <--- d3 * b5b567;
+		b5b567 <-- b5b567 - 1;
+	endwhile
+	return d3];
+end
+
+_main
+	type int :b3;
+	type real :c4bd56;
+	b3 <--- 7;
+	[c4bd56]<--- call _fact with parameters [b3];
+	write(c4bd56);
+	return;
+end
