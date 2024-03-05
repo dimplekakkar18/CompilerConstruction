@@ -14,17 +14,16 @@
 #include "linkedList.h"
 #include "treeADT.h"
 
-int calculateHash(char *word);
-int addnonTerm();
-int addTerm();
-void create_hashTable();
-int getIndex(char *tok);
-Tree * parseInputSourceCode(ruleLL *grammar, int ** parse_table, FILE * fp, token_set* firstSet);
-int** makeParseTable(token_set* first, token_set* follow, ruleLL* grammar); 
-ruleLL * createGrammar(char * filename); 
-void computeFirst(token_set *firstSet, ruleLL* rules);
-void generateFollow(ruleLL* grammar, token_set* follow, token_set* first); 
-void print_rules(ruleLL* rules);
+int calculateHash(char *word);                                                                    // Computes a hash value for a given word (string) to be used in a parsing table.
+int addnonTerm();                                                                                 // Adds a non-terminal to the set of non-terminals in the grammar.
+int addTerm();                                                                                    // Adds a terminal to the set of terminals in the grammar.
+void create_hashTable();                                                                          // Creates a hash table for efficient indexing of non-terminals and terminals.
+int getIndex(char *tok);                                                                          // Retrieves the index of a given token (non-terminal or terminal) from the hash table.
+Tree * parseInputSourceCode(ruleLL *grammar, int ** parse_table, FILE * fp, token_set* firstSet); // Parses the input source code using a LL(1) parsing approach and constructs a parse tree.
+int ** makeParseTable(token_set* first, token_set* follow, ruleLL* grammar);                      // Constructs and returns the LL(1) parsing table for the given grammar.
+ruleLL * createGrammar(char * filename);                                                          // Reads a grammar file and creates a linked list representation of the grammar rules.
+void computeFirst(token_set *firstSet, ruleLL* rules);                                            // Computes the FIRST sets for each non-terminal in the grammar.
+void generateFollow(ruleLL* grammar, token_set* follow, token_set* first);                        // Generates the FOLLOW sets for each non-terminal in the grammar.
 
 
 char *nonterminals[NUM_NONTERMINALS] = {
@@ -254,12 +253,12 @@ void computeFirst(token_set *firstSet, ruleLL* rules)
         isDone[i] = 0;
     }
     for(int i = 0; i < NUM_RULES; i++){
-        if(rules[i].head->next->type==__EPSILON){               // RHS is EPSILON
+        if(rules[i].head->next->type==__EPSILON){                           // RHS is EPSILON
             addToken(&firstSet[rules[i].head->sym.nonterminal], EPSILON);   // include EPSILON in first(LHS)
-            setKthBit(&nullable, rules[i].head->sym.nonterminal);            // LHS is a nullable non-terminal
+            setKthBit(&nullable, rules[i].head->sym.nonterminal);           // LHS is a nullable non-terminal
             isDone[i] = 1;
         }
-        else if(rules[i].head->next->type==TERMINAL){    // RHS is a TERMINAL
+        else if(rules[i].head->next->type==TERMINAL){                       // RHS is a TERMINAL
             addToken(&firstSet[rules[i].head->sym.nonterminal], rules[i].head->next->sym.terminal);   // include this TERMINAL in first(LHS)
             isDone[i] = 1;
         }
@@ -281,7 +280,7 @@ void computeFirst(token_set *firstSet, ruleLL* rules)
                         break;
                     }
                     else{
-                        if(!kthBitSet(&nullable, node->sym.nonterminal)){            // if in RHS there are non-terminal which are yet not nullable, we cannot go ahead with them
+                        if(!kthBitSet(&nullable, node->sym.nonterminal)){ // if in RHS there are non-terminal which are yet not nullable, we cannot go ahead with them
                             break;
                         }
                     }
@@ -327,7 +326,7 @@ void computeFirst(token_set *firstSet, ruleLL* rules)
         // }
     }
 
-    // do topoSort
+    // Using Topological Sorting Algorithm
     int n = NUM_NONTERMINALS;
     int inDegree[n];
     for(int i = 0; i < n; i++){
@@ -363,8 +362,8 @@ void computeFirst(token_set *firstSet, ruleLL* rules)
         }
     }
     destroyQueue(q);
+    
     // compute the first in this order
-
     for(int i = NUM_NONTERMINALS-1; i >= 0; i--){
         for(int j = 0; j < NUM_RULES; j++){
             LLNODE* node = rules[j].head;             // node points to lhs
@@ -396,8 +395,6 @@ void computeFirst(token_set *firstSet, ruleLL* rules)
         }
     }
 }
-
-void printSet(token_set *set);//remove later
 
 void generateFollow(ruleLL* grammar, token_set* follow, token_set* first)
 {
@@ -447,6 +444,7 @@ void generateFollow(ruleLL* grammar, token_set* follow, token_set* first)
                     }
                     continue;
                 }
+                
                 // node next is not null
 
                 if (tempnode->type == TERMINAL)
@@ -556,8 +554,8 @@ int** makeParseTable(token_set* first, token_set* follow, ruleLL* grammar) {
         for(int j=0;j<NUM_TERMINALS;j++)
         {
             if(parseTable[i][j]==-1){ 
-                if(nont & 1){       // populating synchronizing tokens obtained from FOLLOW set of the nonterminal
-                    parseTable[i][j]=-2; //-2 stands for synch tokens
+                if(nont & 1){               // populating synchronizing tokens obtained from FOLLOW set of the nonterminal
+                    parseTable[i][j]=-2;    //-2 stands for synch tokens
                 }
             }
             nont>>=1;
@@ -570,17 +568,23 @@ int** makeParseTable(token_set* first, token_set* follow, ruleLL* grammar) {
         {
             if((parseTable[i][j]==-1 || parseTable[i][j]==-2) && (j == TK_ELSE || j == TK_IF || j == TK_WHILE || j == TK_UNION|| j == TK_RECORD || j == TK_FUNID || j == TK_MAIN || j == TK_THEN || j == TK_DEFINETYPE || j == TK_READ || j == TK_WRITE || j == TK_RETURN || j == TK_END || j == TK_ENDIF || j == TK_ENDRECORD || j == TK_ENDUNION || j == TK_ENDWHILE || j == TK_TYPE || j == TK_FUNID || j == TK_MAIN))
             {
-                parseTable[i][j]=-3; //-3 stands for additional tokens marking the beginning of a new statement 
+                parseTable[i][j]=-3;        //-3 stands for additional tokens marking the beginning of a new statement 
             }
         }
     }
 
     return parseTable;
 }
+
+
+
+// Function adds a symbol to both the parse tree and the stack during the LL(1) parsing process,
+// creating a corresponding tree node and stack element with information such as symbol type, line number, 
+// and lexeme.
 void addToStackAndTree(Tree * parseTree, stack * stk,int sym, SYMBOLTYPE type, TreeNode * parent, int lineNumber, char * lexeme)
 {
     if(type==__EPSILON) return;
-    TreeNode * tnode = createTreeNode(); 
+    TreeNode * tnode = createTreeNode(); // Create a new tree node with the provided symbol type, symbol value, line number, and lexeme
     if(type == NON_TERMINAL)
         tnode->val.sym.nonterminal = sym; 
     else if(type==TERMINAL)
@@ -588,10 +592,10 @@ void addToStackAndTree(Tree * parseTree, stack * stk,int sym, SYMBOLTYPE type, T
     tnode->val.type = type;  
     tnode->lineNumber = lineNumber; 
     tnode->lexeme = lexeme; 
-    addTreeNode(parseTree, parent, tnode); 
+    addTreeNode(parseTree, parent, tnode); // Add the newly created tree node to the parse tree under the specified parent
     
     
-    stackNODE * stkele = createStackEle(); 
+    stackNODE * stkele = createStackEle(); // Create a new stack element with the provided symbol type, symbol value, and tree node reference
     stkele = createStackEle(); 
     if(type == NON_TERMINAL)
         stkele->val.sym.nonterminal = sym;
@@ -599,24 +603,36 @@ void addToStackAndTree(Tree * parseTree, stack * stk,int sym, SYMBOLTYPE type, T
         stkele->val.sym.terminal = sym;
     stkele->val.type = type; 
     stkele->treeref = tnode; 
-    push(stk, stkele); 
+    push(stk, stkele);                     // Push the newly created stack element onto the stack
 
 }
+
+
+// Function to parse the input source code using LL parsing technique
 Tree * parseInputSourceCode(ruleLL *grammar, int ** parse_table, FILE * fp, token_set* firstSet){
+
+    // Initialize the stack and parse tree
     stack * stk = getStack(); 
     Tree * parseTree = createTree(); 
 
+    // Push the end-of-code ($) symbol onto the stack
     stackNODE * stkele = createStackEle(); 
     stkele->val.sym.terminal = END_CODE;
     stkele->val.type = __ENDCODE;  
     push(stk, stkele); 
 
+    // Initialize the stack and parse tree with the start symbol (<program>)
     addToStackAndTree(parseTree, stk, STARTSYMBOL, NON_TERMINAL, NULL, 0, "---");
+
+    // Get the first token from the input testcase
     TOKEN tok = getToken(fp); 
     int flag = 1;
     int errflag=0;
+
+    // Parse the input source code until the end
     while(*(tok.lexeme) != EOF )
     {
+        // Skip comments
         if(tok.tokenId==TK_COMMENT){
             tok = getToken(fp);
             continue;
@@ -626,14 +642,13 @@ Tree * parseInputSourceCode(ruleLL *grammar, int ** parse_table, FILE * fp, toke
         {
             break;
         }
+
+        // Handle lexical errors and get the next token from the input testcase 
         if(tok.tokenId==TK_ERROR || tok.tokenId == TK_BIGLENERROR || tok.tokenId==TK_BIGFIELDERROR){
             printTokenInfo(tok);
             tok = getToken(fp);
-            
             continue;
         }
-        
-         
         
         stackEle TOS = top(stk)->val;
         if(TOS.type == __ENDCODE) return parseTree;
@@ -643,6 +658,7 @@ Tree * parseInputSourceCode(ruleLL *grammar, int ** parse_table, FILE * fp, toke
         {
             
             int index = parse_table[TOS.sym.nonterminal][tok.tokenId];
+
             if(index == -1)
             {
                 if(flag!=0)
@@ -699,6 +715,7 @@ Tree * parseInputSourceCode(ruleLL *grammar, int ** parse_table, FILE * fp, toke
             }
             else
             {
+                // Handle terminal-terminal mismatch errors
                 if((TOS.sym.terminal == TK_SEM || TOS.sym.terminal == TK_SQR || TOS.sym.terminal == TK_CL) && (tok.tokenId == TK_ELSE || tok.tokenId == TK_IF || tok.tokenId == TK_WHILE || tok.tokenId == TK_UNION|| tok.tokenId == TK_RECORD || tok.tokenId == TK_FUNID || tok.tokenId == TK_MAIN || tok.tokenId == TK_THEN || tok.tokenId == TK_DEFINETYPE || tok.tokenId == TK_READ || tok.tokenId == TK_WRITE || tok.tokenId == TK_RETURN || tok.tokenId == TK_END || tok.tokenId == TK_ENDIF || tok.tokenId == TK_ENDRECORD || tok.tokenId == TK_ENDUNION || tok.tokenId == TK_ENDWHILE || tok.tokenId == TK_TYPE || tok.tokenId == TK_FUNID || tok.tokenId == TK_MAIN)){
                     printf("Line %d Error: The token %s for lexeme %s does not match with the expected token %s \n", lineNo-1, terminals[tok.tokenId], tok.lexeme, terminals[TOS.sym.terminal]); 
                 }
