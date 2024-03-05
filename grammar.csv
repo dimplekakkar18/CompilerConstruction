@@ -40,9 +40,9 @@
 <stmt>,<ioStmt>
 <stmt>,<funCallStmt>
 <assignmentStmt>,<SingleOrRecId>,TK_ASSIGNOP,<arithmeticExpression>,TK_SEM
-<SingleOrRecId>,TK_ID,<moreRecID>
-<moreRecID>,TK_DOT,TK_FIELDID,<moreRecID>
-<moreRecID>,EPSILON
+<SingleOrRecId>,TK_ID,<option_single_constructed>
+<option_single_constructed>,TK_DOT,TK_FIELDID,<option_single_constructed>
+<option_single_constructed>,EPSILON
 <funCallStmt>,<outputParameters>,TK_CALL,TK_FUNID,TK_WITH,TK_PARAMETERS,<inputParameters>,TK_SEM
 <outputParameters>,TK_SQL,<idList>,TK_SQR,TK_ASSIGNOP
 <outputParameters>,EPSILON

@@ -49,7 +49,7 @@ typedef enum NONTERMINAL
     __stmt__,
     __assignmentStmt__,
     __SingleOrRecId__,
-    __moreRecID__,
+    __option_single_constructed__,
     __funCallStmt__,
     __outputParameters__,
     __inputParameters__,

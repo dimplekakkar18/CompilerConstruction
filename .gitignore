@@ -8,3 +8,16 @@ final
 a.out
 clean.txt
 parser/.DS_Store
+hash_table.o
+linkedList.o
+linked_listQ.o
+parser.o
+queue_ll.o
+set.o
+stack.o
+stage1exe
+treeADT.o
+driver.o
+p1.txt
+p2.txt
+

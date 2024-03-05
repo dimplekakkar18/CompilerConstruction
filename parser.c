@@ -54,7 +54,7 @@ char *nonterminals[NUM_NONTERMINALS] = {
     "<stmt>",
     "<assignmentStmt>",
     "<SingleOrRecId>",
-    "<moreRecID>",
+    "<option_single_constructed>",
     "<funCallStmt>",
     "<outputParameters>",
     "<inputParameters>",
