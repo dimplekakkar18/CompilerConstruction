@@ -26,8 +26,8 @@ _main
 	type int : d5cb34567;
 	type int :  b3b444 : global;
 	type $real: c3;
-	b5 <-- 1;
-	c4 <--- d3 + 
+	b5 <--- 1;
+	d6 <--- b7 = b3;
 	c4 <--- d3 + d4;
 	read(d5cb34567);
 	read(45);

@@ -18,7 +18,7 @@ int addnonTerm();                                                               
 int addTerm();                                                                                    // Adds a terminal to the set of terminals in the grammar.
 void create_hashTable();                                                                          // Creates a hash table for efficient indexing of non-terminals and terminals.
 int getIndex(char *tok);                                                                          // Retrieves the index of a given token (non-terminal or terminal) from the hash table.
-Tree * parseInputSourceCode(ruleLL *grammar, int ** parse_table, FILE * fp); // Parses the input source code using a LL(1) parsing approach and constructs a parse tree.
+Tree * parseInputSourceCode(ruleLL *grammar, int ** parse_table, FILE * fp, long long int* first_sets); // Parses the input source code using a LL(1) parsing approach and constructs a parse tree.
 int ** makeParseTable(long long int* first, long long int* follow, ruleLL* grammar);                      // Constructs and returns the LL(1) parsing table for the given grammar.
 ruleLL * createGrammar(char * filename);                                                          // Reads a grammar file and creates a linked list representation of the grammar rules.
 void computeFirst(long long int *firstSet, ruleLL* rules);                                            // Computes the FIRST sets for each non-terminal in the grammar.
@@ -601,7 +601,7 @@ void addToStackAndTree(Tree * parseTree, stack * stk,int sym, SYMBOLTYPE type, T
 
 
 // Function to parse the input source code using LL parsing technique
-Tree * parseInputSourceCode(ruleLL *grammar, int ** parse_table, FILE * fp){
+Tree * parseInputSourceCode(ruleLL *grammar, int ** parse_table, FILE * fp, long long int* first_sets){
 
     // Initialize the stack and parse tree
     stack * stk = getStack(); 
@@ -651,7 +651,15 @@ Tree * parseInputSourceCode(ruleLL *grammar, int ** parse_table, FILE * fp){
         {
             
             int index = parse_table[TOS.sym.nonterminal][tok.tokenId];
-
+            if(index < 0){
+                if(setContains(&first_sets[TOS.sym.nonterminal], EPSILON) && ((TOS.sym.nonterminal == __global_or_not__) || (TOS.sym.nonterminal == __remaining_list__) || (TOS.sym.nonterminal == __outputParameters__) || (TOS.sym.nonterminal == __more_ids__) || (TOS.sym.nonterminal == __optionalReturn__) || (TOS.sym.nonterminal == __expPrime__) || (TOS.sym.nonterminal == __termPrime__) || (TOS.sym.nonterminal == __option_single_constructed__) || (TOS.sym.nonterminal == __output_par__) ) ){
+                    TreeNode * tnode = createTreeNode(); 
+                    tnode->val.type = __EPSILON;  
+                    addTreeNode(parseTree, top(stk)->treeref, tnode); 
+                    pop(stk);
+                    continue;
+                }
+            }
             if(index == -1)
             {
                 if(flag!=0)
@@ -709,7 +717,7 @@ Tree * parseInputSourceCode(ruleLL *grammar, int ** parse_table, FILE * fp){
             else
             {
                 // Handle terminal-terminal mismatch errors
-                if((TOS.sym.terminal == TK_SEM || TOS.sym.terminal == TK_SQR || TOS.sym.terminal == TK_CL) && (tok.tokenId == TK_ELSE || tok.tokenId == TK_IF || tok.tokenId == TK_WHILE || tok.tokenId == TK_UNION|| tok.tokenId == TK_RECORD || tok.tokenId == TK_FUNID || tok.tokenId == TK_MAIN || tok.tokenId == TK_THEN || tok.tokenId == TK_DEFINETYPE || tok.tokenId == TK_READ || tok.tokenId == TK_WRITE || tok.tokenId == TK_RETURN || tok.tokenId == TK_END || tok.tokenId == TK_ENDIF || tok.tokenId == TK_ENDRECORD || tok.tokenId == TK_ENDUNION || tok.tokenId == TK_ENDWHILE || tok.tokenId == TK_TYPE || tok.tokenId == TK_FUNID || tok.tokenId == TK_MAIN)){
+                if((TOS.sym.terminal == TK_SEM || TOS.sym.terminal == TK_SQR || TOS.sym.terminal == TK_CL) && (tok.tokenId == TK_ELSE || tok.tokenId == TK_IF || tok.tokenId == TK_WHILE || tok.tokenId == TK_UNION|| tok.tokenId == TK_RECORD || tok.tokenId == TK_FUNID || tok.tokenId == TK_MAIN || tok.tokenId == TK_THEN || tok.tokenId == TK_DEFINETYPE || tok.tokenId == TK_READ || tok.tokenId == TK_WRITE || tok.tokenId == TK_RETURN || tok.tokenId == TK_END || tok.tokenId == TK_ENDIF || tok.tokenId == TK_ENDRECORD || tok.tokenId == TK_ENDUNION || tok.tokenId == TK_ENDWHILE || tok.tokenId == TK_TYPE || tok.tokenId == TK_FUNID || tok.tokenId == TK_MAIN || tok.tokenId == TK_SQL)){
                     printf("Line %d Error: The token %s for lexeme %s does not match with the expected token %s \n", lineNo-1, terminals[tok.tokenId], tok.lexeme, terminals[TOS.sym.terminal]); 
                     flag = 0; //changed
                 }

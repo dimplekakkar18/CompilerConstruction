@@ -94,7 +94,7 @@ int main(int argc, char * argv[]){
                 generateFollow(rules,follow_sets,first_sets);
  
                 int** pt = makeParseTable(first_sets,follow_sets,rules);                
-                Tree * parseTree = parseInputSourceCode(rules,pt,fp); 
+                Tree * parseTree = parseInputSourceCode(rules,pt,fp,first_sets); 
                 fclose(fp);
                 fp = fopen(argv[2], "w"); 
                 if(fp == NULL)
