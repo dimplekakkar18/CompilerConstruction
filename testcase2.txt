@@ -1,0 +1,51 @@
+
+% Group - 29
+% Dimple - 2020B4A70632P
+% Raunak Bhalla - 2020B4A70859P
+% Shrestha Sharma - 2020B3A70817P
+% Radhika Gupta - 2020B4A70600P
+% Yasaswini Reddy S - 2020B1A71892
+% Akshat Shetye - 2021A7PS2426
+
+
+% The following function computes the square rootof given input
+_computeSqrt input parameter list [real b7]
+output parameter list [real c2];
+	type real : d7c723;
+    type real : d2c723;
+
+    d7c723 <--- <--- b7/2+7;
+    
+    while(d7c72<=d2c723)
+        b7c723 <--- d7c723 + (d2c723-d7c723)/2;
+        b2c723 <--- b7/b7c723;
+        if(b7c723<=b2c723)
+        then
+            d7c723 <--- b2c723
+        endif
+
+    return [c7c723];
+end
+
+
+%The following program computes the function value for the user defined input
+_main 
+	type real : d7;
+	type real : d2;
+    
+	type real : b7;
+    type real : b2;
+    type real : b3;    
+    type real : c7;
+
+	read(d7);
+	read(d2);
+
+    b7 <--- d7*d7;
+    [c7] <--- call _computeSqrt[b3];
+    b3 <--- b7+b2;
+
+	[c7] <--- call _computeSqrt with parameters [b3];
+	write(c7);
+	return;
+end

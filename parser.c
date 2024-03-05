@@ -703,9 +703,13 @@ Tree * parseInputSourceCode(ruleLL *grammar, int ** parse_table, FILE * fp){ //l
             {
                 if((TOS.sym.terminal == TK_SEM || TOS.sym.terminal == TK_SQR || TOS.sym.terminal == TK_CL) && (tok.tokenId == TK_ELSE || tok.tokenId == TK_IF || tok.tokenId == TK_WHILE || tok.tokenId == TK_UNION|| tok.tokenId == TK_RECORD || tok.tokenId == TK_FUNID || tok.tokenId == TK_MAIN || tok.tokenId == TK_THEN || tok.tokenId == TK_DEFINETYPE || tok.tokenId == TK_READ || tok.tokenId == TK_WRITE || tok.tokenId == TK_RETURN || tok.tokenId == TK_END || tok.tokenId == TK_ENDIF || tok.tokenId == TK_ENDRECORD || tok.tokenId == TK_ENDUNION || tok.tokenId == TK_ENDWHILE || tok.tokenId == TK_TYPE || tok.tokenId == TK_FUNID || tok.tokenId == TK_MAIN)){
                     printf("Line %d Error: The token %s for lexeme %s does not match with the expected token %s \n", lineNo-1, terminals[tok.tokenId], tok.lexeme, terminals[TOS.sym.terminal]); 
+                    flag = 0; //changed
                 }
-                else
+                else if (flag!=0)//changed
+                {
                     printf("Line %d Error: The token %s for lexeme %s does not match with the expected token %s \n", lineNo, terminals[tok.tokenId], tok.lexeme, terminals[TOS.sym.terminal]); 
+                    flag = 0; //changed
+                }
                 pop(stk); 
             }
         }
