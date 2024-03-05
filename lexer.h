@@ -28,6 +28,7 @@ void refreshPtr();
 TOKEN getToken(FILE *fp);
 int len(char * string); 
 void printTokenInfo(TOKEN tk); 
+void freeSymbolTable();
 
 
 #endif 

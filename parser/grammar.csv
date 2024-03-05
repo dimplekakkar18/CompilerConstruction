@@ -1,5 +1,5 @@
 <program>,<otherFunctions>,<mainFunction>
-<mainFunction>,TK_MAIN,<stmts>,TK_END
+<mainFunction>,TK_MAIN,<stmts>,TK_END          
 <otherFunctions>,<function>,<otherFunctions>
 <otherFunctions>,EPSILON
 <function>,TK_FUNID,<input_par>,<output_par>,TK_SEM,<stmts>,TK_END

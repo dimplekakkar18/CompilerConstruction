@@ -136,25 +136,10 @@ void setKthBit(long long int* n,int k){
     *n=((((long long int)1)<<k)|(*n));
 }
 
-char *trim(char *str)
-{
-    int i = 0;
-    while (str[i] != '\0')
-    {
-        if (str[i] == ' ' || str[i] == '\t' || str[i] == '\n' || str[i] == '\r')
-        {
-            str[i] = '\0';
-            break;
-        }
-        i++;
-    }
-    return str;
-}
-
 ruleLL *createGrammar(char* grammar_file)
 {
     FILE* fp = fopen(grammar_file, "r");
-    char buffer[128];
+    char buffer[130];
     struct LLNode *lhs;
     struct LLNode *rhs;
     ruleLL *grammar = (ruleLL *)malloc(sizeof(ruleLL) * NUMRULES);
@@ -172,31 +157,33 @@ ruleLL *createGrammar(char* grammar_file)
     int i = 0;
     char delim[] = ",\n";
 
-    while (fgets(buffer, 128, fp) != NULL)
+    while (fgets(buffer, 130, fp) != NULL)
     {
 
         char *tok = strtok(buffer, delim); // Just extracting the lhs from each rule
 
         int index = getIndex(tok);
-
-        if (hash_table[index].type == NON_TERMINAL)
+        
+        for(int j =0;tok!=NULL;j++)
         {
-            lhs = createNewNode(hash_table[index].sym, NON_TERMINAL);
-            addNewNode(lhs, &grammar[i]);
-        }
-        else
-        {
-            printf("Error: rule starts with a terminal \n");
-        }
-
-        tok = strtok(NULL, delim); // NULL in the first entry means it'll start tokenizing from where it left off, i.e RHS
-        while (tok != NULL)
-        {
-            tok = trim(tok);
-            int index = getIndex(tok);
-            rhs = createNewNode(hash_table[index].sym, hash_table[index].type);
-            addNewNode(rhs, &grammar[i]);
-            tok = strtok(NULL, delim);
+            if(j==0){
+                if (hash_table[index].type == NON_TERMINAL){
+                    lhs = createNewNode(hash_table[index].sym, NON_TERMINAL);
+                    addNewNode(lhs, &grammar[i]);
+                    tok = strtok(NULL, delim);
+                }
+                else{
+                    printf("Error : rule stasrts with Terminal\n");
+                }
+                printf("%s \n",tok);
+            }
+            else{
+                int index = getIndex(tok);
+                if(hash_table[index].type==NONE || index==-1) printf ("Wrong terminal %s \n",tok);
+                rhs = createNewNode(hash_table[index].sym, hash_table[index].type);
+                addNewNode(rhs, &grammar[i]);
+                tok = strtok(NULL, delim);
+            }
         }
         i++;
     }

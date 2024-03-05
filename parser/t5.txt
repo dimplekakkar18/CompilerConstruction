@@ -43,7 +43,7 @@ _main
 	endrecord
 	definetype union #four as #shape
 	record #variantrecord
-		type int: tagggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggg;
+		type int: tag;
 		type #shape: s;
 	endrecord
 
@@ -53,9 +53,11 @@ _main
 	type record #variantrecord: b5c6;
 	b5c6 <--- b5c6.tag + d4.s.ln.beginpoint.x - b5c6.s.tr.base.beginpoint.y; 
 	b5 <--- b5 +1;
+	b6 <--- if + 2;
 	d4 <--- b5c6 / d5cb34567;
 	write(d4);
 	write(d4.s.ln.beginpoint.x );
 	write(b5c6.tag );
 	return;
 end
+

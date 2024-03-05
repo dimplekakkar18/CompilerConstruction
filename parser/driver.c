@@ -62,7 +62,7 @@ int main(int argc, char * argv[]){
                         checkTokenID(token.lexeme, token.tokenId);
                         printTokenInfo(token); 
                     } 
-                    
+                freeSymbolTable();
                 break;  
             case 3:
                 lineNo = 1;
@@ -79,7 +79,7 @@ int main(int argc, char * argv[]){
                 // printf("DEBUB  %ld",ftell(fp));
                 
                 ruleLL *rules = createGrammar("grammar.csv");
-                // print_rules(rules);
+                //print_rules(rules);
                 token_set *first_sets = malloc(sizeof(token_set) * NUM_NONTERMINALS);
                 token_set *follow_sets = malloc(sizeof(token_set) * NUM_NONTERMINALS);
                 computeFirst(first_sets,rules);
@@ -109,6 +109,7 @@ int main(int argc, char * argv[]){
                 printTree(parseTree,fp); 
                 printf("\n");
                 fclose(fp);
+                freeSymbolTable();
                 freeGrammar(rules);
                 break; 
             case 4:
